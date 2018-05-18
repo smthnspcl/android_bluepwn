@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="11dp"
+        android:text="state:" />
+
+    <TextView
+        android:id="@+id/syncedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/textView"
+        android:layout_marginEnd="11dp"
+        android:text="not checked" />
+
+    <Button
+        android:id="@+id/syncBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="17dp"
+        android:text="sync" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="56dp"
+        android:layout_toEndOf="@+id/textView"
+        android:text="oui" />
+
+    <TextView
+        android:id="@+id/ouiSyncStatusLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/syncedLabel"
+        android:layout_alignTop="@+id/textView5"
+        android:text="not checked" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="83dp"
+        android:layout_toEndOf="@+id/textView"
+        android:text="devices" />
+
+    <TextView
+        android:id="@+id/devicesSyncStatusLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/syncedLabel"
+        android:layout_alignTop="@+id/textView7"
+        android:text="not checked" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="112dp"
+        android:layout_toEndOf="@+id/textView"
+        android:text="actions" />
+
+    <TextView
+        android:id="@+id/actionsSyncStatusLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/syncedLabel"
+        android:layout_alignTop="@+id/textView9"
+        android:text="not checked" />
+
+</RelativeLayout>

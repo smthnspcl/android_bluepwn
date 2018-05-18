@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">bluepwn</string>
+    <string name="skipped">skipped</string>
+    <string name="failed">failed</string>
+    <string name="synced">synced</string>
+    <string name="not_synced">not synced</string>
+
+    <string-array name="action_data_type_array">
+        <item>hex</item>
+        <item>ascii</item>
+    </string-array>
+
+    <string name="uuid_sdp">0001</string>
+    <string name="uuid_udp">0002</string>
+    <string name="uuid_rfcomm">0003</string>
+    <string name="uuid_tcp">0004</string>
+    <string name="uuid_att">0007</string>
+    <string name="uuid_obex">0008</string>
+    <string name="uuid_bnep">000F</string>
+    <string name="uuid_hidp">0011</string>
+    <string name="uuid_hcrp_ctrl">0012</string>
+    <string name="uuid_hcrp_data">0014</string>
+    <string name="uuid_hcrp_notify">0016</string>
+    <string name="uuid_avctp">0017</string>
+    <string name="uuid_avdtp">0019</string>
+    <string name="uuid_mcap_ctrl">001E</string>
+    <string name="uuid_mcap_data">001F</string>
+    <string name="uuid_l2cap">0100</string>
+
+</resources>

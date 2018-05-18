@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/saveAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="11dp"
+        android:text="save" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="12dp"
+        android:id="@+id/space4" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/space4"
+        android:layout_marginEnd="11dp"
+        android:id="@+id/space7" />
+
+    <EditText
+        android:id="@+id/actionName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/space7"
+        android:layout_alignStart="@+id/space4"
+        android:layout_alignTop="@+id/space4"
+        android:ems="10"
+        android:hint="name"
+        android:inputType="textPersonName" />
+
+    <AutoCompleteTextView
+        android:id="@+id/actionMacPrefix"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/actionName"
+        android:layout_below="@+id/actionName"
+        android:layout_marginTop="11dp"
+        android:layout_toEndOf="@+id/space4"
+        android:hint="mac prefix" />
+
+    <Spinner
+        android:id="@+id/actionDataTypeSelector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/actionMacPrefix"
+        android:layout_marginTop="11dp"
+        android:layout_toEndOf="@+id/space4"
+        android:layout_toStartOf="@+id/saveAction" />
+
+    <EditText
+        android:id="@+id/actionDataEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/space8"
+        android:layout_alignEnd="@+id/space7"
+        android:layout_alignStart="@+id/actionDataTypeSelector"
+        android:layout_below="@+id/actionDataTypeSelector"
+        android:layout_marginTop="11dp"
+        android:ems="10"
+        android:gravity="top|left"
+        android:inputType="textMultiLine"
+        android:textAlignment="viewStart" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/saveAction"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/space8" />
+
+</RelativeLayout>

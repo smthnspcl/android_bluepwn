@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="11dp"
+        android:id="@+id/space5" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/space5"
+        android:layout_marginStart="69dp"
+        android:layout_toEndOf="@+id/space5"
+        android:id="@+id/space6" />
+
+    <Spinner
+        android:id="@+id/selectionSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/selectionQuery"
+        android:layout_alignEnd="@+id/space6"
+        android:layout_below="@+id/space6"
+        android:layout_toEndOf="@+id/space5" />
+
+    <AutoCompleteTextView
+        android:id="@+id/selectionQuery"
+        android:layout_width="185dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/space6"
+        android:layout_marginStart="12dp"
+        android:layout_toEndOf="@+id/selectionSpinner"
+        android:hint="query" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/submitQueryButton"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="12dp"
+        android:layout_alignBottom="@id/selectionSpinner"
+        android:text="search"/>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/selectionQuery"
+        android:layout_marginEnd="11dp"
+        android:id="@+id/space9" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/space6"
+        android:layout_marginStart="12dp"
+        android:layout_toEndOf="@+id/space6"
+        android:id="@+id/space10" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/actionsRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignEnd="@+id/space9"
+        android:layout_below="@+id/selectionSpinner"
+        android:layout_marginTop="11dp"
+        android:layout_toEndOf="@+id/space5" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/addActionBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_add_white_48dp" />
+</RelativeLayout>

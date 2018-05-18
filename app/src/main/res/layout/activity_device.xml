@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:text="name:"/>
+    
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_marginStart="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_toEndOf="@id/nameTextView"
+        android:layout_alignBottom="@id/nameTextView"/>
+    
+    <TextView
+        android:layout_alignStart="@+id/nameTextView"
+        android:layout_below="@id/nameTextView"
+        android:text="mac:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    
+    <TextView
+        android:id="@+id/tvMac"
+        android:layout_alignStart="@id/tvName"
+        android:layout_below="@id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    
+    <TextView
+        android:layout_below="@+id/tvManufacturer"
+        android:layout_alignStart="@id/nameTextView"
+        android:text="type:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_below="@id/tvMac"
+        android:layout_alignStart="@id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3" />
+
+    <TextView
+        android:text="manuf:"
+        android:layout_below="@id/tvMac"
+        android:layout_alignStart="@id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/tvManufacturer"
+        android:layout_alignStart="@id/tvName"
+        android:layout_below="@id/tvMac"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvType"
+        android:layout_below="@id/tvManufacturer"
+        android:layout_alignStart="@id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:text="bond:"
+        android:layout_below="@id/tvType"
+        android:layout_alignStart="@id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/tvBond"
+        android:layout_below="@+id/tvType"
+        android:layout_alignStart="@id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/actionRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/onlyActions"
+        android:layout_centerHorizontal="true" />
+
+    <Switch
+        android:id="@+id/onlyActions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="11dp"
+        android:layout_toEndOf="@+id/textView3"
+        android:text="only with action" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/tvManufacturer"
+        android:layout_marginEnd="16dp"
+        android:text="Button" />
+
+</RelativeLayout>

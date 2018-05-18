@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/MenuBluetooth"
+        android:title="bluetooth"
+        android:icon="@drawable/ic_bluetooth_white_48dp"/>
+    <item
+        android:id="@+id/MenuDevices"
+        android:title="devices"
+        android:icon="@drawable/baseline_devices_white_48"/>
+    <item
+        android:id="@+id/MenuActions"
+        android:title="actions"
+        android:icon="@drawable/ic_list_white_48dp"/>
+
+    <item
+        android:id="@+id/MenuMap"
+        android:title="map"
+        android:icon="@drawable/baseline_map_white_48"/>
+
+    <item
+        android:id="@+id/MenuSync"
+        android:title="sync"
+        android:icon="@drawable/baseline_sync_white_48"/>
+
+    <item
+        android:id="@+id/MenuSettings"
+        android:title="settings"
+        android:icon="@drawable/ic_settings_white_48dp"/>
+</menu>
