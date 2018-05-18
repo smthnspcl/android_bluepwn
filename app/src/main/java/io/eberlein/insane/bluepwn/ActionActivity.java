@@ -22,6 +22,8 @@ import butterknife.OnClick;
 import butterknife.OnItemClick;
 import butterknife.OnItemSelected;
 
+// todo fix duplicating items
+
 public class ActionActivity extends AppCompatActivity {
 
     private Boolean actionDataHex = true;
@@ -35,6 +37,7 @@ public class ActionActivity extends AppCompatActivity {
      @OnClick(R.id.saveAction)
      public void saveActionButtonClicked(){
         Action a = new Action();
+        a.name = actionName.getText().toString();
         a.macPrefix = actionMacPrefix.getText().toString();
         a.lastModified = new Date();
         a.data = actionDataEditText.getText().toString();
@@ -47,7 +50,7 @@ public class ActionActivity extends AppCompatActivity {
         finish();
      }
 
-     @OnItemClick(R.id.actionDataTypeSelector)
+     @OnItemSelected(R.id.actionDataTypeSelector)
      public void setActionDataTypeSelectorClicked(){
          actionDataHex = actionDataTypeSelector.getSelectedItem().toString().equals("hex");
      }
@@ -63,13 +66,16 @@ public class ActionActivity extends AppCompatActivity {
     }
 
     private void initFromIntent(){
-         Long id = getIntent().getExtras().getLong("id");
-         if(id != null){
+         Bundle b = getIntent().getExtras();
+         if(b != null){
+             Long id = getIntent().getExtras().getLong("id");
              Action a = SQLite.select().from(Action.class).where(Action_Table.id.eq(id)).querySingle();
-             actionName.setText(a.name);
-             actionDataTypeSelector.setSelection(a.hex ? 0 : 1);
-             actionMacPrefix.setText(a.macPrefix);
-             actionDataEditText.setText(a.data);
+             if(a != null){
+                 actionName.setText(a.name);
+                 actionDataTypeSelector.setSelection(a.hex ? 0 : 1);
+                 actionMacPrefix.setText(a.macPrefix);
+                 actionDataEditText.setText(a.data);
+             }
          }
     }
 

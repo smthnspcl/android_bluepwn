@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.ParcelUuid;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,7 +22,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.alibaba.fastjson.JSON;
 import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -36,6 +34,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+// todo fix duplicating items
 
 public class BluetoothFragment extends Fragment {
     @BindView(R.id.scanBtn) FloatingActionButton scanBtn;
@@ -212,7 +212,7 @@ public class BluetoothFragment extends Fragment {
                             device = new Device(d);
                             device.locations.add(new Location(locationListener.currentLocation));
                         }
-                        // if(uuids != null){for(Parcelable u : uuids){dev.uuids.add((ParcelUuid) u);}} // todo update device
+                        if(uuids != null){for(Parcelable u : uuids){device.uuids.add(new ParcelUuid((android.os.ParcelUuid) u));}}
 
                         devices.add(device);
                         saveDevice(device);

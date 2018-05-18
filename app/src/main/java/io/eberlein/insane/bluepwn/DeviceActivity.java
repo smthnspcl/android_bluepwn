@@ -14,6 +14,9 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -36,7 +39,9 @@ public class DeviceActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         deviceUUIDAdapter = new DeviceUUIDAdapter();
         device = SQLite.select().from(Device.class).where(Device_Table.address.eq(getIntent().getExtras().getString("address"))).querySingle();
-        // deviceUUIDAdapter.populate(device.uuids);
+        List<android.os.ParcelUuid> uuids = new ArrayList<>();
+        for(ParcelUuid u : device.uuids) uuids.add(u.uuid);
+        deviceUUIDAdapter.populate(uuids);
         tvMac.setText(device.address);
         tvName.setText(device.name);
         tvType.setText(device.type);

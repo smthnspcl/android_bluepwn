@@ -6,11 +6,11 @@
     <TextView
         android:id="@+id/actionName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="32dp" />
 
     <TextView
-        android:id="@+id/action"
+        android:id="@+id/actionMacPrefix"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="32dp" />
 
 </LinearLayout>

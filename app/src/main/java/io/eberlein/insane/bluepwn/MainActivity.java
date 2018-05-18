@@ -76,4 +76,9 @@ public class MainActivity extends AppCompatActivity {
         // todo for pub release
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // todo disable bluetooth and location services
+    }
 }

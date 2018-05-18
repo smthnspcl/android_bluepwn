@@ -1,8 +1,8 @@
 package io.eberlein.insane.bluepwn;
 
 import android.bluetooth.BluetoothDevice;
-import android.os.ParcelUuid;
 import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
@@ -22,9 +22,9 @@ class Device extends BaseModel{
     @Column String bond;
     @Column String manufacturer;
     @Column Date lastModified;
-    // @Column(typeConverter = ParcelUuidListTypeConverter.class) List<ParcelUuid> uuids;
 
-    List<Location> locations;
+    @Column String locationIdsJson;
+    @Column String parcelUuidsJson;
 
     // app helper
     @Column Boolean lastLoaded;
@@ -38,7 +38,7 @@ class Device extends BaseModel{
         type = getTypeAsString(device.getType());
         bond = getBondStateAsString(device.getBondState());
         manufacturer = "todo";
-        //uuids = new ArrayList<>();
+        uuids = new ArrayList<>();
         lastModified = new Date();
         locations = new ArrayList<>();
         lastLoaded = false;
@@ -50,7 +50,7 @@ class Device extends BaseModel{
         this.type = type;
         this.bond = bond;
         this.manufacturer = manufacturer;
-        //this.uuids = uuids;
+        this.uuids = uuids;
         this.lastModified = lastModified;
         this.locations = locations;
         this.lastLoaded = lastLoaded;

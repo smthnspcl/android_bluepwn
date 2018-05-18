@@ -28,6 +28,7 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
 
     class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.actionName) TextView actionName;
+        @BindView(R.id.actionMacPrefix) TextView actionMacPrefix;
 
         Context context;
 
@@ -60,12 +61,13 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
     @Override
     public ActionAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater i = LayoutInflater.from(parent.getContext());
-        return new ViewHolder(parent.getContext(), i.inflate(R.layout.viewholder_devices_item, parent, false));
+        return new ViewHolder(parent.getContext(), i.inflate(R.layout.viewholder_actions_item, parent, false));
     }
 
     public void onBindViewHolder(ActionAdapter.ViewHolder holder, int position) {
         Action a = actions.get(position);
         holder.actionName.setText(a.name);
+        holder.actionMacPrefix.setText(a.macPrefix);
     }
 
     @Override
