@@ -1,6 +1,8 @@
 package io.eberlein.insane.bluepwn;
 
 import android.bluetooth.BluetoothDevice;
+
+import com.alibaba.fastjson.JSONArray;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
@@ -23,8 +25,8 @@ class Device extends BaseModel{
     @Column String manufacturer;
     @Column Date lastModified;
 
-    @Column String locationIdsJson;
-    @Column String parcelUuidsJson;
+    @Column(typeConverter = JSONArrayTypeConverter.class) JSONArray locationIdsJson;
+    @Column(typeConverter = JSONArrayTypeConverter.class) JSONArray parcelUuidsJson;
 
     // app helper
     @Column Boolean lastLoaded;
@@ -38,21 +40,21 @@ class Device extends BaseModel{
         type = getTypeAsString(device.getType());
         bond = getBondStateAsString(device.getBondState());
         manufacturer = "todo";
-        uuids = new ArrayList<>();
+        parcelUuidsJson = new JSONArray();
         lastModified = new Date();
-        locations = new ArrayList<>();
+        locationIdsJson = new JSONArray();
         lastLoaded = false;
     }
 
-    public Device(String address, String name, String type, String bond, String manufacturer, List<ParcelUuid> uuids, Date lastModified, List<Location> locations, Boolean lastLoaded){
+    public Device(String address, String name, String type, String bond, String manufacturer, JSONArray parcelUuidsJson, Date lastModified, JSONArray locationIdsJson, Boolean lastLoaded){
         this.address = address;
         this.name = name;
         this.type = type;
         this.bond = bond;
         this.manufacturer = manufacturer;
-        this.uuids = uuids;
+        this.parcelUuidsJson = parcelUuidsJson;
         this.lastModified = lastModified;
-        this.locations = locations;
+        this.locationIdsJson = locationIdsJson;
         this.lastLoaded = lastLoaded;
     }
 

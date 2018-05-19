@@ -13,10 +13,8 @@ import android.view.View;
 import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -28,7 +26,7 @@ public class DeviceActivity extends AppCompatActivity {
     @BindView(R.id.tvManufacturer) TextView tvManufacturer;
     @BindView(R.id.actionRecycler) RecyclerView actionRecycler;
 
-    DeviceUUIDAdapter deviceUUIDAdapter;
+    ParcelUuidAdapter parcelUuidAdapter;
     BluetoothAdapter bluetoothAdapter;
     Device device;
 
@@ -37,11 +35,13 @@ public class DeviceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device);
         ButterKnife.bind(this);
-        deviceUUIDAdapter = new DeviceUUIDAdapter();
+        parcelUuidAdapter = new ParcelUuidAdapter();
         device = SQLite.select().from(Device.class).where(Device_Table.address.eq(getIntent().getExtras().getString("address"))).querySingle();
-        List<android.os.ParcelUuid> uuids = new ArrayList<>();
-        for(ParcelUuid u : device.uuids) uuids.add(u.uuid);
-        deviceUUIDAdapter.populate(uuids);
+        List<ParcelUuid> uuids = new ArrayList<>();
+        for(Object uid : device.parcelUuidsJson)
+            uuids.add(SQLite.select().from(ParcelUuid.class).where(ParcelUuid_Table.id.eq((Long) uid)).querySingle());
+        System.out.println(uuids.size());
+        parcelUuidAdapter.addAll(uuids);
         tvMac.setText(device.address);
         tvName.setText(device.name);
         tvType.setText(device.type);
@@ -49,8 +49,7 @@ public class DeviceActivity extends AppCompatActivity {
         tvManufacturer.setText(device.manufacturer);
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         actionRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        // todo find actions by manufacturer and service id
-        deviceUUIDAdapter.setOnItemClickListener(new DeviceUUIDAdapter.OnItemClickListener() {
+        parcelUuidAdapter.setOnItemClickListener(new ParcelUuidAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
                 AlertDialog.Builder b = new AlertDialog.Builder(getApplicationContext());
@@ -72,16 +71,16 @@ public class DeviceActivity extends AppCompatActivity {
             case "classic": onBluetoothClassic(); break;
             default: onBluetoothElse();
         }
-        actionRecycler.setAdapter(deviceUUIDAdapter);
-        // device.getMac() returns null and throws null
+        actionRecycler.setAdapter(parcelUuidAdapter);
     }
+
 
     void onBluetoothLe(){
 
     }
 
     void onBluetoothClassic(){
-        // iterate over device.uuids
+
     }
 
     void onBluetoothElse(){}

@@ -5,10 +5,14 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import java.util.UUID;
+
+
 @Table(database = LocalDatabase.class)
 public class ParcelUuid extends BaseModel {
     @PrimaryKey(autoincrement = true) Long id;
-    @Column(typeConverter = ParcelUuidTypeConverter.class) android.os.ParcelUuid uuid;
+    @Column(typeConverter = ParcelUuidTypeConverter.class)
+    android.os.ParcelUuid uuid;
 
     ParcelUuid(){}
 

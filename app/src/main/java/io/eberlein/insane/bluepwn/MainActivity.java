@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
                     f = new DevicesFragment(); break;
                 case R.id.MenuActions:
                     f = new ActionsFragment(); break;
+                case R.id.MenuUuids:
+                    f = new UuidsFragment(); break;
                 case R.id.MenuMap:
                     f = new MapFragment(); break;
                 case R.id.MenuSync:
@@ -66,8 +68,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBackStackChanged() {
             FragmentManager fm = getSupportFragmentManager();
-            Fragment f = fm.findFragmentById(fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getId());
-            if(f != null) f.onResume();
+            try{
+                Fragment f = fm.findFragmentById(fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getId());
+                if(f != null) f.onResume();
+            } catch (ArrayIndexOutOfBoundsException e){
+                e.printStackTrace();
+                finish(); // user wants to leave the app using back
+            }
         }
     };
 

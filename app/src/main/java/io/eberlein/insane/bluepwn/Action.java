@@ -14,6 +14,7 @@ class Action extends BaseModel {
     @Column String name;
     @Column Boolean hex;
     @Column String data;
+    @Column String uuid;
     @Column String macPrefix;
     @Column Date lastModified;
 

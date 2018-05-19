@@ -6,10 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -67,7 +65,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
         Device d = devices.get(position);
         holder.tvMac.setText(d.address);
         holder.tvName.setText(d.name);
-        // holder.tvUuids.setText(String.valueOf(d.uuids.size()));
+        holder.tvUuids.setText(String.valueOf(d.parcelUuidsJson.size()));
         holder.tvManufacturer.setText(d.manufacturer);
     }
 
@@ -76,20 +74,21 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
         return devices.size();
     }
 
-    void add(Device device){
-        if(!devices.contains(device)){
-            devices.add(device);
-            notifyDataSetChanged();
-        }
-    }
-
     void addAll(List<Device> devices){
-        for(Device d : devices){
-            if(!this.devices.contains(d)) add(d);
-        }
-        notifyDataSetChanged();
+        this.devices = devices;
     }
 
+    void add(Device device){
+        for(Device d : devices){
+            if(d.address.equals(device.address)){
+                devices.set(devices.indexOf(d), device);
+                notifyItemChanged(devices.indexOf(device));
+                return;
+            }
+        }
+        devices.add(device);
+        notifyItemChanged(devices.indexOf(device));
+    }
 
     Device get(int index){
         return devices.get(index);

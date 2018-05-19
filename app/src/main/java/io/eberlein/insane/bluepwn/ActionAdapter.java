@@ -6,10 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -76,17 +74,19 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
     }
 
     void add(Action action){
-        if(!actions.contains(action)){
-            actions.add(action);
-            notifyDataSetChanged();
+        for(Action a : actions){
+            if(a.id.equals(action.id)){
+                actions.set(actions.indexOf(a), action);
+                notifyItemChanged(actions.indexOf(action));
+                return;
+            }
         }
+        actions.add(action);
+        notifyItemChanged(actions.indexOf(action));
     }
 
     void addAll(List<Action> actions){
-        for(Action a : actions){
-            if(!this.actions.contains(a)) this.actions.add(a);
-        }
-        notifyDataSetChanged();
+        for(Action a : actions) add(a);
     }
 
     void empty(){

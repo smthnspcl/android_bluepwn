@@ -76,7 +76,7 @@ public class MapFragment extends Fragment {
         locationListener.onLocationChangedFunctions.add(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-                currentPositionMarker.setPosition(new GeoPoint(locationListener.currentLocation));
+                currentPositionMarker.setPosition(new GeoPoint(locationListener.currentLocation.latitude, locationListener.currentLocation.longitude));
                 currentPositionMarker.setIcon(getResources().getDrawable(R.drawable.baseline_my_location_white_48));
                 return null;
             }

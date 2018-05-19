@@ -2,7 +2,6 @@ package io.eberlein.insane.bluepwn;
 
 
 import android.content.Context;
-import android.os.ParcelUuid;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,24 +13,23 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class DeviceUUIDAdapter extends RecyclerView.Adapter<DeviceUUIDAdapter.ViewHolder> {
-    private List<ParcelUuid> uuids;
+public class ParcelUuidAdapter extends RecyclerView.Adapter<ParcelUuidAdapter.ViewHolder> {
+    private List<io.eberlein.insane.bluepwn.ParcelUuid> uuids;
 
-    private DeviceUUIDAdapter.OnItemClickListener listener;
+    private ParcelUuidAdapter.OnItemClickListener listener;
 
     public interface OnItemClickListener {
         void onItemClick(View v, int p);
     }
 
-    void setOnItemClickListener(DeviceUUIDAdapter.OnItemClickListener listener){
+    void setOnItemClickListener(ParcelUuidAdapter.OnItemClickListener listener){
         this.listener = listener;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        // @BindView(R.id.dev) TextView uuid;
-        @BindView(R.id.tvUuids) TextView tvUuids;
-        @BindView(R.id.tvName) TextView tvName;
-        @BindView(R.id.tvManufacturer) TextView tvManufacturer;
+        @BindView(R.id.uuid) TextView uuid;
+        @BindView(R.id.serviceName) TextView serviceName;
+        // todo amount of actions
 
         Context context;
 
@@ -53,17 +51,20 @@ public class DeviceUUIDAdapter extends RecyclerView.Adapter<DeviceUUIDAdapter.Vi
         }
     }
 
-    DeviceUUIDAdapter(){
+    ParcelUuidAdapter(){
         uuids = new ArrayList<>();
     }
 
     @Override
-    public DeviceUUIDAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ParcelUuidAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater i = LayoutInflater.from(parent.getContext());
-        return new DeviceUUIDAdapter.ViewHolder(parent.getContext(), i.inflate(R.layout.viewholder_devices_item, parent, false));
+        return new ParcelUuidAdapter.ViewHolder(parent.getContext(), i.inflate(R.layout.viewholder_uuids_item, parent, false));
     }
 
-    public void onBindViewHolder(DeviceUUIDAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(ParcelUuidAdapter.ViewHolder holder, int position) {
+        ParcelUuid uuid = uuids.get(position);
+        holder.serviceName.setText("todo");
+        if(uuid != null) holder.uuid.setText(uuid.uuid.toString());
     }
 
     @Override
@@ -71,11 +72,12 @@ public class DeviceUUIDAdapter extends RecyclerView.Adapter<DeviceUUIDAdapter.Vi
         return uuids.size();
     }
 
-    void populate(List<ParcelUuid> uuids){ this.uuids.addAll(uuids); }
+    void addAll(List<io.eberlein.insane.bluepwn.ParcelUuid> uuids){
+        this.uuids.addAll(uuids); }
 
-    void add(ParcelUuid uuid){
+    void add(io.eberlein.insane.bluepwn.ParcelUuid uuid){
         for(ParcelUuid u : uuids){
-            if(u.equals(uuid)){
+            if(u.id.equals(uuid.id)){
                 uuids.set(uuids.indexOf(u), uuid);
                 notifyItemChanged(uuids.indexOf(uuid));
                 return;
@@ -85,11 +87,11 @@ public class DeviceUUIDAdapter extends RecyclerView.Adapter<DeviceUUIDAdapter.Vi
         notifyItemChanged(uuids.indexOf(uuid));
     }
 
-    ParcelUuid get(int index){
+    io.eberlein.insane.bluepwn.ParcelUuid get(int index){
         return uuids.get(index);
     }
 
-    List<ParcelUuid> get(){return uuids;}
+    List<io.eberlein.insane.bluepwn.ParcelUuid> get(){return uuids;}
 
     void empty(){
         uuids = new ArrayList<>();
