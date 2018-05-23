@@ -1,5 +1,6 @@
 package io.eberlein.insane.bluepwn;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()){
                 case R.id.MenuBluetooth:
                     f = new BluetoothFragment(); break;
+                case R.id.MenuScans:
+                    f = new ScansFragment(); break;
                 case R.id.MenuDevices:
                     f = new DevicesFragment(); break;
                 case R.id.MenuActions:
@@ -55,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
                     f = new SyncFragment(); break;
                 case R.id.MenuSettings:
                     f = new SettingsFragment(); break;
+                case R.id.MenuExit:
+                    finish();
                 default:
                     f = new BluetoothFragment();
             }
@@ -86,6 +91,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // todo disable bluetooth and location services
+        BluetoothAdapter.getDefaultAdapter().disable();
     }
 }

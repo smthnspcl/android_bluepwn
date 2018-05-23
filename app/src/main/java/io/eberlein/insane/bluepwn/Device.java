@@ -5,8 +5,10 @@ import android.bluetooth.BluetoothDevice;
 import com.alibaba.fastjson.JSONArray;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
+import com.raizlabs.android.dbflow.annotation.OneToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.ArrayList;
@@ -31,6 +33,18 @@ class Device extends BaseModel{
     // app helper
     @Column Boolean lastLoaded;
     // todo proximity alert bool value; trigger with locationManager.addProximityAlert();
+
+    public List<Location> getLocations(){
+        List<Location> locations = new ArrayList<>();
+        for(Object l : locationIdsJson.toArray()) locations.add(SQLite.select().from(Location.class).where(Location_Table.id.eq((Long) l)).querySingle());
+        return locations;
+    }
+
+    public List<ParcelUuid> getParcelUuids(){
+        List<ParcelUuid> parcelUuids = new ArrayList<>();
+        for(Object p : parcelUuidsJson.toArray()) parcelUuids.add(SQLite.select().from(ParcelUuid.class).where(ParcelUuid_Table.id.eq((Long) p)).querySingle());
+        return parcelUuids;
+    }
 
     public Device() {}
 

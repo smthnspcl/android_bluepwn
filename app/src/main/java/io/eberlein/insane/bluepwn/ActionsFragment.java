@@ -43,6 +43,7 @@ public class ActionsFragment extends Fragment{
     @BindView(R.id.addActionBtn) FloatingActionButton addActionButton;
 
     private ActionAdapter actionAdapter;
+    private ArrayAdapter<String> selectionSpinnerAdapter;
 
     @OnClick(R.id.submitQueryButton)
     public void submitQueryButtonClicked(){
@@ -53,11 +54,11 @@ public class ActionsFragment extends Fragment{
             Operator p = null;
             switch (selectionSpinner.getSelectedItem().toString()){
                 case "id":
-                    p = Action_Table.id.eq(Long.getLong(q)); break;
+                    p = Action_Table.id.eq(Long.getLong(q)); break; // todo check if number supplied
                 case "name":
-                    p = Action_Table.name.like(q); break;
+                    p = Action_Table.name.like(q); break; // does not work
                 case "hex":
-                    p = Action_Table.hex.is(q.equals("true")); break;
+                    p = Action_Table.hex.is(q.equals("true")); break; // works
                 case "data":
                     p = Action_Table.data.like(q); break;
                 case "macPrefix":
@@ -91,7 +92,6 @@ public class ActionsFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-
         init();
     }
 
@@ -116,7 +116,9 @@ public class ActionsFragment extends Fragment{
         ArrayAdapter<Action> actionArrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, actions);
         selectionQuery.setAdapter(actionArrayAdapter);
         selectionQuery.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, SQLite.select().from(Action.class).queryList()));
-        selectionSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, selectionSpinnerAdapterItems));
+        selectionSpinnerAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, selectionSpinnerAdapterItems);
+        selectionSpinnerAdapter.notifyDataSetChanged();
+        selectionSpinner.setAdapter(selectionSpinnerAdapter);
     }
 
     public ActionsFragment(){ }

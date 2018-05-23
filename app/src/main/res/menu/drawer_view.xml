@@ -4,6 +4,11 @@
         android:id="@+id/MenuBluetooth"
         android:title="bluetooth"
         android:icon="@drawable/ic_bluetooth_white_48dp"/>
+
+    <item
+        android:id="@+id/MenuScans"
+        android:title="scans"
+        />
     <item
         android:id="@+id/MenuDevices"
         android:title="devices"
@@ -32,4 +37,9 @@
         android:id="@+id/MenuSettings"
         android:title="settings"
         android:icon="@drawable/ic_settings_white_48dp"/>
+
+    <item
+        android:id="@+id/MenuExit"
+        android:title="exit"
+        android:icon="@drawable/baseline_exit_to_app_white_48"/>
 </menu>

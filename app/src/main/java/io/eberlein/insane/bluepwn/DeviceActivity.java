@@ -52,17 +52,7 @@ public class DeviceActivity extends AppCompatActivity {
         parcelUuidAdapter.setOnItemClickListener(new ParcelUuidAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
-                AlertDialog.Builder b = new AlertDialog.Builder(getApplicationContext());
-                b.setPositiveButton("send", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // todo three button chooser (close, edit, send)
-                        Intent i = new Intent();
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        i.putExtra("device", JSON.toJSONString(device));
-                        startActivity(i);
-                    }
-                });
+                // action activity for device uuids
             }
         });
 

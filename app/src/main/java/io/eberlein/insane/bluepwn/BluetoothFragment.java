@@ -22,6 +22,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+
 import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -37,16 +39,17 @@ import butterknife.OnClick;
 public class BluetoothFragment extends Fragment {
     @BindView(R.id.scanBtn) FloatingActionButton scanBtn;
     @BindView(R.id.devicesRecycler) RecyclerView deviceRecycler;
+    @BindView(R.id.continuousScanningCheckbox) CheckBox continuousScanningCheckbox;
 
     @OnClick(R.id.scanBtn)
     void scanBtnClicked(){
         if(!bluetoothAdapter.isEnabled()) bluetoothAdapter.enable();
         if(bluetoothAdapter.getState() == BluetoothAdapter.STATE_ON){
             if(bluetoothAdapter.isDiscovering()){
+                continuousScanningCheckbox.setChecked(false);
                 bluetoothAdapter.cancelDiscovery();
                 scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
             } else {
-                devices.empty();
                 bluetoothAdapter.startDiscovery();
                 scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
             }
@@ -189,8 +192,9 @@ public class BluetoothFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(intent.getAction())){
-                scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
                 for(Device d : devices.get()) bluetoothAdapter.getRemoteDevice(d.address).fetchUuidsWithSdp();
+                if(continuousScanningCheckbox.isChecked()) bluetoothAdapter.startDiscovery();
+                else scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
             }
         }
     };
@@ -223,7 +227,7 @@ public class BluetoothFragment extends Fragment {
                 Device device = SQLite.select().from(Device.class).where(Device_Table.address.eq(d.getAddress())).querySingle();
                 if(device == null){
                     device = new Device(d);
-                    device.locationIdsJson.add(locationListener.currentLocation.id);
+                    if(locationListener.currentLocation != null) device.locationIdsJson.add(locationListener.currentLocation.id);
                 }
                 if(uuids != null){
                     for(Parcelable u : uuids){

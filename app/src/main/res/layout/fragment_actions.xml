@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/space5"
-        android:layout_marginStart="69dp"
+        android:layout_marginStart="64dp"
         android:layout_toEndOf="@+id/space5"
         android:id="@+id/space6" />
 
