@@ -5,11 +5,6 @@
     <string name="synced">synced</string>
     <string name="not_synced">not synced</string>
 
-    <string-array name="action_data_type_array">
-        <item>hex</item>
-        <item>ascii</item>
-    </string-array>
-
     <string name="uuid_sdp">0001</string>
     <string name="uuid_udp">0002</string>
     <string name="uuid_rfcomm">0003</string>

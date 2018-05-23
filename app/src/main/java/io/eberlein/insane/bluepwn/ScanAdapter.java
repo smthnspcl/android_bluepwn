@@ -1,6 +1,7 @@
 package io.eberlein.insane.bluepwn;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +35,7 @@ public class ScanAdapter extends RecyclerView.Adapter<ScanAdapter.ViewHolder>{
 
         @OnClick(R.id.metaDataBtn)
         public void metaDataBtnClicked() {
-            // start new activity for scanactivity - location, people nearby
+
         }
 
         @OnClick(R.id.locationLabel)

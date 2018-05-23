@@ -8,7 +8,7 @@
     <item
         android:id="@+id/MenuScans"
         android:title="scans"
-        />
+        android:icon="@drawable/baseline_format_list_bulleted_white_48"/>
     <item
         android:id="@+id/MenuDevices"
         android:title="devices"
@@ -16,12 +16,12 @@
     <item
         android:id="@+id/MenuActions"
         android:title="actions"
-        android:icon="@drawable/ic_list_white_48dp"/>
+        android:icon="@drawable/baseline_format_list_bulleted_white_48"/>
 
     <item
         android:id="@+id/MenuUuids"
         android:title="uuids"
-        android:icon="@drawable/ic_list_white_48dp"/>
+        android:icon="@drawable/baseline_format_list_bulleted_white_48"/>
 
     <item
         android:id="@+id/MenuMap"

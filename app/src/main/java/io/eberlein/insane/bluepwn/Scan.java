@@ -8,6 +8,7 @@ import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
 public class Scan extends BaseModel {
     @PrimaryKey(autoincrement = true) Long id;
     @Column Date timestamp;
+    @Column Boolean lastLoaded;
 
     List<Device> devices;
     @ForeignKey(tableClass = Location.class) Location location;
@@ -22,5 +24,9 @@ public class Scan extends BaseModel {
     @OneToMany(methods = {OneToMany.Method.ALL}, variableName = "devices")
     public List<Device> getDevices(){
         return SQLite.select().from(Device.class).queryList();
+    }
+
+    public Scan(){
+        devices = new ArrayList<>();
     }
 }

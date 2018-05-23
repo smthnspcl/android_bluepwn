@@ -5,19 +5,24 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import java.util.Date;
 import java.util.UUID;
 
 
 @Table(database = LocalDatabase.class)
 public class ParcelUuid extends BaseModel {
     @PrimaryKey(autoincrement = true) Long id;
-    @Column(typeConverter = ParcelUuidTypeConverter.class)
-    android.os.ParcelUuid uuid;
+    @Column String name;
+    @Column String description;
+    @Column String protocol; // new action: specify uuid and use protocol space holders // list of rows ( stages ) ?
+    @Column Date lastModified;
+    @Column(typeConverter = ParcelUuidTypeConverter.class) android.os.ParcelUuid uuid;
 
     ParcelUuid(){}
 
     ParcelUuid(android.os.ParcelUuid parcelUuid){
         uuid = parcelUuid;
+        lastModified = new Date();
     }
 
 }

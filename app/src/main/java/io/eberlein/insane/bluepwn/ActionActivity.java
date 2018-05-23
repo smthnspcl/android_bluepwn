@@ -26,6 +26,10 @@ import butterknife.OnItemSelected;
 
 public class ActionActivity extends AppCompatActivity {
 
+    private String[] spinnerArrayItems = {
+            "name", "data", "uuid", "macPrefix"
+    };
+
     private Boolean actionDataHex = true;
 
      @BindView(R.id.actionName) EditText actionName;
@@ -61,8 +65,8 @@ public class ActionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_action);
         ButterKnife.bind(this);
         initFromIntent();
-        populateSpinner();
-        populateMacPrefixAutoCompleteView();
+        actionDataTypeSelector.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, spinnerArrayItems));
+        actionMacPrefix.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, SQLite.select().from(OuiEntry.class).queryList()));
     }
 
     private void initFromIntent(){
@@ -82,15 +86,5 @@ public class ActionActivity extends AppCompatActivity {
     @OnItemSelected(R.id.actionDataTypeSelector)
     public void onSpinnerItemSelected(int index){
         // todo get string from index and set actionDataHex = true/false
-    }
-
-    private void populateSpinner(){
-        ArrayAdapter<CharSequence> a = ArrayAdapter.createFromResource(this, R.array.action_data_type_array, android.R.layout.simple_spinner_item);
-        a.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        actionDataTypeSelector.setAdapter(a);
-    }
-
-    private void populateMacPrefixAutoCompleteView(){
-        actionMacPrefix.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, SQLite.select().from(OuiEntry.class).queryList()));
     }
 }

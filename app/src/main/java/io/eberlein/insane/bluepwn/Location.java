@@ -6,6 +6,8 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import java.util.Date;
+
 @Table(database = LocalDatabase.class)
 @ManyToMany(referencedTable = Device.class)
 public class Location extends BaseModel {
@@ -16,8 +18,27 @@ public class Location extends BaseModel {
     @Column double latitude;
     @Column long timestamp;
     @Column float speed;
+    @Column Date lastModified;
 
-    public Location(){}
+    public Location(){
+        accuracy = 0;
+        altitude = 0;
+        longitude = 0;
+        latitude = 0;
+        timestamp = 0;
+        speed = 0;
+        lastModified = new Date();
+    }
+
+    public Location(float accuracy, double altitude, double longitude, double latitude, long timestamp, float speed){
+        this.accuracy = accuracy;
+        this.altitude = altitude;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.timestamp = timestamp;
+        this.speed = speed;
+        lastModified = new Date();
+    }
 
     public Location(android.location.Location location){
         accuracy = location.getAccuracy();
@@ -26,5 +47,6 @@ public class Location extends BaseModel {
         latitude = location.getLatitude();
         timestamp = location.getTime();
         speed = location.getSpeed();
+        lastModified = new Date();
     }
 }

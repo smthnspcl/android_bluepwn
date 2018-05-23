@@ -36,11 +36,10 @@ public class DeviceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_device);
         ButterKnife.bind(this);
         parcelUuidAdapter = new ParcelUuidAdapter();
-        device = SQLite.select().from(Device.class).where(Device_Table.address.eq(getIntent().getExtras().getString("address"))).querySingle();
+        device = SQLite.select().from(Device.class).where(Device_Table.address.eq(getIntent().getStringExtra("address"))).querySingle();
         List<ParcelUuid> uuids = new ArrayList<>();
         for(Object uid : device.parcelUuidsJson)
             uuids.add(SQLite.select().from(ParcelUuid.class).where(ParcelUuid_Table.id.eq((Long) uid)).querySingle());
-        System.out.println(uuids.size());
         parcelUuidAdapter.addAll(uuids);
         tvMac.setText(device.address);
         tvName.setText(device.name);

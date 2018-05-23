@@ -4,8 +4,6 @@ import android.bluetooth.BluetoothDevice;
 
 import com.alibaba.fastjson.JSONArray;
 import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.ForeignKey;
-import com.raizlabs.android.dbflow.annotation.OneToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -30,8 +28,6 @@ class Device extends BaseModel{
     @Column(typeConverter = JSONArrayTypeConverter.class) JSONArray locationIdsJson;
     @Column(typeConverter = JSONArrayTypeConverter.class) JSONArray parcelUuidsJson;
 
-    // app helper
-    @Column Boolean lastLoaded;
     // todo proximity alert bool value; trigger with locationManager.addProximityAlert();
 
     public List<Location> getLocations(){
@@ -57,10 +53,9 @@ class Device extends BaseModel{
         parcelUuidsJson = new JSONArray();
         lastModified = new Date();
         locationIdsJson = new JSONArray();
-        lastLoaded = false;
     }
 
-    public Device(String address, String name, String type, String bond, String manufacturer, JSONArray parcelUuidsJson, Date lastModified, JSONArray locationIdsJson, Boolean lastLoaded){
+    public Device(String address, String name, String type, String bond, String manufacturer, JSONArray parcelUuidsJson, Date lastModified, JSONArray locationIdsJson){
         this.address = address;
         this.name = name;
         this.type = type;
@@ -69,7 +64,6 @@ class Device extends BaseModel{
         this.parcelUuidsJson = parcelUuidsJson;
         this.lastModified = lastModified;
         this.locationIdsJson = locationIdsJson;
-        this.lastLoaded = lastLoaded;
     }
 
     private String getTypeAsString(int _type){

@@ -29,8 +29,6 @@ import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
-import java.util.List;
-import java.util.concurrent.Callable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,6 +48,9 @@ public class BluetoothFragment extends Fragment {
                 bluetoothAdapter.cancelDiscovery();
                 scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
             } else {
+                scan.lastLoaded = false;
+                saveScan(scan);
+                scan = new Scan();
                 bluetoothAdapter.startDiscovery();
                 scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
             }
@@ -62,12 +63,14 @@ public class BluetoothFragment extends Fragment {
     private BluetoothAdapter bluetoothAdapter;
     private DeviceAdapter devices;
     private DatabaseDefinition db;
+    private Scan scan;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestPermissions();
         initGPS();
+        scan = new Scan();
         db = FlowManager.getDatabase(LocalDatabase.class);
         devices = new DeviceAdapter();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -90,15 +93,6 @@ public class BluetoothFragment extends Fragment {
         View v =  inflater.inflate(R.layout.fragment_bluetooth, container, false);
         ButterKnife.bind(this, v);
         scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
-        scanBtn.setVisibility(View.INVISIBLE);
-        locationListener.onLocationChangedFunctions.add(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                scanBtn.setVisibility(View.VISIBLE);
-                locationListener.onLocationChangedFunctions.remove(this);
-                return null;
-            }
-        });
         deviceRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         return v;
     }
@@ -106,26 +100,16 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        markDevicesAsLastLoaded();
+        scan.lastLoaded = true;
+        saveScan(scan);
         unregisterReceivers();
-    }
-
-    private void markDevicesAsLastLoaded(){
-        for(Device d : this.devices.get()) {d.lastLoaded = true; FlowManager.getModelAdapter(Device.class).save(d);}
-    }
-
-    private void loadUnmarkLastLoadedDevices(){
-        List<Device> deviceList = SQLite.select().from(Device.class).where(Device_Table.lastLoaded.eq(true)).queryList();
-        devices.addAll(deviceList);
-        deviceRecycler.setAdapter(devices);
-        for(Device d : deviceList) {d.lastLoaded = false; saveDevice(d);}
     }
 
     @Override
     public void onResume() {
         super.onResume();
         registerReceivers();
-        loadUnmarkLastLoadedDevices();
+        // loadLastScan();
     }
 
     private void unregisterReceivers(){
@@ -150,14 +134,23 @@ public class BluetoothFragment extends Fragment {
         }
     }
 
+    private void saveScan(Scan scan){
+        db.beginTransactionAsync(new ITransaction() {
+            @Override
+            public void execute(DatabaseWrapper databaseWrapper) {
+                scan.save(databaseWrapper);
+            }
+        }).build().execute();
+        // todo onerror save for later saving
+    }
+
     private void saveDevice(Device device){
         db.beginTransactionAsync(new ITransaction() {
             @Override
             public void execute(DatabaseWrapper databaseWrapper) {
                 device.save(databaseWrapper);
             }
-        }).build().execute();
-        // todo onerror save for later saving
+        });
     }
 
     private void saveParcelUuid(ParcelUuid parcelUuid){
@@ -181,8 +174,10 @@ public class BluetoothFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             if(BluetoothDevice.ACTION_FOUND.equals(intent.getAction())){
                 Device d = new Device(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
-                d.locationIdsJson.add(locationListener.currentLocation.id);
+                if(locationListener.currentLocation == null) d.locationIdsJson.add(new Location());
+                else d.locationIdsJson.add(locationListener.currentLocation.id);
                 devices.add(d);
+                scan.devices.add(d);
                 saveDevice(d);
             }
         }
@@ -193,7 +188,7 @@ public class BluetoothFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(intent.getAction())){
                 for(Device d : devices.get()) bluetoothAdapter.getRemoteDevice(d.address).fetchUuidsWithSdp();
-                if(continuousScanningCheckbox.isChecked()) bluetoothAdapter.startDiscovery();
+                if(continuousScanningCheckbox.isChecked()) bluetoothAdapter.startDiscovery(); // todo also run in background ( service? )
                 else scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
             }
         }
@@ -225,20 +220,16 @@ public class BluetoothFragment extends Fragment {
                 BluetoothDevice d = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Parcelable[] uuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
                 Device device = SQLite.select().from(Device.class).where(Device_Table.address.eq(d.getAddress())).querySingle();
-                if(device == null){
-                    device = new Device(d);
-                    if(locationListener.currentLocation != null) device.locationIdsJson.add(locationListener.currentLocation.id);
-                }
-                if(uuids != null){
+                if(uuids != null && device != null){
                     for(Parcelable u : uuids){
                         ParcelUuid _u = new ParcelUuid((android.os.ParcelUuid) u);
                         saveParcelUuid(_u);
                         device.parcelUuidsJson.add(_u.id);
                     }
+                    devices.add(device);
+                    saveDevice(device);
                 }
 
-                devices.add(device);
-                saveDevice(device);
             }
         }
     };
