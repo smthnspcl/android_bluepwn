@@ -29,9 +29,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".DeviceActivity" android:parentActivityName=".MainActivity"/>
-        <activity android:name=".ActionActivity" android:parentActivityName=".MainActivity"/>
-        <activity android:name=".ScanActivity" android:parentActivityName=".MainActivity"/>
+        <activity android:name=".DeviceActivity"/>
+        <activity android:name=".ActionActivity"/>
+        <activity android:name=".ScanActivity"/>
+        <activity android:name=".LocationActivity"/>
+        <service android:name=".ScanService"/>
     </application>
 
 </manifest>

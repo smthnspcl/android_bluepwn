@@ -1,5 +1,7 @@
 package io.eberlein.insane.bluepwn;
 
+import com.alibaba.fastjson.JSONArray;
+import com.google.gson.JsonArray;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.OneToMany;
@@ -19,7 +21,7 @@ public class Scan extends BaseModel {
     @Column Boolean lastLoaded;
 
     List<Device> devices;
-    @ForeignKey(tableClass = Location.class) Location location;
+    @Column(typeConverter = JSONArrayTypeConverter.class) JSONArray locationsIds;
 
     @OneToMany(methods = {OneToMany.Method.ALL}, variableName = "devices")
     public List<Device> getDevices(){
@@ -28,5 +30,6 @@ public class Scan extends BaseModel {
 
     public Scan(){
         devices = new ArrayList<>();
+        locationsIds = new JSONArray();
     }
 }

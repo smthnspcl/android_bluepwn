@@ -2,41 +2,28 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="64dp">
 
-    <Button
-        android:id="@+id/metaDataBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="12dp"
-        android:layout_marginTop="12dp"
-        android:text="meta" />
-
     <TextView
         android:id="@+id/deviceCountLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/locationLabel"
-        android:layout_alignTop="@+id/metaDataBtn"
+        android:layout_alignBaseline="@+id/textView11"
+        android:layout_alignStart="@id/locationCountLabel"
         android:text="0" />
 
     <TextView
-        android:id="@+id/locationLabel"
+        android:id="@+id/locationCountLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="11dp"
-        android:layout_marginStart="120dp"
+        android:layout_alignBaseline="@+id/textView12"
+        android:layout_marginStart="84dp"
         android:text="none" />
 
     <TextView
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignTop="@+id/metaDataBtn"
-        android:layout_marginStart="14dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
         android:text="devices:" />
 
     <TextView
@@ -44,6 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/textView11"
-        android:layout_below="@+id/deviceCountLabel"
+        android:layout_below="@+id/textView11"
+        android:layout_marginTop="4dp"
         android:text="location:" />
 </RelativeLayout>

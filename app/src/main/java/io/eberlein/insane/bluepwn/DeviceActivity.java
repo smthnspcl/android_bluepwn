@@ -11,6 +11,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.alibaba.fastjson.JSON;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ public class DeviceActivity extends AppCompatActivity {
         device = SQLite.select().from(Device.class).where(Device_Table.address.eq(getIntent().getStringExtra("address"))).querySingle();
         List<ParcelUuid> uuids = new ArrayList<>();
         for(Object uid : device.parcelUuidsJson)
-            uuids.add(SQLite.select().from(ParcelUuid.class).where(ParcelUuid_Table.id.eq((Long) uid)).querySingle());
+            uuids.add(SQLite.select().from(ParcelUuid.class).where(ParcelUuid_Table.id.eq(Long.valueOf((Integer) uid))).querySingle());
         parcelUuidAdapter.addAll(uuids);
         tvMac.setText(device.address);
         tvName.setText(device.name);

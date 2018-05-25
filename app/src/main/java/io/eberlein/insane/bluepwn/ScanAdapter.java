@@ -31,20 +31,7 @@ public class ScanAdapter extends RecyclerView.Adapter<ScanAdapter.ViewHolder>{
 
     class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.deviceCountLabel) TextView deviceCountLabel;
-        @BindView(R.id.locationLabel) TextView locationLabel;
-
-        @OnClick(R.id.metaDataBtn)
-        public void metaDataBtnClicked() {
-
-        }
-
-        @OnClick(R.id.locationLabel)
-        public void locationLabelClicked(){
-            if(locationLabel.getText().toString().equals("none")) Toast.makeText(context, "no location stored. click meta button", Toast.LENGTH_SHORT).show();
-            else {
-                // open new activity for location - gps details, notes
-            }
-        }
+        @BindView(R.id.locationCountLabel) TextView locationCountLabel;
 
         Context context;
 
@@ -79,7 +66,7 @@ public class ScanAdapter extends RecyclerView.Adapter<ScanAdapter.ViewHolder>{
     public void onBindViewHolder(ScanAdapter.ViewHolder holder, int position) {
         Scan s = scans.get(position);
         holder.deviceCountLabel.setText(s.devices.size());
-        holder.locationLabel.setText(String.valueOf(s.location.id));
+        holder.locationCountLabel.setText(String.valueOf(s.locationsIds.size()));
     }
 
     @Override

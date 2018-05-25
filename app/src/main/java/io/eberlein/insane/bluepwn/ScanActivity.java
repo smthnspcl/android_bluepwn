@@ -1,10 +1,12 @@
 package io.eberlein.insane.bluepwn;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -16,7 +18,7 @@ import butterknife.OnClick;
 
 public class ScanActivity extends AppCompatActivity {
 
-    @BindView(R.id.locationLabel) TextView location;
+    @BindView(R.id.locationCountLabel) TextView location;
     @BindView(R.id.devicesRecycler) RecyclerView devices;
     @BindView(R.id.filterSpinner) Spinner filters;
 
@@ -25,7 +27,7 @@ public class ScanActivity extends AppCompatActivity {
             "person unk.", "location unk."
     };
 
-    @OnClick(R.id.locationLabel)
+    @OnClick(R.id.locationCountLabel)
     public void locationLabelClicked(){
         // todo open location activity
     }
@@ -35,7 +37,13 @@ public class ScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
         Scan s = SQLite.select().from(Scan.class).where(Scan_Table.id.eq(Long.valueOf(getIntent().getStringExtra("id")))).querySingle();
-        location.setText(String.valueOf(s.location.latitude) + ", " + String.valueOf(s.location.longitude));
+        location.setText(s.locationsIds.size());
+        location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), Location.class);
+            }
+        });
         deviceAdapter = new DeviceAdapter();
         deviceAdapter.addAll(s.devices);
         devices.setLayoutManager(new LinearLayoutManager(this));
