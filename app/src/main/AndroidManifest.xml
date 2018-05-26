@@ -33,6 +33,7 @@
         <activity android:name=".ActionActivity"/>
         <activity android:name=".ScanActivity"/>
         <activity android:name=".LocationActivity"/>
+        <activity android:name=".ParcelUuidActivity"/>
         <service android:name=".ScanService"/>
     </application>
 

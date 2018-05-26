@@ -31,7 +31,7 @@ public class ScanService extends IntentService {
     private BluetoothAdapter bluetoothAdapter;
     private LocationManager locationManager;
     private GPSLocationListener locationListener;
-    private Scan scan;
+    Scan scan;
     private DatabaseDefinition db;
     private Boolean continuousScanning = false;
     private Context context;
@@ -39,6 +39,7 @@ public class ScanService extends IntentService {
     List<Callable<Void>> deviceDiscoveredCallableList;
     List<Callable<Void>> discoveryFinishedCallableList;
     List<Callable<Void>> discoveryStartedCallableList;
+    List<Callable<Void>> uuidFoundCallableList;
 
     public class ScanBinder extends Binder {
         ScanService getService() {
@@ -58,7 +59,7 @@ public class ScanService extends IntentService {
 
         locationListener.onLocationChangedFunctions.add(new Callable<Void>() {
             @Override
-            public Void call() throws Exception {
+            public Void call() {
                 if(scan != null) scan.locationsIds.add(locationListener.currentLocation.id);
                 return null;
             }
@@ -79,10 +80,6 @@ public class ScanService extends IntentService {
         if(!bluetoothAdapter.isEnabled()) bluetoothAdapter.enable();
     }
 
-    public Scan getScan() {
-        return scan;
-    }
-
     public Boolean isScanning(){
         return bluetoothAdapter.isDiscovering();
     }
@@ -93,6 +90,7 @@ public class ScanService extends IntentService {
 
     public void cancelScanning(){
         bluetoothAdapter.cancelDiscovery();
+        Toast.makeText(context, "stopped scanning", Toast.LENGTH_SHORT).show();
     }
 
     public ScanService() {
@@ -100,6 +98,7 @@ public class ScanService extends IntentService {
         deviceDiscoveredCallableList = new ArrayList<>();
         discoveryFinishedCallableList = new ArrayList<>();
         discoveryStartedCallableList = new ArrayList<>();
+        uuidFoundCallableList = new ArrayList<>();
         scan = new Scan();
         // notificationManager = getSystemService()
     }
@@ -169,12 +168,13 @@ public class ScanService extends IntentService {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(BluetoothDevice.ACTION_FOUND.equals(intent.getAction())){
-                try{for(Callable<Void> c : deviceDiscoveredCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
                 Device d = new Device(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
                 if(locationListener.currentLocation == null) d.locationIdsJson.add(new Location());
                 else d.locationIdsJson.add(locationListener.currentLocation.id);
                 saveDevice(d);
-                if(!scan.devices.contains(d)) scan.devices.add(d);
+                if(!scan.deviceAddresses.contains(d.address)) scan.deviceAddresses.add(d.address);
+                saveScan(scan);
+                try{for(Callable<Void> c : deviceDiscoveredCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
             }
         }
     };
@@ -185,7 +185,7 @@ public class ScanService extends IntentService {
             if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(intent.getAction())){
                 try{for(Callable<Void> c : discoveryFinishedCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
                 saveScan(scan);
-                for(Device d : scan.devices) bluetoothAdapter.getRemoteDevice(d.address).fetchUuidsWithSdp();
+                for(Object a : scan.deviceAddresses) bluetoothAdapter.getRemoteDevice((String) a).fetchUuidsWithSdp();
                 if(continuousScanning) bluetoothAdapter.startDiscovery();
             }
         }
@@ -195,8 +195,8 @@ public class ScanService extends IntentService {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(intent.getAction())){
-                try{for(Callable<Void> c : discoveryStartedCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
                 scan = new Scan();
+                try{for(Callable<Void> c : discoveryStartedCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
             }
         }
     };
@@ -211,12 +211,12 @@ public class ScanService extends IntentService {
                 if(uuids != null && device != null){
                     for(Parcelable u : uuids){
                         ParcelUuid _u = ParcelUuid.getExistingOrNew((android.os.ParcelUuid) u);
+                        saveParcelUuid(_u);
                         if(!device.parcelUuidsJson.contains(_u.id)) device.parcelUuidsJson.add(_u.id);
-                        if(SQLite.select().from(ParcelUuid.class).where(ParcelUuid_Table.id.eq(_u.id)).querySingle() == null) saveParcelUuid(_u);
                     }
-                    if(!scan.devices.contains(device)) scan.devices.add(device);
                     saveDevice(device);
                 }
+                try{for(Callable<Void> c : uuidFoundCallableList) c.call();}catch (Exception e){e.printStackTrace();}
             }
         }
     };

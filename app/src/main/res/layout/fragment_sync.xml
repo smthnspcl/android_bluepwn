@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="17dp"
+        android:layout_marginBottom="16dp"
         android:text="sync" />
 
     <TextView
@@ -82,5 +82,13 @@
         android:layout_alignStart="@+id/syncedLabel"
         android:layout_alignTop="@+id/textView9"
         android:text="not checked" />
+
+    <Button
+        android:id="@+id/checkBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/textView"
+        android:layout_alignTop="@+id/syncBtn"
+        android:text="check" />
 
 </RelativeLayout>

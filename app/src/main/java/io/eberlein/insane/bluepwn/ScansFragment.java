@@ -28,7 +28,6 @@ public class ScansFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         scans = new ScanAdapter();
-        scans.addAll(SQLite.select().from(Scan.class).queryList());
     }
 
     @Nullable
@@ -38,6 +37,7 @@ public class ScansFragment extends Fragment {
         ButterKnife.bind(this, v);
         scansRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         scansRecycler.setAdapter(scans);
+        scans.addAll(SQLite.select().from(Scan.class).orderBy(Scan_Table.id.desc()).queryList());
         scans.setOnItemClickListener(new ScanAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {

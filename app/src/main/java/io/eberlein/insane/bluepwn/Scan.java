@@ -18,18 +18,24 @@ import java.util.List;
 public class Scan extends BaseModel {
     @PrimaryKey(autoincrement = true) Long id;
     @Column Date timestamp;
-    @Column Boolean lastLoaded;
 
-    List<Device> devices;
+    @Column(typeConverter = JSONArrayTypeConverter.class) JSONArray deviceAddresses;
     @Column(typeConverter = JSONArrayTypeConverter.class) JSONArray locationsIds;
 
-    @OneToMany(methods = {OneToMany.Method.ALL}, variableName = "devices")
     public List<Device> getDevices(){
-        return SQLite.select().from(Device.class).queryList();
+        List<Device> devices = new ArrayList<>();
+        for(Object o : deviceAddresses) devices.add(SQLite.select().from(Device.class).where(Device_Table.address.eq((String) o)).querySingle());
+        return devices;
+    }
+
+    public List<Location> getLocations(){
+        List<Location> locations = new ArrayList<>();
+        for(Object o : locationsIds) locations.add(SQLite.select().from(Location.class).where(Location_Table.id.eq((Long) o)).querySingle());
+        return locations;
     }
 
     public Scan(){
-        devices = new ArrayList<>();
+        deviceAddresses = new JSONArray();
         locationsIds = new JSONArray();
     }
 }

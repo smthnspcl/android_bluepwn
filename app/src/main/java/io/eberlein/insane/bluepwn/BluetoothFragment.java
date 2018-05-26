@@ -34,6 +34,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import butterknife.BindView;
@@ -82,17 +83,33 @@ public class BluetoothFragment extends Fragment {
 
             scanService.deviceDiscoveredCallableList.add(new Callable<Void>() {
                 @Override
-                public Void call() throws Exception {
-                    devices.add();
+                public Void call() {
+                    List<Device> deviceList = scanService.scan.getDevices();
+                    devices.add(deviceList.get(deviceList.size() - 1));
                     return null;
                 }
             });
 
             scanService.discoveryFinishedCallableList.add(new Callable<Void>() {
                 @Override
-                public Void call() throws Exception {
-                    devices.addAll(scanService.getScan().devices);
+                public Void call() {
                     scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
+                    return null;
+                }
+            });
+
+            scanService.uuidFoundCallableList.add(new Callable<Void>() {
+                @Override
+                public Void call() {
+                    devices.addAll(scanService.scan.getDevices());
+                    return null;
+                }
+            });
+
+            scanService.discoveryStartedCallableList.add(new Callable<Void>() {
+                @Override
+                public Void call() {
+                    scan = scanService.scan;
                     return null;
                 }
             });
@@ -125,6 +142,14 @@ public class BluetoothFragment extends Fragment {
         scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
         deviceRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         deviceRecycler.setAdapter(devices);
+        devices.setOnItemClickListener(new DeviceAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int p) {
+                Intent i = new Intent(getContext(), DeviceActivity.class);
+                i.putExtra("address", devices.get(p).address);
+                startActivity(i);
+            }
+        });
         return v;
     }
 
@@ -137,8 +162,9 @@ public class BluetoothFragment extends Fragment {
     public void onResume() {
         super.onResume();
         scan = SQLite.select().from(Scan.class).orderBy(Scan_Table.id.desc()).querySingle();
-        if(scan == null) scan = new Scan();
-        devices.addAll(scan.devices);
+        System.out.println(scan.id);
+        if(scan == null) {scan = new Scan();}
+        devices.addAll(scan.getDevices());
     }
 
     @Override

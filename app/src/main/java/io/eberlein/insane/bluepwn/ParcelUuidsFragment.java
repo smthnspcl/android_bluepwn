@@ -18,7 +18,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class UuidsFragment extends Fragment {
+public class ParcelUuidsFragment extends Fragment {
 
     @BindView(R.id.selectionQuery) AutoCompleteTextView selectionQuery;
     @BindView(R.id.selectionSpinner) Spinner selectionSpinner;
@@ -43,7 +43,7 @@ public class UuidsFragment extends Fragment {
         parcelUuidAdapter.setOnItemClickListener(new ParcelUuidAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
-                Intent i = new Intent(getContext(), DeviceActivity.class); // todo parceluuid activity
+                Intent i = new Intent(getContext(), ParcelUuidActivity.class); // todo parceluuid activity
                 // switch between actions using this uuid and devices having that uuid
                 // display list in recycler
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

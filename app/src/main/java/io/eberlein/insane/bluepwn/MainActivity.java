@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.MenuActions:
                     f = new ActionsFragment(); break;
                 case R.id.MenuUuids:
-                    f = new UuidsFragment(); break;
+                    f = new ParcelUuidsFragment(); break;
                 case R.id.MenuMap:
                     f = new MapFragment(); break;
                 case R.id.MenuSync:

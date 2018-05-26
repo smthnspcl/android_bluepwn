@@ -10,44 +10,56 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ScanActivity extends AppCompatActivity {
 
     @BindView(R.id.locationCountLabel) TextView location;
-    @BindView(R.id.devicesRecycler) RecyclerView devices;
+    @BindView(R.id.devicesRecycler) RecyclerView devicesRecycler;
     @BindView(R.id.filterSpinner) Spinner filters;
 
-    private DeviceAdapter deviceAdapter;
+    private DeviceAdapter devices;
     private static final String[] selectionSpinnerAdapterItems = {
             "person unk.", "location unk."
     };
 
     @OnClick(R.id.locationCountLabel)
     public void locationLabelClicked(){
-        // todo open location activity
+        Intent i = new Intent(this, LocationActivity.class);
+        i.putExtra("ids", JSON.toJSONString(scan.locationsIds));
+        startActivity(i);
     }
+
+    private Scan scan;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
-        Scan s = SQLite.select().from(Scan.class).where(Scan_Table.id.eq(Long.valueOf(getIntent().getStringExtra("id")))).querySingle();
-        location.setText(s.locationsIds.size());
-        location.setOnClickListener(new View.OnClickListener() {
+        ButterKnife.bind(this);
+        Long _id = getIntent().getLongExtra("id", -1);
+        if(_id == -1){ Toast.makeText(this, "id not parsable / -1 returned", Toast.LENGTH_SHORT).show(); finish();}
+        scan = SQLite.select().from(Scan.class).where(Scan_Table.id.eq(_id)).querySingle();
+        devices = new DeviceAdapter();
+        devices.addAll(scan.getDevices());
+        devicesRecycler.setLayoutManager(new LinearLayoutManager(this));
+        devicesRecycler.setAdapter(devices);
+        devices.setOnItemClickListener(new DeviceAdapter.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), Location.class);
+            public void onItemClick(View v, int p) {
+                Intent i = new Intent(getApplicationContext(), DeviceActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.putExtra("address", devices.get(p).address);
+                startActivity(i);
             }
         });
-        deviceAdapter = new DeviceAdapter();
-        deviceAdapter.addAll(s.devices);
-        devices.setLayoutManager(new LinearLayoutManager(this));
-        devices.setAdapter(deviceAdapter);
         filters.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, selectionSpinnerAdapterItems));
     }
 }

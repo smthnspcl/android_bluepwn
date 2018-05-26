@@ -76,6 +76,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
 
     void addAll(List<Device> devices){
         this.devices = devices;
+        notifyDataSetChanged();
     }
 
     void add(Device device){

@@ -27,7 +27,7 @@ import butterknife.OnItemSelected;
 public class ActionActivity extends AppCompatActivity {
 
     private String[] spinnerArrayItems = {
-            "name", "data", "uuid", "macPrefix"
+            "hex", "text"
     };
 
     private Boolean actionDataHex = true;

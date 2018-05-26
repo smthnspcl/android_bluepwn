@@ -23,6 +23,11 @@ public class SyncFragment extends Fragment {
 
     }
 
+    @OnClick(R.id.checkBtn)
+    public void checkBtnClicked(){
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -30,6 +35,4 @@ public class SyncFragment extends Fragment {
         ButterKnife.bind(this, v);
         return v;
     }
-
-
 }
