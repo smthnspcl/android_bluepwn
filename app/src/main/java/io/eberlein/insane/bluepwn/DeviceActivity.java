@@ -51,7 +51,10 @@ public class DeviceActivity extends AppCompatActivity {
         parcelUuidAdapter.setOnItemClickListener(new ParcelUuidAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
-                // action activity for device uuids
+                Intent i = new Intent(getApplicationContext(), ParcelUuidActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.putExtra("id", parcelUuidAdapter.get(p).id);
+                startActivity(i);
             }
         });
 

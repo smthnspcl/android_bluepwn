@@ -4,14 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.raizlabs.android.dbflow.converter.TypeConverter;
 
 @com.raizlabs.android.dbflow.annotation.TypeConverter
-public class MongoDBSettingsTypeConverter extends TypeConverter<MongoDBSettings, String>{
+public class MongoDBSettingsTypeConverter extends TypeConverter<String, MongoDBSettings>{
     @Override
-    public MongoDBSettings getDBValue(String model) {
-        return JSON.parseObject(model, MongoDBSettings.class);
+    public MongoDBSettings getModelValue(String data) {
+        return JSON.parseObject(data, MongoDBSettings.class);
     }
 
     @Override
-    public String getModelValue(MongoDBSettings data) {
-        return JSON.toJSONString(data);
+    public String getDBValue(MongoDBSettings model) {
+        return JSON.toJSONString(model);
     }
 }

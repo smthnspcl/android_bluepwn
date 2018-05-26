@@ -28,7 +28,7 @@ public class ParcelUuid extends BaseModel {
 
     static ParcelUuid getExistingOrNew(android.os.ParcelUuid uuid){
         ParcelUuid u = SQLite.select().from(ParcelUuid.class).where(ParcelUuid_Table.uuid.eq(uuid)).querySingle();
-        if( u != null) return u;
+        if(u != null) return u;
         return new ParcelUuid(uuid);
     }
 }

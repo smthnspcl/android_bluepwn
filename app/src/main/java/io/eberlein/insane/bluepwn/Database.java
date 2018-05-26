@@ -1,6 +1,8 @@
 package io.eberlein.insane.bluepwn;
 
 import android.content.Context;
+
+
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -8,6 +10,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.connection.ClusterSettings;
+
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -18,6 +22,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
@@ -37,10 +42,15 @@ public class Database {
 
     private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:MM:SS", Locale.getDefault());
 
-    Database(Context context, String username, String password, String database, String host, Integer port){
+    Database(MongoDBSettings settings){
         CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-        mongoClient = MongoClients.create(MongoClientSettings.builder().applyToSslSettings(builder -> builder.enabled(true)).codecRegistry(codecRegistry).credential(MongoCredential.createCredential(username, database, password.toCharArray())).applyToClusterSettings(builder -> builder.hosts(Arrays.asList(new ServerAddress(host, port)))).build());
-        this.database = mongoClient.getDatabase(database);
+        MongoClientSettings.Builder b = MongoClientSettings.builder()
+                .codecRegistry(codecRegistry)
+                .credential(MongoCredential.createCredential(settings.username, "bluepwn", settings.password.toCharArray()))
+                .applyToSslSettings(builder -> builder.enabled(true))
+                .applyToClusterSettings(builder -> builder.hosts(Arrays.asList(new ServerAddress(settings.host, Integer.valueOf(settings.port)))));
+        mongoClient = MongoClients.create(b.build());
+        this.database = mongoClient.getDatabase("bluepwn");
         this.deviceMongoCollection = this.database.getCollection(DEVICES_COLLECTION, Device.class);
         this.actionMongoCollection = this.database.getCollection(ACTIONS_COLLECTION, Action.class);
         this.ouiMongoCollection = this.database.getCollection(OUI_COLLECTION, OuiEntry.class);
@@ -65,7 +75,7 @@ public class Database {
 
     // theoretically just gets more?
     Boolean deviceCountEquals(Integer count){
-        return deviceMongoCollection.count() >= count;
+        return deviceMongoCollection.count() == count;
     }
 
     Date parseDateFromString(String date){

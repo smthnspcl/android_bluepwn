@@ -162,7 +162,6 @@ public class BluetoothFragment extends Fragment {
     public void onResume() {
         super.onResume();
         scan = SQLite.select().from(Scan.class).orderBy(Scan_Table.id.desc()).querySingle();
-        System.out.println(scan.id);
         if(scan == null) {scan = new Scan();}
         devices.addAll(scan.getDevices());
     }

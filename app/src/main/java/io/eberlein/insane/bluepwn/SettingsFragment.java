@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 public class SettingsFragment extends Fragment{
@@ -23,6 +25,13 @@ public class SettingsFragment extends Fragment{
     @BindView(R.id.serverEditText) EditText server;
     @BindView(R.id.usernameEditText) EditText username;
     @BindView(R.id.passwordEditText) EditText password;
+    @BindView(R.id.databaseEditText) EditText database;
+    @BindView(R.id.authenticationCheckbox) CheckBox authenticationCheckbox;
+
+    @OnCheckedChanged(R.id.authenticationCheckbox)
+    public void authenticationCheckboxChanged(){
+        settings.mongoDBSettings.authentication = authenticationCheckbox.isChecked();
+    }
 
     @OnClick(R.id.saveBtn)
     public void saveBtnClicked(){

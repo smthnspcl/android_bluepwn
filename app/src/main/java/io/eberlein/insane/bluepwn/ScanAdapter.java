@@ -66,7 +66,7 @@ public class ScanAdapter extends RecyclerView.Adapter<ScanAdapter.ViewHolder>{
     public void onBindViewHolder(ScanAdapter.ViewHolder holder, int position) {
         Scan s = scans.get(position);
         holder.deviceCountLabel.setText(String.valueOf(s.getDevices().size()));
-        holder.locationCountLabel.setText(String.valueOf(s.locationsIds.size()));
+        holder.locationCountLabel.setText(String.valueOf(s.getLocations().size()));
     }
 
     @Override

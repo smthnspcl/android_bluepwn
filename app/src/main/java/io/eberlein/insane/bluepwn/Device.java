@@ -28,17 +28,15 @@ class Device extends BaseModel{
     @Column(typeConverter = JSONArrayTypeConverter.class) JSONArray locationIdsJson;
     @Column(typeConverter = JSONArrayTypeConverter.class) JSONArray parcelUuidsJson;
 
-    // todo proximity alert bool value; trigger with locationManager.addProximityAlert();
-
     public List<Location> getLocations(){
         List<Location> locations = new ArrayList<>();
-        for(Object l : locationIdsJson.toArray()) locations.add(SQLite.select().from(Location.class).where(Location_Table.id.eq((Long) l)).querySingle());
+        for(Object l : locationIdsJson.toArray()) locations.add(SQLite.select().from(Location.class).where(Location_Table.id.eq(Long.valueOf((Integer) l))).querySingle());
         return locations;
     }
 
     public List<ParcelUuid> getParcelUuids(){
         List<ParcelUuid> parcelUuids = new ArrayList<>();
-        for(Object p : parcelUuidsJson.toArray()) parcelUuids.add(SQLite.select().from(ParcelUuid.class).where(ParcelUuid_Table.id.eq((Long) p)).querySingle());
+        for(Object p : parcelUuidsJson.toArray()) {if(p != null) parcelUuids.add(SQLite.select().from(ParcelUuid.class).where(ParcelUuid_Table.id.eq(Long.valueOf((Integer) p))).querySingle());}
         return parcelUuids;
     }
 

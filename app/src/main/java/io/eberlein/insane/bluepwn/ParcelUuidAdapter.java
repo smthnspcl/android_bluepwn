@@ -63,8 +63,8 @@ public class ParcelUuidAdapter extends RecyclerView.Adapter<ParcelUuidAdapter.Vi
 
     public void onBindViewHolder(ParcelUuidAdapter.ViewHolder holder, int position) {
         ParcelUuid uuid = uuids.get(position);
-        holder.serviceName.setText("todo");
-        if(uuid != null) holder.uuid.setText(uuid.uuid.toString());
+        holder.serviceName.setText(uuid.name);
+        holder.uuid.setText(uuid.uuid.toString());
     }
 
     @Override
