@@ -2,45 +2,37 @@ package io.eberlein.insane.bluepwn;
 
 import android.bluetooth.BluetoothDevice;
 
-import com.alibaba.fastjson.JSONArray;
-import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.PrimaryKey;
-import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.structure.BaseModel;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.paperdb.Paper;
 // todo extract important information from https://en.wikipedia.org/wiki/List_of_Bluetooth_profiles
 // todo script to pull tables https://www.bluetooth.com/specifications/assigned-numbers/service-discovery
 
-@Table(database = LocalDatabase.class)
-class Device extends BaseModel{
-    @PrimaryKey String address;
-    @Column String name;
-    @Column String type;
-    @Column String bond;
-    @Column String manufacturer;
-    @Column Date lastModified;
 
-    @Column(typeConverter = JSONArrayTypeConverter.class) JSONArray locationIdsJson;
-    @Column(typeConverter = JSONArrayTypeConverter.class) JSONArray parcelUuidsJson;
+public class Device {
+    String address;
+    String name;
+    String type;
+    String bond;
+    String manufacturer;
+    Date lastModified;
 
-    public List<Location> getLocations(){
+    List<String> parcelUuids;
+    List<String> locations;
+
+    public List<Location> getLocations() {
         List<Location> locations = new ArrayList<>();
-        for(Object l : locationIdsJson.toArray()) locations.add(SQLite.select().from(Location.class).where(Location_Table.id.eq(Long.valueOf((Integer) l))).querySingle());
+        for(String l : this.locations) locations.add(Paper.book("location").read(l));
         return locations;
     }
 
     public List<ParcelUuid> getParcelUuids(){
         List<ParcelUuid> parcelUuids = new ArrayList<>();
-        for(Object p : parcelUuidsJson.toArray()) {if(p != null) parcelUuids.add(SQLite.select().from(ParcelUuid.class).where(ParcelUuid_Table.id.eq(Long.valueOf((Integer) p))).querySingle());}
+        for(String p : this.parcelUuids) parcelUuids.add(Paper.book("parcelUuid").read(p));
         return parcelUuids;
     }
-
-    public Device() {}
 
     public Device(BluetoothDevice device){
         address = device.getAddress();
@@ -48,20 +40,20 @@ class Device extends BaseModel{
         type = getTypeAsString(device.getType());
         bond = getBondStateAsString(device.getBondState());
         manufacturer = "todo";
-        parcelUuidsJson = new JSONArray();
         lastModified = new Date();
-        locationIdsJson = new JSONArray();
+        parcelUuids = new ArrayList<>();
+        locations = new ArrayList<>();
     }
 
-    public Device(String address, String name, String type, String bond, String manufacturer, JSONArray parcelUuidsJson, Date lastModified, JSONArray locationIdsJson){
+    public Device(String address, String name, String type, String bond, String manufacturer, Date lastModified){
         this.address = address;
         this.name = name;
         this.type = type;
         this.bond = bond;
         this.manufacturer = manufacturer;
-        this.parcelUuidsJson = parcelUuidsJson;
         this.lastModified = lastModified;
-        this.locationIdsJson = locationIdsJson;
+        parcelUuids = new ArrayList<>();
+        locations = new ArrayList<>();
     }
 
     private String getTypeAsString(int _type){

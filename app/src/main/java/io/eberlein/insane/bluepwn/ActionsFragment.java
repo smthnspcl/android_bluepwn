@@ -13,23 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Spinner;
-
-import com.raizlabs.android.dbflow.sql.language.Operator;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.sql.language.property.IProperty;
-import com.raizlabs.android.dbflow.sql.language.property.Property;
-import com.raizlabs.android.dbflow.structure.database.transaction.QueryTransaction;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemSelected;
-import butterknife.OnTextChanged;
 
 public class ActionsFragment extends Fragment{
 
@@ -48,9 +38,10 @@ public class ActionsFragment extends Fragment{
     @OnClick(R.id.submitQueryButton)
     public void submitQueryButtonClicked(){
         actionAdapter.empty();
-        String q = selectionQuery.getText().toString();
-        if(q.isEmpty()) actionAdapter.addAll(SQLite.select().from(Action.class).queryList());
-        else {
+        //String q = selectionQuery.getText().toString();
+        /*if(q.isEmpty())*/ actionAdapter.addAll(LocalDatabase.getAllActions());
+        /*else {
+
             Operator p = null;
             switch (selectionSpinner.getSelectedItem().toString()){
                 case "id":
@@ -63,9 +54,12 @@ public class ActionsFragment extends Fragment{
                     p = Action_Table.data.like(q); break;
                 case "macPrefix":
                     p = Action_Table.macPrefix.like(q); break;
+
             }
-            if(p != null) actionAdapter.addAll(SQLite.select().from(Action.class).where(p).queryList());
-        }
+            //if(p != null) actionAdapter.addAll(SQLite.select().from(Action.class).where(p).queryList());
+            actionAdapter.addAll(LocalDatabase.getAllActions());
+
+        }*/
     }
 
     @OnClick(R.id.addActionBtn)
@@ -111,11 +105,11 @@ public class ActionsFragment extends Fragment{
     }
 
     private void init(){
-        List<Action> actions = SQLite.select().from(Action.class).queryList();
+        List<Action> actions = LocalDatabase.getAllActions();
         initActionRecycler(actions);
         ArrayAdapter<Action> actionArrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, actions);
         selectionQuery.setAdapter(actionArrayAdapter);
-        selectionQuery.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, SQLite.select().from(Action.class).queryList()));
+        selectionQuery.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, LocalDatabase.getAllActions()));
         selectionSpinnerAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, selectionSpinnerAdapterItems);
         selectionSpinnerAdapter.notifyDataSetChanged();
         selectionSpinner.setAdapter(selectionSpinnerAdapter);

@@ -65,7 +65,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
         Device d = devices.get(position);
         holder.tvMac.setText(d.address);
         holder.tvName.setText(d.name);
-        holder.tvUuids.setText(String.valueOf(d.parcelUuidsJson.size()));
+        holder.tvUuids.setText(String.valueOf(d.parcelUuids.size()));
         holder.tvManufacturer.setText(d.manufacturer);
     }
 

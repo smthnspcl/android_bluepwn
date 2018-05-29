@@ -10,21 +10,23 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Spinner;
-
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ParcelUuidsFragment extends Fragment {
 
-    @BindView(R.id.selectionQuery) AutoCompleteTextView selectionQuery;
-    @BindView(R.id.selectionSpinner) Spinner selectionSpinner;
-    @BindView(R.id.uuidsRecycler) RecyclerView uuidsRecycler;
+    @BindView(R.id.query) AutoCompleteTextView query;
+    @BindView(R.id.spinner) Spinner spinner;
+    @BindView(R.id.recycler) RecyclerView recycler;
 
     private ParcelUuidAdapter parcelUuidAdapter;
+    private static final String[] selectionSpinnerItems = {
+            "id", "name", "description", "protocol"
+    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,11 +37,11 @@ public class ParcelUuidsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_uuids, container, false);
+        View v = inflater.inflate(R.layout.fragment_objectlist_search, container, false);
         ButterKnife.bind(this, v);
-        uuidsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        parcelUuidAdapter.addAll(SQLite.select().from(ParcelUuid.class).queryList());
-        uuidsRecycler.setAdapter(parcelUuidAdapter);
+        recycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        parcelUuidAdapter.addAll(LocalDatabase.getAllParcelUuids());
+        recycler.setAdapter(parcelUuidAdapter);
         parcelUuidAdapter.setOnItemClickListener(new ParcelUuidAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
@@ -47,11 +49,11 @@ public class ParcelUuidsFragment extends Fragment {
                 // switch between actions using this uuid and devices having that uuid
                 // display list in recycler
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("id", parcelUuidAdapter.get(p).id);
+                i.putExtra("id", parcelUuidAdapter.get(p).uuid.toString());
                 startActivity(i);
             }
         });
-        // selectionSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, ));
+        spinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, selectionSpinnerItems));
         return v;
     }
 }

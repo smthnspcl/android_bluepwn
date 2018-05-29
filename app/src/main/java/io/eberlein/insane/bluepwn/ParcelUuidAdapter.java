@@ -77,7 +77,7 @@ public class ParcelUuidAdapter extends RecyclerView.Adapter<ParcelUuidAdapter.Vi
 
     void add(io.eberlein.insane.bluepwn.ParcelUuid uuid){
         for(ParcelUuid u : uuids){
-            if(u.id.equals(uuid.id)){
+            if(u.uuid.equals(uuid.uuid)){
                 uuids.set(uuids.indexOf(u), uuid);
                 notifyItemChanged(uuids.indexOf(uuid));
                 return;

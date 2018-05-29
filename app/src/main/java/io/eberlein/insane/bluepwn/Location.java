@@ -1,24 +1,28 @@
 package io.eberlein.insane.bluepwn;
 
-import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.ManyToMany;
-import com.raizlabs.android.dbflow.annotation.PrimaryKey;
-import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.structure.BaseModel;
-
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-@Table(database = LocalDatabase.class)
-@ManyToMany(referencedTable = Device.class)
-public class Location extends BaseModel {
-    @PrimaryKey(autoincrement = true) Long id;
-    @Column float accuracy;
-    @Column double altitude;
-    @Column double longitude;
-    @Column double latitude;
-    @Column long timestamp;
-    @Column float speed;
-    @Column Date lastModified;
+import io.paperdb.Paper;
+
+public class Location {
+    String id;
+    float accuracy;
+    double altitude;
+    double longitude;
+    double latitude;
+    long timestamp;
+    float speed;
+    Date lastModified;
+
+    List<String> scans;
+
+    public List<Scan> getScans(){
+        List<Scan> scans = new ArrayList<>();
+        for(String s : this.scans) scans.add(Paper.book("scan").read(s));
+        return scans;
+    }
 
     public Location(){
         accuracy = 0;
@@ -48,5 +52,9 @@ public class Location extends BaseModel {
         timestamp = location.getTime();
         speed = location.getSpeed();
         lastModified = new Date();
+    }
+
+    boolean isEmpty(){
+        return accuracy == 0 && altitude == 0 && longitude == 0 && latitude == 0 && timestamp == 0 && speed == 0;
     }
 }

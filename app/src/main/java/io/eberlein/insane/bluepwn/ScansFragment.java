@@ -10,17 +10,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.Spinner;
-
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ScansFragment extends Fragment {
 
-    @BindView(R.id.scansRecycler) RecyclerView scansRecycler;
-    @BindView(R.id.filterSpinner) Spinner filters;
+    @BindView(R.id.recycler) RecyclerView recycler;
+    @BindView(R.id.spinner) Spinner spinner;
+    @BindView(R.id.query) AutoCompleteTextView filters;
 
     private ScanAdapter scans;
 
@@ -33,11 +33,11 @@ public class ScansFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_scans, container, false);
+        View v = inflater.inflate(R.layout.fragment_objectlist_search, container, false);
         ButterKnife.bind(this, v);
-        scansRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        scansRecycler.setAdapter(scans);
-        scans.addAll(SQLite.select().from(Scan.class).orderBy(Scan_Table.id.desc()).queryList());
+        recycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        recycler.setAdapter(scans);
+        scans.addAll(LocalDatabase.getAllScans());
         scans.setOnItemClickListener(new ScanAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {

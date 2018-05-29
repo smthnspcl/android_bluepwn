@@ -9,18 +9,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
-import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
-
+import java.util.ArrayList;
 import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemClick;
 import butterknife.OnItemSelected;
+import io.paperdb.Paper;
 
 // todo fix duplicating items
 
@@ -46,11 +42,7 @@ public class ActionActivity extends AppCompatActivity {
         a.lastModified = new Date();
         a.data = actionDataEditText.getText().toString();
         a.hex = actionDataHex;
-        FlowManager.getDatabase(LocalDatabase.class).executeTransaction(new ITransaction() {
-             @Override
-             public void execute(DatabaseWrapper databaseWrapper) {
-                 a.save(databaseWrapper);
-             }});
+        Paper.book("action").write(a.uuid, a);
         finish();
      }
 
@@ -66,14 +58,14 @@ public class ActionActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         initFromIntent();
         actionDataTypeSelector.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, spinnerArrayItems));
-        actionMacPrefix.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, SQLite.select().from(OuiEntry.class).queryList()));
+        actionMacPrefix.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, Paper.book("oui").read("macs", new ArrayList<>())));
     }
 
     private void initFromIntent(){
          Bundle b = getIntent().getExtras();
          if(b != null){
-             Long id = getIntent().getExtras().getLong("id");
-             Action a = SQLite.select().from(Action.class).where(Action_Table.id.eq(id)).querySingle();
+             String uuid = getIntent().getExtras().getString("uuid");
+             Action a = Paper.book("action").read(uuid, new Action());
              if(a != null){
                  actionName.setText(a.name);
                  actionDataTypeSelector.setSelection(a.hex ? 0 : 1);

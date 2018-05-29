@@ -1,41 +1,35 @@
 package io.eberlein.insane.bluepwn;
 
-import com.alibaba.fastjson.JSONArray;
-import com.google.gson.JsonArray;
-import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.ForeignKey;
-import com.raizlabs.android.dbflow.annotation.OneToMany;
-import com.raizlabs.android.dbflow.annotation.PrimaryKey;
-import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.structure.BaseModel;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
-@Table(database = LocalDatabase.class)
-public class Scan extends BaseModel {
-    @PrimaryKey(autoincrement = true) Long id;
-    @Column Date timestamp;
+import io.paperdb.Paper;
 
-    @Column(typeConverter = JSONArrayTypeConverter.class) JSONArray deviceAddresses;
-    @Column(typeConverter = JSONArrayTypeConverter.class) JSONArray locationsIds;
+public class Scan {
+    String id;
+    Date timestamp;
 
-    public List<Device> getDevices(){
-        List<Device> devices = new ArrayList<>();
-        for(Object o : deviceAddresses) devices.add(SQLite.select().from(Device.class).where(Device_Table.address.eq((String) o)).querySingle());
-        return devices;
-    }
-
-    public List<Location> getLocations(){
-        List<Location> locations = new ArrayList<>();
-        for(Object o : locationsIds) locations.add(SQLite.select().from(Location.class).where(Location_Table.id.eq((Long) o)).querySingle());
-        return locations;
-    }
+    List<String> devices;
+    List<String> locations;
 
     public Scan(){
-        deviceAddresses = new JSONArray();
-        locationsIds = new JSONArray();
+        id = UUID.randomUUID().toString();
+        timestamp = new Date();
+        devices = new ArrayList<>();
+        locations = new ArrayList<>();
+    }
+
+    public List<Device> getDevices(){
+        List<Device> devs = new ArrayList<>();
+        for(String d : devices) devs.add(Paper.book("device").read(d));
+        return devs;
+    }
+
+    public List<Location> getLocation(){
+        List<Location> locations = new ArrayList<>();
+        for(String l : this.locations) locations.add(Paper.book("location").read(l));
+        return locations;
     }
 }

@@ -9,11 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.paperdb.Paper;
 
 public class SyncFragment extends Fragment {
     @BindView(R.id.ouiSyncStatusLabel) TextView ouiSyncStatusLabel;
@@ -37,7 +36,7 @@ public class SyncFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_sync, container, false);
         ButterKnife.bind(this, v);
-        mongoDBSettings = SQLite.select().from(Settings.class).where(Settings_Table.id.eq(0L)).querySingle().mongoDBSettings;
+        mongoDBSettings = Paper.book("mongodb").read("settings");
         return v;
     }
 

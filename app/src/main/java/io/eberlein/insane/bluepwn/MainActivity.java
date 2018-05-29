@@ -11,14 +11,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
-import com.raizlabs.android.dbflow.config.DatabaseConfig;
-import com.raizlabs.android.dbflow.config.FlowConfig;
-import com.raizlabs.android.dbflow.config.FlowManager;
 
 import org.osmdroid.config.Configuration;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.paperdb.Paper;
 
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
@@ -31,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Context c = getApplicationContext();
         Configuration.getInstance().load(c, PreferenceManager.getDefaultSharedPreferences(c));
-        FlowManager.init(FlowConfig.builder(this).addDatabaseConfig(DatabaseConfig.builder(LocalDatabase.class).databaseName("bluepwn").build()).build());
+        Paper.init(this);
         navigationView.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new BluetoothFragment()).addToBackStack(null).commit();
         getSupportFragmentManager().addOnBackStackChangedListener(onBackStackChangedListener);
@@ -90,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         BluetoothAdapter.getDefaultAdapter().disable();
+        super.onDestroy();
     }
 }

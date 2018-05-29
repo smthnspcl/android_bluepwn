@@ -14,16 +14,12 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
-import com.raizlabs.android.dbflow.config.DatabaseDefinition;
-import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
-import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import io.paperdb.Paper;
 
 public class ScanService extends IntentService {
     private final IBinder binder = new ScanBinder();
@@ -32,7 +28,6 @@ public class ScanService extends IntentService {
     private LocationManager locationManager;
     private GPSLocationListener locationListener;
     Scan scan;
-    private DatabaseDefinition db;
     private Boolean continuousScanning = false;
     private Context context;
 
@@ -60,7 +55,7 @@ public class ScanService extends IntentService {
         locationListener.onLocationChangedFunctions.add(new Callable<Void>() {
             @Override
             public Void call() {
-                if(scan != null) scan.locationsIds.add(locationListener.currentLocation.id);
+                if(scan != null && locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) scan.locations.add(locationListener.currentLocation.id);
                 return null;
             }
         });
@@ -76,7 +71,6 @@ public class ScanService extends IntentService {
         initGPS();
         registerReceivers();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        db = FlowManager.getDatabase(LocalDatabase.class);
         if(!bluetoothAdapter.isEnabled()) bluetoothAdapter.enable();
     }
 
@@ -119,14 +113,14 @@ public class ScanService extends IntentService {
     }
 
     private void unregisterReceivers(){
-        context.unregisterReceiver(onDiscoveryStartedReceiver);
-        context.unregisterReceiver(onDiscoveryFinishedReceiver);
-        context.unregisterReceiver(onDiscoveryStartedReceiver);
-        context.unregisterReceiver(onUuidFoundReceiver);
+        for(BroadcastReceiver br : Arrays.asList(onDeviceDiscoveredReceiver, onDiscoveryFinishedReceiver, onDiscoveryStartedReceiver, onUuidFoundReceiver)){
+            try { context.unregisterReceiver(br); } catch (RuntimeException e){e.printStackTrace();}
+        }
     }
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         unregisterReceivers();
         bluetoothAdapter.disable();
     }
@@ -137,26 +131,15 @@ public class ScanService extends IntentService {
     }
 
     private void saveDevice(Device device){
-        db.beginTransactionAsync(new ITransaction() {
-            @Override
-            public void execute(DatabaseWrapper databaseWrapper) { device.save(databaseWrapper); }
-        }).build().execute();
+        Paper.book("device").write(device.address, device);
     }
 
     private void saveParcelUuid(ParcelUuid parcelUuid){
-        db.beginTransactionAsync(new ITransaction() {
-            @Override
-            public void execute(DatabaseWrapper databaseWrapper) { parcelUuid.save(databaseWrapper); }
-        }).build().execute();
+       Paper.book("parcelUuid").write(parcelUuid.uuid.toString(), parcelUuid);
     }
 
     private void saveScan(Scan scan){
-        db.beginTransactionAsync(new ITransaction() {
-            @Override
-            public void execute(DatabaseWrapper databaseWrapper) {
-                scan.save(databaseWrapper);
-            }
-        }).build().execute();
+        Paper.book("scan").write(scan.id, scan);
     }
 
     @Override
@@ -169,10 +152,10 @@ public class ScanService extends IntentService {
         public void onReceive(Context context, Intent intent) {
             if(BluetoothDevice.ACTION_FOUND.equals(intent.getAction())){
                 Device d = new Device(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
-                if(locationListener.currentLocation == null) d.locationIdsJson.add(new Location());
-                else d.locationIdsJson.add(locationListener.currentLocation.id);
+                if(locationListener.currentLocation == null) d.getLocations().add(new Location());
+                else d.locations.add(locationListener.currentLocation.id);
                 saveDevice(d);
-                if(!scan.deviceAddresses.contains(d.address)) scan.deviceAddresses.add(d.address);
+                if(!scan.devices.contains(d.address)) scan.devices.add(d.address);
                 saveScan(scan);
                 try{for(Callable<Void> c : deviceDiscoveredCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
             }
@@ -183,10 +166,12 @@ public class ScanService extends IntentService {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(intent.getAction())){
-                try{for(Callable<Void> c : discoveryFinishedCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
                 saveScan(scan);
-                for(Object a : scan.deviceAddresses) bluetoothAdapter.getRemoteDevice((String) a).fetchUuidsWithSdp();
+                for(Device d : scan.getDevices()) bluetoothAdapter.getRemoteDevice(d.address).fetchUuidsWithSdp();
                 if(continuousScanning) bluetoothAdapter.startDiscovery();
+                else {
+                    try{for(Callable<Void> c : discoveryFinishedCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
+                }
             }
         }
     };
@@ -195,7 +180,7 @@ public class ScanService extends IntentService {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(intent.getAction())){
-                scan = new Scan();
+                if(!continuousScanning) scan = new Scan();
                 try{for(Callable<Void> c : discoveryStartedCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
             }
         }
@@ -207,12 +192,13 @@ public class ScanService extends IntentService {
             if(BluetoothDevice.ACTION_UUID.equals(intent.getAction())){
                 BluetoothDevice d = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Parcelable[] uuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
-                Device device = SQLite.select().from(Device.class).where(Device_Table.address.eq(d.getAddress())).querySingle();
+                Device device = Paper.book("device").read(d.getAddress());
                 if(uuids != null && device != null){
                     for(Parcelable u : uuids){
-                        ParcelUuid _u = ParcelUuid.getExistingOrNew((android.os.ParcelUuid) u);
+                        android.os.ParcelUuid __u = (android.os.ParcelUuid) u;
+                        ParcelUuid _u = Paper.book("parcelUuid").read(__u.toString(), new ParcelUuid(__u));
                         saveParcelUuid(_u);
-                        if(!device.parcelUuidsJson.contains(_u.id)) device.parcelUuidsJson.add(_u.id);
+                        if(!device.parcelUuids.contains(_u.uuid.toString())) device.parcelUuids.add(_u.uuid.toString());
                     }
                     saveDevice(device);
                 }

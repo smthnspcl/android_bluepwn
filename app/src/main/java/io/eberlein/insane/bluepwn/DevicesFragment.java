@@ -12,15 +12,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
+import android.widget.Spinner;
+
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DevicesFragment extends Fragment {
 
-    @BindView(R.id.selectionQuery) AutoCompleteTextView selectionQuery;
-    @BindView(R.id.devicesRecycler) RecyclerView deviceRecycler;
+    @BindView(R.id.query) AutoCompleteTextView query;
+    @BindView(R.id.recycler) RecyclerView recycler;
+    @BindView(R.id.spinner) Spinner spinner;
 
     private DeviceAdapter devices;
 
@@ -33,14 +35,14 @@ public class DevicesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_devices, container, false);
+        View v = inflater.inflate(R.layout.fragment_objectlist_search, container, false);
         ButterKnife.bind(this, v);
         initDeviceRecycler();
         return v;
     }
 
     private void initDeviceRecycler(){
-        List<Device> _devices = SQLite.select().from(Device.class).queryList();
+        List<Device> _devices = LocalDatabase.getAllDevices();
         devices.addAll(_devices);
         devices.setOnItemClickListener(new DeviceAdapter.OnItemClickListener() {
             @Override
@@ -51,8 +53,8 @@ public class DevicesFragment extends Fragment {
                 startActivity(i);
             }
         });
-        deviceRecycler.setAdapter(devices);
-        deviceRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        selectionQuery.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, _devices));
+        recycler.setAdapter(devices);
+        recycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        query.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, _devices));
     }
 }

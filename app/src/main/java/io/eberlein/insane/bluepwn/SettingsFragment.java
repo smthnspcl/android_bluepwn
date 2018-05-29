@@ -10,15 +10,11 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
-import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import io.paperdb.Paper;
 
 public class SettingsFragment extends Fragment{
 
@@ -36,12 +32,7 @@ public class SettingsFragment extends Fragment{
     @OnClick(R.id.saveBtn)
     public void saveBtnClicked(){
         settings.mongoDBSettings = new MongoDBSettings(server.getText().toString(), username.getText().toString(), password.getText().toString());
-        FlowManager.getDatabase(LocalDatabase.class).executeTransaction(new ITransaction() {
-            @Override
-            public void execute(DatabaseWrapper databaseWrapper) {
-                settings.save(databaseWrapper);
-            }
-        });
+        Paper.book("settings").write("settings", settings);
         Toast.makeText(getContext(), "settings saved", Toast.LENGTH_SHORT).show();
     }
 
@@ -52,7 +43,7 @@ public class SettingsFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_settings, container, false);
         ButterKnife.bind(this, v);
-        settings = SQLite.select().from(Settings.class).querySingle();
+        settings = Paper.book("settings").read("settings");
         if(settings == null) settings = new Settings();
         return v;
     }

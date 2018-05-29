@@ -13,11 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.paperdb.Paper;
 
 public class ScanActivity extends AppCompatActivity {
 
@@ -32,8 +32,8 @@ public class ScanActivity extends AppCompatActivity {
 
     @OnClick(R.id.locationCountLabel)
     public void locationLabelClicked(){
-        Intent i = new Intent(this, LocationActivity.class);
-        i.putExtra("ids", JSON.toJSONString(scan.locationsIds));
+        Intent i = new Intent(this, LocationsActivity.class);
+        i.putExtra("scan_id", JSON.toJSONString(scan.id));
         startActivity(i);
     }
 
@@ -44,9 +44,7 @@ public class ScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
         ButterKnife.bind(this);
-        Long _id = getIntent().getLongExtra("id", -1);
-        if(_id == -1){ Toast.makeText(this, "id not parsable / -1 returned", Toast.LENGTH_SHORT).show(); finish();}
-        scan = SQLite.select().from(Scan.class).where(Scan_Table.id.eq(_id)).querySingle();
+        scan = Paper.book("scan").read(getIntent().getStringExtra("id"), new Scan());
         devices = new DeviceAdapter();
         devices.addAll(scan.getDevices());
         devicesRecycler.setLayoutManager(new LinearLayoutManager(this));

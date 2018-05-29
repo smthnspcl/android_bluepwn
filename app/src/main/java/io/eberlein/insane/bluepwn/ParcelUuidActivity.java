@@ -6,14 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
-import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.paperdb.Paper;
 
 public class ParcelUuidActivity extends AppCompatActivity {
 
@@ -25,12 +21,7 @@ public class ParcelUuidActivity extends AppCompatActivity {
     public void saveBtnClicked(){
         parcelUuid.name = name.getText().toString();
         parcelUuid.description = description.getText().toString();
-        FlowManager.getDatabase(LocalDatabase.class).executeTransaction(new ITransaction() {
-            @Override
-            public void execute(DatabaseWrapper databaseWrapper) {
-                parcelUuid.save(databaseWrapper);
-            }
-        });
+        Paper.book("parcelUuid").write(parcelUuid.uuid.toString(), parcelUuid);
     }
 
     private ParcelUuid parcelUuid;
@@ -40,7 +31,7 @@ public class ParcelUuidActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uuid);
         ButterKnife.bind(this);
-        parcelUuid = SQLite.select().from(ParcelUuid.class).where(ParcelUuid_Table.id.eq(getIntent().getLongExtra("id", -1))).querySingle();
+        parcelUuid = Paper.book("parcelUuid").read(getIntent().getStringExtra("id"));
         uuid.setText(parcelUuid.uuid.getUuid().toString());
         name.setText(parcelUuid.name);
         description.setText(parcelUuid.description);

@@ -34,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/space9"
         android:layout_below="@+id/space6"
+        android:layout_marginEnd="99dp"
         android:layout_toEndOf="@+id/space10"
         android:hint="query" />
 
@@ -54,11 +55,19 @@
         android:id="@+id/space10" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/uuidsRecycler"
+        android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignEnd="@+id/space9"
         android:layout_below="@+id/selectionSpinner"
         android:layout_marginTop="11dp"
         android:layout_toEndOf="@+id/space5" />
+
+    <Button
+        android:id="@+id/searchBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/space5"
+        android:layout_toStartOf="@+id/space9"
+        android:text="search" />
 </RelativeLayout>
