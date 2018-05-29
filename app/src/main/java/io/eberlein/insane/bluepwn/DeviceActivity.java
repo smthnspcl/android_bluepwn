@@ -32,9 +32,18 @@ public class DeviceActivity extends AppCompatActivity {
 
     @OnClick(R.id.locationCountLabel)
     public void locationCountLabelClicked(){
+        locationsActivityIntent();
+    }
+
+    @OnClick(R.id.locationLabel)
+    public void locationLabelClicked(){
+        locationsActivityIntent();
+    }
+
+    private void locationsActivityIntent(){
         Intent i = new Intent(this, LocationsActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.putExtra("ids", JSON.toJSONString(device.getLocations()));
+        i.putExtra("locations", JSON.toJSONString(device.getLocations()));
         startActivity(i);
     }
 
@@ -51,7 +60,7 @@ public class DeviceActivity extends AppCompatActivity {
         tvName.setText(device.name);
         tvType.setText(device.type);
         tvBond.setText(device.bond);
-        locationCountLabel.setText(String.valueOf(device.getLocations().size()));
+        locationCountLabel.setText(String.valueOf(device.locations.size()));
         tvManufacturer.setText(device.manufacturer);
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         actionRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -60,7 +69,7 @@ public class DeviceActivity extends AppCompatActivity {
             public void onItemClick(View v, int p) {
                 Intent i = new Intent(getApplicationContext(), ParcelUuidActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("uuid", parcelUuidAdapter.get(p).uuid);
+                i.putExtra("uuid", parcelUuidAdapter.get(p).uuid.toString());
                 startActivity(i);
             }
         });

@@ -49,7 +49,7 @@ public class ParcelUuidsFragment extends Fragment {
                 // switch between actions using this uuid and devices having that uuid
                 // display list in recycler
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("id", parcelUuidAdapter.get(p).uuid.toString());
+                i.putExtra("uuid", parcelUuidAdapter.get(p).uuid.toString());
                 startActivity(i);
             }
         });

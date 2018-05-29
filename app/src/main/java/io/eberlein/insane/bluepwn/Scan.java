@@ -27,7 +27,7 @@ public class Scan {
         return devs;
     }
 
-    public List<Location> getLocation(){
+    public List<Location> getLocations(){
         List<Location> locations = new ArrayList<>();
         for(String l : this.locations) locations.add(Paper.book("location").read(l));
         return locations;

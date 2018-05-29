@@ -22,6 +22,7 @@ public class ParcelUuidActivity extends AppCompatActivity {
         parcelUuid.name = name.getText().toString();
         parcelUuid.description = description.getText().toString();
         Paper.book("parcelUuid").write(parcelUuid.uuid.toString(), parcelUuid);
+        finish();
     }
 
     private ParcelUuid parcelUuid;
@@ -31,7 +32,7 @@ public class ParcelUuidActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uuid);
         ButterKnife.bind(this);
-        parcelUuid = Paper.book("parcelUuid").read(getIntent().getStringExtra("id"));
+        parcelUuid = Paper.book("parcelUuid").read(getIntent().getStringExtra("uuid"));
         uuid.setText(parcelUuid.uuid.getUuid().toString());
         name.setText(parcelUuid.name);
         description.setText(parcelUuid.description);

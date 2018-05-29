@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import io.paperdb.Paper;
+
 
 // todo
 public class GPSLocationListener implements LocationListener {
@@ -21,6 +23,7 @@ public class GPSLocationListener implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         currentLocation = new io.eberlein.insane.bluepwn.Location(location);
+        Paper.book("location").write(currentLocation.id, currentLocation);
         for(Callable<Void> c : onLocationChangedFunctions) {
             try {
                 c.call();

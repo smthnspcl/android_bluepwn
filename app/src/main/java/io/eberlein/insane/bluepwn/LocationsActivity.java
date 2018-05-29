@@ -38,7 +38,7 @@ public class LocationsActivity extends AppCompatActivity {
         setContentView(R.layout.activtiy_location);
         ButterKnife.bind(this);
         locations = new LocationAdapter();
-        String e = getIntent().getStringExtra("ids");
+        String e = getIntent().getStringExtra("locations");
         if(e != null) populateWithSuppliedLocations(e);
         else locations.addAll(LocalDatabase.getAllLocations());
         locationsRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
