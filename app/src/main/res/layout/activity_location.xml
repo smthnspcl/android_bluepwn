@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="latitude:" />
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/textView8"
+        android:layout_below="@id/textView8"
+        android:layout_marginTop="4dp"
+        android:text="longitude:" />
+
+    <TextView
+        android:id="@+id/latitudeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/textView8"
+        android:layout_marginStart="82dp"
+        android:text="none" />
+
+    <TextView
+        android:id="@+id/longitudeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/latitudeTextView"
+        android:layout_alignTop="@+id/textView16"
+        android:text="none" />
+
+    <TextView
+        android:id="@+id/textView19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/textView8"
+        android:layout_marginEnd="128dp"
+        android:text="altitude:" />
+
+    <TextView
+        android:id="@+id/altitudeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/textView8"
+        android:layout_marginEnd="80dp"
+        android:text="none" />
+
+    <Button
+        android:id="@+id/saveBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="13dp"
+        android:text="save" />
+
+    <EditText
+        android:id="@+id/countryEditText"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/longitudeTextView"
+        android:layout_alignStart="@+id/textView8"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:hint="country"
+        android:ems="10"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/cityEditText"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/countryEditText"
+        android:layout_marginTop="4dp"
+        android:layout_alignStart="@id/countryEditText"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:inputType="text"
+        android:hint="zip, city" />
+
+    <EditText
+        android:id="@+id/streetEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/cityEditText"
+        android:layout_below="@id/cityEditText"
+        android:layout_marginTop="4dp"
+        android:ems="10"
+        android:inputType="text"
+        android:layout_marginEnd="16dp"
+        android:hint="street, house nr." />
+
+    <Button
+        android:id="@+id/geocodeBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/streetEditText"
+        android:layout_below="@id/streetEditText"
+        android:layout_marginTop="4dp"
+        android:text="geocode" />
+
+    <EditText
+        android:id="@+id/notesEditText"
+        android:layout_width="350dp"
+        android:layout_height="113dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/textView8"
+        android:layout_marginBottom="78dp"
+        android:ems="10"
+        android:inputType="textMultiLine" />
+</RelativeLayout>
