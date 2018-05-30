@@ -19,14 +19,9 @@ public class SyncFragment extends Fragment {
     @BindView(R.id.actionsSyncStatusLabel) TextView actionsSyncStatusLabel;
     @BindView(R.id.devicesSyncStatusLabel) TextView devicesSyncStatusLabel;
 
-    @OnClick(R.id.syncBtn)
+    @OnClick(R.id.checkSyncBtn)
     public void syncBtnClicked(){
-
-    }
-
-    @OnClick(R.id.checkBtn)
-    public void checkBtnClicked(){
-
+        // check what is needed to sync, then show sync, on second tap sync
     }
 
     private MongoDBSettings mongoDBSettings;
