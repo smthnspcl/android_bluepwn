@@ -18,7 +18,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.paperdb.Paper;
+import butterknife.OnClick;
 
 public class LocationsActivity extends AppCompatActivity {
 
@@ -32,10 +32,17 @@ public class LocationsActivity extends AppCompatActivity {
 
     private LocationAdapter locations;
 
+    @OnClick(R.id.addLocationBtn)
+    public void addLocationBtnClicked(){
+        Intent i = new Intent(this, LocationActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activtiy_location);
+        setContentView(R.layout.activtiy_locations);
         ButterKnife.bind(this);
         locations = new LocationAdapter();
         String e = getIntent().getStringExtra("locations");
@@ -46,7 +53,7 @@ public class LocationsActivity extends AppCompatActivity {
         locations.setOnItemClickListener(new LocationAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
-                Intent i = new Intent(getApplicationContext(), LocationsActivity.class);
+                Intent i = new Intent(getApplicationContext(), LocationActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.putExtra("id", locations.get(p).id);
                 startActivity(i);

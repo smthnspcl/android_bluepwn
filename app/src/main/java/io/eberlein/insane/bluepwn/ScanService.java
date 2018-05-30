@@ -152,8 +152,6 @@ public class ScanService extends IntentService {
         public void onReceive(Context context, Intent intent) {
             if(BluetoothDevice.ACTION_FOUND.equals(intent.getAction())){
                 Device d = new Device(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
-                if(locationListener.currentLocation == null) d.getLocations().add(new Location());
-                else d.locations.add(locationListener.currentLocation.id);
                 saveDevice(d);
                 if(!scan.devices.contains(d.address)) scan.devices.add(d.address);
                 saveScan(scan);

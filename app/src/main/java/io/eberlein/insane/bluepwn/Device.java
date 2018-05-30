@@ -3,6 +3,7 @@ package io.eberlein.insane.bluepwn;
 import android.bluetooth.BluetoothDevice;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -20,11 +21,12 @@ public class Device {
     Date lastModified;
 
     List<String> parcelUuids;
-    List<String> locations;
 
     public List<Location> getLocations() {
         List<Location> locations = new ArrayList<>();
-        for(String l : this.locations) locations.add(Paper.book("location").read(l));
+        for(Scan s : LocalDatabase.getAllScans()) {
+            if (s.devices.contains(address)) locations.addAll(s.getLocations());
+        }
         return locations;
     }
 
@@ -42,7 +44,6 @@ public class Device {
         manufacturer = "todo";
         lastModified = new Date();
         parcelUuids = new ArrayList<>();
-        locations = new ArrayList<>();
     }
 
     public Device(String address, String name, String type, String bond, String manufacturer, Date lastModified){
@@ -53,7 +54,6 @@ public class Device {
         this.manufacturer = manufacturer;
         this.lastModified = lastModified;
         parcelUuids = new ArrayList<>();
-        locations = new ArrayList<>();
     }
 
     private String getTypeAsString(int _type){

@@ -29,7 +29,7 @@ public class Scan {
 
     public List<Location> getLocations(){
         List<Location> locations = new ArrayList<>();
-        for(String l : this.locations) locations.add(Paper.book("location").read(l));
+        for(String l : this.locations) if(l != null) locations.add(Paper.book("location").read(l));
         return locations;
     }
 }

@@ -3,6 +3,7 @@ package io.eberlein.insane.bluepwn;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import io.paperdb.Paper;
 
@@ -15,6 +16,10 @@ public class Location {
     long timestamp;
     float speed;
     Date lastModified;
+    String note;
+    String country;
+    String city;
+    String street;
 
     List<String> scans;
 
@@ -24,7 +29,12 @@ public class Location {
         return scans;
     }
 
+    public List<Device> getDevicesWithinRadius(float radius){
+        return new ArrayList<>();
+    }
+
     public Location(){
+        id = UUID.randomUUID().toString();
         accuracy = 0;
         altitude = 0;
         longitude = 0;
@@ -34,7 +44,8 @@ public class Location {
         lastModified = new Date();
     }
 
-    public Location(float accuracy, double altitude, double longitude, double latitude, long timestamp, float speed){
+    public Location(String id, float accuracy, double altitude, double longitude, double latitude, long timestamp, float speed){
+        this.id = id;
         this.accuracy = accuracy;
         this.altitude = altitude;
         this.longitude = longitude;
@@ -45,6 +56,7 @@ public class Location {
     }
 
     public Location(android.location.Location location){
+        id = UUID.randomUUID().toString();
         accuracy = location.getAccuracy();
         altitude = location.getAltitude();
         longitude = location.getLongitude();

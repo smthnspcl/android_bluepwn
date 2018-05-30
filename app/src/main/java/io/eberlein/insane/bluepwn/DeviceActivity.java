@@ -60,7 +60,7 @@ public class DeviceActivity extends AppCompatActivity {
         tvName.setText(device.name);
         tvType.setText(device.type);
         tvBond.setText(device.bond);
-        locationCountLabel.setText(String.valueOf(device.locations.size()));
+        locationCountLabel.setText(String.valueOf(device.getLocations().size()));
         tvManufacturer.setText(device.manufacturer);
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         actionRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));

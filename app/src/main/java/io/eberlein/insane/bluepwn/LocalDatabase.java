@@ -28,7 +28,7 @@ public class LocalDatabase {
     }
 
     public static List<ParcelUuid> getAllParcelUuids(){
-        List<String> puids = Paper.book("parcelUuids").getAllKeys();
+        List<String> puids = Paper.book("parcelUuid").getAllKeys();
         List<ParcelUuid> parcelUuids = new ArrayList<>();
         for(String p : puids) parcelUuids.add(Paper.book("parcelUuid").read(p));
         return parcelUuids;

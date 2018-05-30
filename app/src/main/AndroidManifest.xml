@@ -34,6 +34,7 @@
         <activity android:name=".ScanActivity"/>
         <activity android:name=".LocationsActivity"/>
         <activity android:name=".ParcelUuidActivity"/>
+        <activity android:name=".LocationActivity"/>
         <service android:name=".ScanService"/>
     </application>
 
