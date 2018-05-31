@@ -26,13 +26,15 @@ public class SettingsFragment extends Fragment{
 
     @OnCheckedChanged(R.id.authenticationCheckbox)
     public void authenticationCheckboxChanged(){
+        username.setEnabled(authenticationCheckbox.isChecked());
+        password.setEnabled(authenticationCheckbox.isChecked());
         settings.mongoDBSettings.authentication = authenticationCheckbox.isChecked();
     }
 
     @OnClick(R.id.saveBtn)
     public void saveBtnClicked(){
         settings.mongoDBSettings = new MongoDBSettings(server.getText().toString(), username.getText().toString(), password.getText().toString());
-        Paper.book("settings").write("settings", settings);
+        Paper.book("mongodb").write("settings", settings);
         Toast.makeText(getContext(), "settings saved", Toast.LENGTH_SHORT).show();
     }
 
@@ -43,6 +45,8 @@ public class SettingsFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_settings, container, false);
         ButterKnife.bind(this, v);
+        username.setEnabled(false);
+        password.setEnabled(false);
         settings = Paper.book("settings").read("settings");
         if(settings == null) settings = new Settings();
         return v;

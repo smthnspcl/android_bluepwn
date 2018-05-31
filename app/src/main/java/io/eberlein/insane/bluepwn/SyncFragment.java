@@ -19,9 +19,15 @@ public class SyncFragment extends Fragment {
     @BindView(R.id.actionsSyncStatusLabel) TextView actionsSyncStatusLabel;
     @BindView(R.id.devicesSyncStatusLabel) TextView devicesSyncStatusLabel;
 
+
     @OnClick(R.id.checkSyncBtn)
     public void syncBtnClicked(){
-        // check what is needed to sync, then show sync, on second tap sync
+        if(!actionsUpToDate()) updateActions();
+        if(!devicesUpToDate()) updateDevices();
+        if(!parcelUuidsUptoDate()) updateParcelUuids();
+        if(!locationsUpToDate()) updateLocations();
+        if(!ouiUpToDate()) updateOui();
+        if(!scansUpToDate()) updateScans();
     }
 
     private MongoDBSettings mongoDBSettings;
@@ -35,15 +41,41 @@ public class SyncFragment extends Fragment {
         return v;
     }
 
-    private void checkActions(){}
+    private boolean actionsUpToDate(){
+        return false;
+    }
 
-    private void checkDevices(){}
+    private boolean updateActions(){
+        return false;
+    }
 
-    private void checkParcelUuids(){}
+    private boolean devicesUpToDate(){
+        return false;
+    }
 
-    private void checkLocations(){}
+    private boolean updateDevices(){return false;}
 
-    private void checkOui(){}
+    private boolean parcelUuidsUptoDate(){
+        return false;
+    }
 
-    private void checkScans(){}
+    private boolean updateParcelUuids(){return false;}
+
+    private boolean locationsUpToDate(){
+        return false;
+    }
+
+    private boolean updateLocations(){return false;}
+
+    private boolean ouiUpToDate(){
+        return false;
+    }
+
+    private boolean updateOui(){return false;}
+
+    private boolean scansUpToDate(){
+        return false;
+    }
+
+    private boolean updateScans(){return false;}
 }
