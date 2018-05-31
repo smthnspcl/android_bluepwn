@@ -30,6 +30,7 @@ public class ScanService extends IntentService {
     Scan scan;
     private Boolean continuousScanning = false;
     private Context context;
+    private List<Device> toSdpScanDevices;
 
     List<Callable<Void>> deviceDiscoveredCallableList;
     List<Callable<Void>> discoveryFinishedCallableList;
@@ -94,6 +95,7 @@ public class ScanService extends IntentService {
         discoveryStartedCallableList = new ArrayList<>();
         uuidFoundCallableList = new ArrayList<>();
         scan = new Scan();
+        toSdpScanDevices = new ArrayList<>();
         // notificationManager = getSystemService()
     }
 
@@ -142,6 +144,11 @@ public class ScanService extends IntentService {
         Paper.book("scan").write(scan.id, scan);
     }
 
+    private void doSdpScanOnNextDevice(){
+        if(toSdpScanDevices.size() > 0) {bluetoothAdapter.getRemoteDevice(toSdpScanDevices.get(0).address).fetchUuidsWithSdp(); toSdpScanDevices.remove(0);}
+        else if(continuousScanning) scan();
+    }
+
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
@@ -165,11 +172,9 @@ public class ScanService extends IntentService {
         public void onReceive(Context context, Intent intent) {
             if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(intent.getAction())){
                 saveScan(scan);
-                for(Device d : scan.getDevices()) bluetoothAdapter.getRemoteDevice(d.address).fetchUuidsWithSdp();
-                if(continuousScanning) bluetoothAdapter.startDiscovery();
-                else {
-                    try{for(Callable<Void> c : discoveryFinishedCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
-                }
+                toSdpScanDevices = scan.getDevices();
+                doSdpScanOnNextDevice();
+                try{for(Callable<Void> c : discoveryFinishedCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
             }
         }
     };
@@ -201,6 +206,7 @@ public class ScanService extends IntentService {
                     saveDevice(device);
                 }
                 try{for(Callable<Void> c : uuidFoundCallableList) c.call();}catch (Exception e){e.printStackTrace();}
+                doSdpScanOnNextDevice();
             }
         }
     };

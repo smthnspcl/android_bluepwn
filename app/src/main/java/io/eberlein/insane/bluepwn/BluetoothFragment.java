@@ -81,7 +81,7 @@ public class BluetoothFragment extends Fragment {
             scanService.discoveryFinishedCallableList.add(new Callable<Void>() {
                 @Override
                 public Void call() {
-                    scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
+                    if(!scanService.getContinuousScanning()) scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
                     return null;
                 }
             });
