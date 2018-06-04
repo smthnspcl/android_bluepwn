@@ -35,6 +35,7 @@
         <activity android:name=".LocationsActivity"/>
         <activity android:name=".ParcelUuidActivity"/>
         <activity android:name=".LocationActivity"/>
+        <activity android:name=".DatabaseSettingsActivity"/>
         <service android:name=".ScanService"/>
     </application>
 
