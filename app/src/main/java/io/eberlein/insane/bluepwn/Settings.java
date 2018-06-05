@@ -1,13 +1,13 @@
 package io.eberlein.insane.bluepwn;
 
 public class Settings {
-    MongoDBSettings mongoDBSettings;
+    RemoteDBSettings remoteDBSettings;
 
     public Settings(){
-        mongoDBSettings = new MongoDBSettings();
+        remoteDBSettings = new RemoteDBSettings();
     }
 
-    public Settings(MongoDBSettings mongoDBSettings){
-        this.mongoDBSettings = mongoDBSettings;
+    public Settings(RemoteDBSettings mongoDBSettings){
+        this.remoteDBSettings = mongoDBSettings;
     }
 }

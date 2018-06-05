@@ -30,14 +30,14 @@ public class SyncFragment extends Fragment {
         if(!scansUpToDate()) updateScans();
     }
 
-    private MongoDBSettings mongoDBSettings;
+    private RemoteDBSettings remoteDBSettings;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_sync, container, false);
         ButterKnife.bind(this, v);
-        mongoDBSettings = Paper.book("mongodb").read("settings");
+        remoteDBSettings = Paper.book("remote").read("settings");
         return v;
     }
 

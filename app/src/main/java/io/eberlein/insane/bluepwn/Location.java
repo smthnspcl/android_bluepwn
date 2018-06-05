@@ -23,11 +23,13 @@ public class Location {
 
     List<String> scans;
 
+    /*
     public List<Scan> getScans(){
         List<Scan> scans = new ArrayList<>();
         for(String s : this.scans) scans.add(Paper.book("scan").read(s));
         return scans;
     }
+    */
 
     public List<Device> getDevicesWithinRadius(float radius){
         return new ArrayList<>();
@@ -67,6 +69,6 @@ public class Location {
     }
 
     boolean isEmpty(){
-        return accuracy == 0 && altitude == 0 && longitude == 0 && latitude == 0 && timestamp == 0 && speed == 0;
+        return (accuracy == 0 && altitude == 0 && longitude == 0 && latitude == 0 && timestamp == 0 && speed == 0);
     }
 }

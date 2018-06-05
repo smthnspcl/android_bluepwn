@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="remote database" />
+        android:text="remote db api" />
 
     <EditText
         android:id="@+id/serverEditText"
@@ -20,28 +20,16 @@
         android:layout_alignStart="@id/textView10"
         android:layout_marginEnd="16dp"
         android:ems="10"
-        android:hint="myserver:27017"
-        android:inputType="text" />
-
-    <EditText
-        android:id="@+id/databaseEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/serverEditText"
-        android:layout_below="@id/serverEditText"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="4dp"
-        android:ems="10"
-        android:hint="database"
+        android:hint="http(s)://host:port"
         android:inputType="text" />
 
     <CheckBox
         android:id="@+id/authenticationCheckbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/databaseEditText"
+        android:layout_below="@id/serverEditText"
         android:layout_marginTop="8dp"
-        android:layout_alignStart="@id/databaseEditText"
+        android:layout_alignStart="@id/serverEditText"
         android:text="authentication" />
 
     <EditText

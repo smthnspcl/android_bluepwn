@@ -36,8 +36,6 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.alibaba:fastjson:1.2.46'
-    implementation 'org.mongodb:mongodb-driver:3.7.0'
-    implementation 'org.mongodb:bson:3.7.0'
     implementation 'org.osmdroid:osmdroid-android:6.0.1'
     implementation 'com.github.MKergall:osmbonuspack:6.5.1'
     implementation 'io.paperdb:paperdb:2.6'
