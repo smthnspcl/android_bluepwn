@@ -11,8 +11,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
 
@@ -31,6 +31,7 @@ public class LocationsActivity extends AppCompatActivity {
     };
 
     private LocationAdapter locations;
+    private Gson gson;
 
     @OnClick(R.id.addLocationBtn)
     public void addLocationBtnClicked(){
@@ -44,6 +45,7 @@ public class LocationsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activtiy_locations);
         ButterKnife.bind(this);
+        gson = new Gson();
         locations = new LocationAdapter();
         String e = getIntent().getStringExtra("locations");
         if(e != null) populateWithSuppliedLocations(e);
@@ -63,6 +65,7 @@ public class LocationsActivity extends AppCompatActivity {
     }
 
     private void populateWithSuppliedLocations(String data){
-        for(Location l : JSON.parseObject(data, new TypeReference<List<Location>>(){})){ locations.add(l); }
+        List<Location> locations = gson.fromJson(data, new TypeToken<List<Location>>(){}.getType());
+        this.locations.addAll(locations);
     }
 }

@@ -10,9 +10,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,6 +25,7 @@ public class ScanActivity extends AppCompatActivity {
     @BindView(R.id.filterSpinner) Spinner filters;
 
     private DeviceAdapter devices;
+    private Gson gson;
     private static final String[] selectionSpinnerAdapterItems = {
             "person unk.", "location unk."
     };
@@ -33,7 +33,7 @@ public class ScanActivity extends AppCompatActivity {
     @OnClick(R.id.locationCountLabel)
     public void locationLabelClicked(){
         Intent i = new Intent(this, LocationsActivity.class);
-        i.putExtra("scan_id", JSON.toJSONString(scan.id));
+        i.putExtra("scan_id", scan.id);
         startActivity(i);
     }
 

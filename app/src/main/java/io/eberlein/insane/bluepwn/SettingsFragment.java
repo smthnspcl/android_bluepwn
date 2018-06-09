@@ -28,13 +28,13 @@ public class SettingsFragment extends Fragment{
     public void authenticationCheckboxChanged(){
         username.setEnabled(authenticationCheckbox.isChecked());
         password.setEnabled(authenticationCheckbox.isChecked());
-        settings.remoteDBSettings.setAuthentication(authenticationCheckbox.isChecked());
+        remoteDBSettings.setAuthentication(authenticationCheckbox.isChecked());
         saveSettings();
     }
 
     @OnCheckedChanged(R.id.sslCheckbox)
     public void sslCheckboxChanged(){
-        settings.remoteDBSettings.setSsl(sslCheckbox.isChecked());
+        remoteDBSettings.setSsl(sslCheckbox.isChecked());
         saveSettings();
     }
 
@@ -43,37 +43,37 @@ public class SettingsFragment extends Fragment{
         saveSettings();
     }
 
-    private Settings settings;
+    private RemoteDBSettings remoteDBSettings;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_settings, container, false);
         ButterKnife.bind(this, v);
-        settings = new Settings();
+        remoteDBSettings = new RemoteDBSettings();
         username.setEnabled(false);
         password.setEnabled(false);
-        settings = Paper.book("settings").read("remote");
-        if(settings == null) settings = new Settings();
+        remoteDBSettings = Paper.book("settings").read("remote");
+        if(remoteDBSettings == null) remoteDBSettings = new RemoteDBSettings();
         else populateSettings();
         return v;
     }
 
     private void populateSettings(){
-        server.setText(settings.remoteDBSettings.getServer());
-        username.setText(settings.remoteDBSettings.getUsername());
-        password.setText(settings.remoteDBSettings.getPassword());
-        authenticationCheckbox.setChecked(settings.remoteDBSettings.getAuthentication() != null);
-        sslCheckbox.setChecked(settings.remoteDBSettings.getSsl());
+        server.setText(remoteDBSettings.getServer());
+        username.setText(remoteDBSettings.getUsername());
+        password.setText(remoteDBSettings.getPassword());
+        authenticationCheckbox.setChecked(remoteDBSettings.getAuthentication() != null);
+        sslCheckbox.setChecked(remoteDBSettings.getSsl());
     }
 
     private void saveSettings(){
-        settings.remoteDBSettings.setServer(server.getText().toString());
-        settings.remoteDBSettings.setAuthentication(authenticationCheckbox.isChecked());
-        settings.remoteDBSettings.setUsername(username.getText().toString());
-        settings.remoteDBSettings.setPassword(password.getText().toString());
-        settings.remoteDBSettings.setSsl(sslCheckbox.isChecked());
-        Paper.book("settings").write("remote", settings);
+        remoteDBSettings.setServer(server.getText().toString());
+        remoteDBSettings.setAuthentication(authenticationCheckbox.isChecked());
+        remoteDBSettings.setUsername(username.getText().toString());
+        remoteDBSettings.setPassword(password.getText().toString());
+        remoteDBSettings.setSsl(sslCheckbox.isChecked());
+        Paper.book("settings").write("remote", remoteDBSettings);
         Toast.makeText(getContext(), "settings saved", Toast.LENGTH_SHORT).show();
     }
 }

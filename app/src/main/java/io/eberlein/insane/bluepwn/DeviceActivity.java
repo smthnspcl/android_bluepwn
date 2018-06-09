@@ -10,7 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
+
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +30,7 @@ public class DeviceActivity extends AppCompatActivity {
     ParcelUuidAdapter parcelUuidAdapter;
     BluetoothAdapter bluetoothAdapter;
     Device device;
+    private Gson gson;
 
     @OnClick(R.id.locationCountLabel)
     public void locationCountLabelClicked(){
@@ -43,7 +45,7 @@ public class DeviceActivity extends AppCompatActivity {
     private void locationsActivityIntent(){
         Intent i = new Intent(this, LocationsActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.putExtra("locations", JSON.toJSONString(device.getLocations()));
+        i.putExtra("locations", gson.toJson(device.getLocations()));
         startActivity(i);
     }
 
@@ -52,6 +54,7 @@ public class DeviceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device);
         ButterKnife.bind(this);
+        gson = new Gson();
         parcelUuidAdapter = new ParcelUuidAdapter();
         device = Paper.book("device").read(getIntent().getStringExtra("address"));
         List<ParcelUuid> uuids = device.getParcelUuids();
