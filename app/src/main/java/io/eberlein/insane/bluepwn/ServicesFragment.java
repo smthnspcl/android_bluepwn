@@ -23,7 +23,7 @@ public class ServicesFragment extends Fragment {
     @BindView(R.id.spinner) Spinner spinner;
     @BindView(R.id.recycler) RecyclerView recycler;
 
-    private ServiceAdapter uuidAdapter;
+    private ServiceAdapter serviceAdapter;
     private static final String[] selectionSpinnerItems = {
             "id", "name", "description", "protocol"
     };
@@ -31,7 +31,7 @@ public class ServicesFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        uuidAdapter = new ServiceAdapter();
+        serviceAdapter = new ServiceAdapter();
     }
 
     @Nullable
@@ -40,16 +40,16 @@ public class ServicesFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_objectlist_search, container, false);
         ButterKnife.bind(this, v);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        uuidAdapter.addAll(LocalDatabase.getAllServices());
-        recycler.setAdapter(uuidAdapter);
-        uuidAdapter.setOnItemClickListener(new ServiceAdapter.OnItemClickListener() {
+        serviceAdapter.addAll(LocalDatabase.getAllServices());
+        recycler.setAdapter(serviceAdapter);
+        serviceAdapter.setOnItemClickListener(new ServiceAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
-                Intent i = new Intent(getContext(), ServiceActivity.class); // todo parceluuid activity
+                Intent i = new Intent(getContext(), ServiceActivity.class);
                 // switch between actions using this uuid and devices having that uuid
                 // display list in recycler
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("uuid", uuidAdapter.get(p).uuid);
+                i.putExtra("uuid", serviceAdapter.get(p).uuid);
                 startActivity(i);
             }
         });

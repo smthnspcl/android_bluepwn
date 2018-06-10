@@ -68,6 +68,11 @@ public class BluetoothFragment extends Fragment {
             ScanService.ScanBinder binder = (ScanService.ScanBinder) service;
             scanService = binder.getService();
             bound = true;
+            if (scanService.getContinuousScanning() || scanService.isScanning()){
+                scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
+            } else {
+                scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
+            }
 
             scanService.deviceDiscoveredCallableList.add(new Callable<Void>() {
                 @Override

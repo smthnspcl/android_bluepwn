@@ -26,17 +26,9 @@ public class StagerActivity extends AppCompatActivity {
 
      @BindView(R.id.name) EditText name;
      @BindView(R.id.save) Button save;
-     @BindView(R.id.stage) AutoCompleteTextView stage; // todo autocomplete
      @BindView(R.id.stages) RecyclerView stages;
 
      private StageAdapter stageAdapter;
-
-     @OnClick(R.id.newStage)
-     public void newStageButtonClicked(){
-         Intent i = new Intent(this, StageActivity.class); // todo StageActivity
-         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-         startActivity(i);
-     }
 
      @OnClick(R.id.add)
      public void addButtonClicked(){
@@ -46,9 +38,26 @@ public class StagerActivity extends AppCompatActivity {
          b.setPositiveButton("save", new DialogInterface.OnClickListener() {
              @Override
              public void onClick(DialogInterface dialog, int which) {
+                 AutoCompleteTextView stage = findViewById(R.id.stage);
                  stageAdapter.add(Paper.book("stage").read(stage.getText().toString()));
              }
          });
+         b.setNegativeButton("close", new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialog, int which) {
+                 // todo close dialog
+             }
+         });
+         b.setNeutralButton("new", new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialog, int which) {
+                 Intent i = new Intent(getApplicationContext(), StageActivity.class); // todo StageActivity
+                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                 startActivity(i);
+             }
+         });
+         AlertDialog dialog = b.create();
+         dialog.show();
      }
 
      @OnClick(R.id.save)

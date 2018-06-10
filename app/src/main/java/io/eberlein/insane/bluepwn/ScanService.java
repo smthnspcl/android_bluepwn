@@ -27,6 +27,8 @@ import java.util.concurrent.Callable;
 
 import io.paperdb.Paper;
 
+// todo fix stop scanning when locked
+
 public class ScanService extends IntentService {
     private final IBinder binder = new ScanBinder();
 
