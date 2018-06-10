@@ -11,8 +11,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder>{
-    private List<Action> actions;
+public class StagerAdapter extends RecyclerView.Adapter<StagerAdapter.ViewHolder>{
+    private List<Stager> stagers;
 
     private OnItemClickListener listener;
 
@@ -25,8 +25,7 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.actionName) TextView actionName;
-        @BindView(R.id.actionMacPrefix) TextView actionMacPrefix;
+        @BindView(R.id.name) TextView name;
 
         Context context;
 
@@ -48,53 +47,52 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
         }
     }
 
-    ActionAdapter(){
-        actions = new ArrayList<>();
+    StagerAdapter(){
+        stagers = new ArrayList<>();
     }
 
-    ActionAdapter(List<Action> actions){
-        this.actions = actions;
+    StagerAdapter(List<Stager> stagers){
+        this.stagers = stagers;
     }
 
     @Override
-    public ActionAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public StagerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater i = LayoutInflater.from(parent.getContext());
-        return new ViewHolder(parent.getContext(), i.inflate(R.layout.viewholder_actions_item, parent, false));
+        return new ViewHolder(parent.getContext(), i.inflate(R.layout.viewholder_stagers_item, parent, false));
     }
 
-    public void onBindViewHolder(ActionAdapter.ViewHolder holder, int position) {
-        Action a = actions.get(position);
-        holder.actionName.setText(a.name);
-        holder.actionMacPrefix.setText(a.macPrefix);
+    public void onBindViewHolder(StagerAdapter.ViewHolder holder, int position) {
+        Stager a = stagers.get(position);
+        holder.name.setText(a.name);
     }
 
     @Override
     public int getItemCount() {
-        return actions.size();
+        return stagers.size();
     }
 
-    void add(Action action){
-        for(Action a : actions){
-            if(a.id.equals(action.id)){
-                actions.set(actions.indexOf(a), action);
-                notifyItemChanged(actions.indexOf(action));
+    void add(Stager stager){
+        for(Stager s : stagers){
+            if(s.id.equals(stager.id)){
+                stagers.set(stagers.indexOf(s), stager);
+                notifyItemChanged(stagers.indexOf(stager));
                 return;
             }
         }
-        actions.add(action);
-        notifyItemChanged(actions.indexOf(action));
+        stagers.add(stager);
+        notifyItemChanged(stagers.indexOf(stager));
     }
 
-    void addAll(List<Action> actions){
-        for(Action a : actions) add(a);
+    void addAll(List<Stager> stagers){
+        for(Stager s : stagers) add(s);
     }
 
     void empty(){
-        actions = new ArrayList<>();
+        stagers = new ArrayList<>();
     }
 
-    Action get(int index){
-        return actions.get(index);
+    Stager get(int index){
+        return stagers.get(index);
     }
 }
 

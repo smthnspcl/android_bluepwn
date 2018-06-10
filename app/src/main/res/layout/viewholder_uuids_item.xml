@@ -7,11 +7,11 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="16dp"
-        android:id="@+id/uuid" />
+        android:id="@+id/service" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="16dp"
-        android:id="@+id/serviceName"/>
+        android:id="@+id/name"/>
 
 </LinearLayout>

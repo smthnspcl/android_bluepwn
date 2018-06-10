@@ -14,13 +14,13 @@
         android:title="devices"
         android:icon="@drawable/baseline_devices_white_48"/>
     <item
-        android:id="@+id/MenuActions"
-        android:title="actions"
+        android:id="@+id/MenuStagers"
+        android:title="stagers"
         android:icon="@drawable/baseline_format_list_bulleted_white_48"/>
 
     <item
         android:id="@+id/MenuUuids"
-        android:title="uuids"
+        android:title="services"
         android:icon="@drawable/baseline_format_list_bulleted_white_48"/>
 
     <item

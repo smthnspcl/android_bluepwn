@@ -17,13 +17,13 @@ import android.widget.Spinner;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ParcelUuidsFragment extends Fragment {
+public class UUIDsFragment extends Fragment {
 
     @BindView(R.id.query) AutoCompleteTextView query;
     @BindView(R.id.spinner) Spinner spinner;
     @BindView(R.id.recycler) RecyclerView recycler;
 
-    private ParcelUuidAdapter parcelUuidAdapter;
+    private UUIDAdapter uuidAdapter;
     private static final String[] selectionSpinnerItems = {
             "id", "name", "description", "protocol"
     };
@@ -31,7 +31,7 @@ public class ParcelUuidsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        parcelUuidAdapter = new ParcelUuidAdapter();
+        uuidAdapter = new UUIDAdapter();
     }
 
     @Nullable
@@ -40,16 +40,16 @@ public class ParcelUuidsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_objectlist_search, container, false);
         ButterKnife.bind(this, v);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        parcelUuidAdapter.addAll(LocalDatabase.getAllParcelUuids());
-        recycler.setAdapter(parcelUuidAdapter);
-        parcelUuidAdapter.setOnItemClickListener(new ParcelUuidAdapter.OnItemClickListener() {
+        uuidAdapter.addAll(LocalDatabase.getAllUUIDs());
+        recycler.setAdapter(uuidAdapter);
+        uuidAdapter.setOnItemClickListener(new UUIDAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
-                Intent i = new Intent(getContext(), ParcelUuidActivity.class); // todo parceluuid activity
+                Intent i = new Intent(getContext(), UUIDActivity.class); // todo parceluuid activity
                 // switch between actions using this uuid and devices having that uuid
                 // display list in recycler
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("uuid", parcelUuidAdapter.get(p).uuid.toString());
+                i.putExtra("uuid", uuidAdapter.get(p).uuid);
                 startActivity(i);
             }
         });

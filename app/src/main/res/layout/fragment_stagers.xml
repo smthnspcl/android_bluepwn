@@ -72,7 +72,7 @@
         android:layout_toEndOf="@+id/space5" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addActionBtn"
+        android:id="@+id/addBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

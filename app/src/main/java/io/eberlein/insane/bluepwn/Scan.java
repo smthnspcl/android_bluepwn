@@ -32,4 +32,13 @@ public class Scan {
         for(String l : this.locations) if(l != null) locations.add(Paper.book("location").read(l));
         return locations;
     }
+
+    public List<Device> getDevicesWithType(String type){
+        List<Device> r = new ArrayList<>();
+        for(String d : devices){
+            Device _d = Paper.book("device").read(d);
+            if(_d.type.equals(type)) r.add(_d);
+        }
+        return r;
+    }
 }

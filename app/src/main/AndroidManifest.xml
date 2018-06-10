@@ -30,10 +30,10 @@
         </activity>
 
         <activity android:name=".DeviceActivity"/>
-        <activity android:name=".ActionActivity"/>
+        <activity android:name=".StagerActivity"/>
         <activity android:name=".ScanActivity"/>
         <activity android:name=".LocationsActivity"/>
-        <activity android:name=".ParcelUuidActivity"/>
+        <activity android:name=".UUIDActivity"/>
         <activity android:name=".LocationActivity"/>
         <activity android:name=".DatabaseSettingsActivity"/>
         <service android:name=".ScanService"/>

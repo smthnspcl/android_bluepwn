@@ -27,7 +27,7 @@ public class DeviceActivity extends AppCompatActivity {
     @BindView(R.id.tvManufacturer) TextView tvManufacturer;
     @BindView(R.id.actionRecycler) RecyclerView actionRecycler;
 
-    ParcelUuidAdapter parcelUuidAdapter;
+    UUIDAdapter uuidAdapter;
     BluetoothAdapter bluetoothAdapter;
     Device device;
     private Gson gson;
@@ -55,10 +55,10 @@ public class DeviceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_device);
         ButterKnife.bind(this);
         gson = new Gson();
-        parcelUuidAdapter = new ParcelUuidAdapter();
+        uuidAdapter = new UUIDAdapter();
         device = Paper.book("device").read(getIntent().getStringExtra("address"));
-        List<ParcelUuid> uuids = device.getParcelUuids();
-        parcelUuidAdapter.addAll(uuids);
+        List<Service> services = device.getUUIDs();
+        uuidAdapter.addAll(services);
         tvMac.setText(device.address);
         tvName.setText(device.name);
         tvType.setText(device.type);
@@ -67,12 +67,12 @@ public class DeviceActivity extends AppCompatActivity {
         tvManufacturer.setText(device.manufacturer);
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         actionRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        parcelUuidAdapter.setOnItemClickListener(new ParcelUuidAdapter.OnItemClickListener() {
+        uuidAdapter.setOnItemClickListener(new UUIDAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
-                Intent i = new Intent(getApplicationContext(), ParcelUuidActivity.class);
+                Intent i = new Intent(getApplicationContext(), UUIDActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("uuid", parcelUuidAdapter.get(p).uuid.toString());
+                i.putExtra("uuid", uuidAdapter.get(p).uuid.toString());
                 startActivity(i);
             }
         });
@@ -82,7 +82,7 @@ public class DeviceActivity extends AppCompatActivity {
             case "classic": onBluetoothClassic(); break;
             default: onBluetoothElse();
         }
-        actionRecycler.setAdapter(parcelUuidAdapter);
+        actionRecycler.setAdapter(uuidAdapter);
     }
 
 

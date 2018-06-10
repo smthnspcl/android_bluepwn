@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/saveAction"
+        android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -30,7 +30,7 @@
         android:id="@+id/space7" />
 
     <EditText
-        android:id="@+id/actionName"
+        android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/space7"
@@ -41,44 +41,31 @@
         android:inputType="textPersonName" />
 
     <AutoCompleteTextView
-        android:id="@+id/actionMacPrefix"
+        android:id="@+id/service"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/actionName"
-        android:layout_below="@+id/actionName"
+        android:layout_alignEnd="@+id/name"
+        android:layout_below="@+id/name"
         android:layout_marginTop="11dp"
         android:layout_toEndOf="@+id/space4"
-        android:hint="mac prefix" />
+        android:hint="service" />
 
-    <Spinner
-        android:id="@+id/actionDataTypeSelector"
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/actionMacPrefix"
-        android:layout_marginTop="11dp"
-        android:layout_toEndOf="@+id/space4"
-        android:layout_toStartOf="@+id/saveAction" />
+        android:layout_height="315dp"
+        android:layout_below="@id/service"
+        android:layout_marginTop="8dp"
+        android:id="@+id/stages">
 
-    <EditText
-        android:id="@+id/actionDataEditText"
+    </android.support.v7.widget.RecyclerView>
+
+    <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/space8"
-        android:layout_alignEnd="@+id/space7"
-        android:layout_alignStart="@+id/actionDataTypeSelector"
-        android:layout_below="@+id/actionDataTypeSelector"
-        android:layout_marginTop="11dp"
-        android:ems="10"
-        android:gravity="top|left"
-        android:inputType="textMultiLine"
-        android:textAlignment="viewStart" />
-
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/saveAction"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"
-        android:id="@+id/space8" />
+        android:layout_alignEnd="@id/stages"
+        android:layout_alignBottom="@+id/stages"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/ic_add_white_48dp"/>
 
 </RelativeLayout>

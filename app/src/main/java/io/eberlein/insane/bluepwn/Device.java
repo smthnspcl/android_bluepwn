@@ -3,11 +3,9 @@ package io.eberlein.insane.bluepwn;
 import android.bluetooth.BluetoothDevice;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import io.paperdb.Paper;
 // todo extract important information from https://en.wikipedia.org/wiki/List_of_Bluetooth_profiles
 // todo script to pull tables https://www.bluetooth.com/specifications/assigned-numbers/service-discovery
 
@@ -15,12 +13,14 @@ import io.paperdb.Paper;
 public class Device {
     String address;
     String name;
-    String type;
-    String bond;
     String manufacturer;
+    String bond;
+    String type;
     Date lastModified;
 
-    List<String> parcelUuids;
+    List<String> services;
+    List<String> descriptors;
+    List<String> locations;
 
     public List<Location> getLocations() {
         List<Location> locations = new ArrayList<>();
@@ -30,30 +30,33 @@ public class Device {
         return locations;
     }
 
-    public List<ParcelUuid> getParcelUuids(){
-        List<ParcelUuid> parcelUuids = new ArrayList<>();
-        for(String p : this.parcelUuids) parcelUuids.add(Paper.book("parcelUuid").read(p));
-        return parcelUuids;
+    public List<Service> getUUIDs(){
+        List<Service> services = new ArrayList<>();
+        for(Service u : LocalDatabase.getAllUUIDs()) {if(this.services.contains(u.uuid)) services.add(u);}
+        return services;
     }
+
+    Device(){}
 
     public Device(BluetoothDevice device){
         address = device.getAddress();
         name = device.getName();
-        type = getTypeAsString(device.getType());
-        bond = getBondStateAsString(device.getBondState());
         manufacturer = "todo";
+        bond = getBondStateAsString(device.getBondState());
+        type = getTypeAsString(device.getType());
         lastModified = new Date();
-        parcelUuids = new ArrayList<>();
+        locations = new ArrayList<>();
+        services = new ArrayList<>();
+        descriptors = new ArrayList<>();
     }
 
-    public Device(String address, String name, String type, String bond, String manufacturer, Date lastModified){
+    public Device(String address, String name, String manufacturer, String bond, String type, Date lastModified){
         this.address = address;
         this.name = name;
-        this.type = type;
-        this.bond = bond;
         this.manufacturer = manufacturer;
+        this.bond = bond;
+        this.type = type;
         this.lastModified = lastModified;
-        parcelUuids = new ArrayList<>();
     }
 
     private String getTypeAsString(int _type){
