@@ -86,9 +86,17 @@ public class BluetoothFragment extends Fragment {
                 }
             });
 
-            scanService.uuidFoundCallableList.add(new Callable<Void>() {
+            scanService.sdpScanFinshedCallableList.add(new Callable<Void>() {
                 @Override
                 public Void call() {
+                    devices.addAll(scanService.scan.getDevices());
+                    return null;
+                }
+            });
+
+            scanService.gattScanFinishedCallableList.add(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
                     devices.addAll(scanService.scan.getDevices());
                     return null;
                 }

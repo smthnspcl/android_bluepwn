@@ -46,10 +46,12 @@ public class MainActivity extends AppCompatActivity {
                     f = new ScansFragment(); break;
                 case R.id.MenuDevices:
                     f = new DevicesFragment(); break;
+                case R.id.MenuStages:
+                    f = new StagesFragment(); break;
                 case R.id.MenuStagers:
                     f = new StagersFragment(); break;
                 case R.id.MenuUuids:
-                    f = new UUIDsFragment(); break;
+                    f = new ServicesFragment(); break;
                 case R.id.MenuMap:
                     f = new MapFragment(); break;
                 case R.id.MenuSync:

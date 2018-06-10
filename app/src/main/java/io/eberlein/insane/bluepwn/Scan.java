@@ -21,6 +21,10 @@ public class Scan {
         locations = new ArrayList<>();
     }
 
+    void save(){
+        Paper.book("scan").write(id, this);
+    }
+
     public List<Device> getDevices(){
         List<Device> devs = new ArrayList<>();
         for(String d : devices) devs.add(Paper.book("device").read(d));

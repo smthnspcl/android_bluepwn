@@ -1,6 +1,5 @@
 package io.eberlein.insane.bluepwn;
 
-
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,24 +11,21 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+public class StageAdapter extends RecyclerView.Adapter<StageAdapter.ViewHolder>{
+    private List<Stage> stages;
 
-public class UUIDAdapter extends RecyclerView.Adapter<UUIDAdapter.ViewHolder> {
-    private List<Service> services;
-
-    private UUIDAdapter.OnItemClickListener listener;
+    private OnItemClickListener listener;
 
     public interface OnItemClickListener {
         void onItemClick(View v, int p);
     }
 
-    void setOnItemClickListener(UUIDAdapter.OnItemClickListener listener){
+    void setOnItemClickListener(OnItemClickListener listener){
         this.listener = listener;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.service) TextView uuid;
         @BindView(R.id.name) TextView name;
-        // todo amount of actions
 
         Context context;
 
@@ -51,49 +47,52 @@ public class UUIDAdapter extends RecyclerView.Adapter<UUIDAdapter.ViewHolder> {
         }
     }
 
-    UUIDAdapter(){
-        services = new ArrayList<>();
+    StageAdapter(){
+        stages = new ArrayList<>();
+    }
+
+    StageAdapter(List<Stage> stages){
+        this.stages = stages;
     }
 
     @Override
-    public UUIDAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public StageAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater i = LayoutInflater.from(parent.getContext());
-        return new UUIDAdapter.ViewHolder(parent.getContext(), i.inflate(R.layout.viewholder_uuids_item, parent, false));
+        return new ViewHolder(parent.getContext(), i.inflate(R.layout.viewholder_stagers_item, parent, false));
     }
 
-    public void onBindViewHolder(UUIDAdapter.ViewHolder holder, int position) {
-        Service service = services.get(position);
-        holder.name.setText(service.name);
-        holder.uuid.setText(service.uuid);
+    public void onBindViewHolder(StageAdapter.ViewHolder holder, int position) {
+        Stage s = stages.get(position);
+        holder.name.setText(s.name);
     }
 
     @Override
     public int getItemCount() {
-        return services.size();
+        return stages.size();
     }
 
-    void addAll(List<Service> services){
-        this.services.addAll(services); }
-
-    void add(Service service){
-        for(Service u : services){
-            if(u.uuid.equals(service.uuid)){
-                services.set(services.indexOf(u), service);
-                notifyItemChanged(services.indexOf(service));
+    void add(Stage stage){
+        for(Stage s : stages){
+            if(s.id.equals(stage.id)){
+                stages.set(stages.indexOf(s), stage);
+                notifyItemChanged(stages.indexOf(stage));
                 return;
             }
         }
-        services.add(service);
-        notifyItemChanged(services.indexOf(service));
+        stages.add(stage);
+        notifyItemChanged(stages.indexOf(stage));
     }
 
-    Service get(int index){
-        return services.get(index);
+    void addAll(List<Stage> stages){
+        for(Stage s : stages) add(s);
     }
-
-    List<Service> get(){return services;}
 
     void empty(){
-        services = new ArrayList<>();
+        stages = new ArrayList<>();
+    }
+
+    Stage get(int index){
+        return stages.get(index);
     }
 }
+

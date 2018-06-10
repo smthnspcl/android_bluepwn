@@ -33,9 +33,10 @@
         <activity android:name=".StagerActivity"/>
         <activity android:name=".ScanActivity"/>
         <activity android:name=".LocationsActivity"/>
-        <activity android:name=".UUIDActivity"/>
+        <activity android:name=".ServiceActivity"/>
         <activity android:name=".LocationActivity"/>
         <activity android:name=".DatabaseSettingsActivity"/>
+        <activity android:name=".StageActivity"/>
         <service android:name=".ScanService"/>
     </application>
 

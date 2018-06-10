@@ -44,7 +44,8 @@ public class ScanService extends IntentService {
     List<Callable<Void>> deviceDiscoveredCallableList;
     List<Callable<Void>> discoveryFinishedCallableList;
     List<Callable<Void>> discoveryStartedCallableList;
-    List<Callable<Void>> uuidFoundCallableList;
+    List<Callable<Void>> sdpScanFinshedCallableList;
+    List<Callable<Void>> gattScanFinishedCallableList;
 
     public class ScanBinder extends Binder {
         ScanService getService() {
@@ -106,7 +107,8 @@ public class ScanService extends IntentService {
         deviceDiscoveredCallableList = new ArrayList<>();
         discoveryFinishedCallableList = new ArrayList<>();
         discoveryStartedCallableList = new ArrayList<>();
-        uuidFoundCallableList = new ArrayList<>();
+        sdpScanFinshedCallableList = new ArrayList<>();
+        gattScanFinishedCallableList = new ArrayList<>();
         scan = new Scan();
         toSdpScanDevices = new ArrayList<>();
         toGattScanDevices = new ArrayList<>();
@@ -146,18 +148,6 @@ public class ScanService extends IntentService {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void saveDevice(Device device){
-        Paper.book("device").write(device.address, device);
-    }
-
-    private void saveUUID(Service service){
-       Paper.book("service").write(service.uuid, service);
-    }
-
-    private void saveScan(Scan scan){
-        Paper.book("scan").write(scan.id, scan);
-    }
-
     private void doScanOnNextDevice(){
         System.out.println("doScanOnNextDevice");
         if(prioritize.equals("gatt")){ if(toGattScanDevices.size() > 0) {System.out.println("gatt"); doGattScanOnNextDevice();} else if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice(); }
@@ -179,7 +169,6 @@ public class ScanService extends IntentService {
                 @Override
                 public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
                     if(newState == BluetoothProfile.STATE_CONNECTED){
-                        System.out.println("gatt connected; discovering");
                         gatt.discoverServices();
                     }
                 }
@@ -187,7 +176,7 @@ public class ScanService extends IntentService {
                 @Override
                 public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                     if(status == BluetoothGatt.GATT_SUCCESS){
-                        System.out.println("got services");
+                        Device device = toGattScanDevices.get(0);
                         for(BluetoothGattService s : gatt.getServices()){
                             Service service = Service.getExistingOrNew(s.getUuid().toString());
                             for(BluetoothGattCharacteristic c : s.getCharacteristics()){
@@ -201,7 +190,10 @@ public class ScanService extends IntentService {
                                 characteristic.save();
                             }
                             service.save();
+                            device.updateServices(service);
                         }
+                        device.save();
+                        for(Callable<Void> c : gattScanFinishedCallableList){try {c.call();}catch (Exception e){e.printStackTrace();}}
                     }
                 }
             });
@@ -220,9 +212,9 @@ public class ScanService extends IntentService {
             if(BluetoothDevice.ACTION_FOUND.equals(intent.getAction())){
                 Device d = new Device(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
                 if(locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) d.locations.add(locationListener.currentLocation.id);
-                saveDevice(d);
+                d.save();
                 if(!scan.devices.contains(d.address)) scan.devices.add(d.address);
-                saveScan(scan);
+                scan.save();
                 try{for(Callable<Void> c : deviceDiscoveredCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
             }
         }
@@ -231,7 +223,7 @@ public class ScanService extends IntentService {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(intent.getAction())){
-                saveScan(scan);
+                scan.save();
                 toSdpScanDevices = scan.getDevicesWithType("classic");
                 toSdpScanDevices.addAll(scan.getDevicesWithType("dual"));
                 toGattScanDevices = scan.getDevicesWithType("le");
@@ -263,12 +255,12 @@ public class ScanService extends IntentService {
                     for(Parcelable u : uuids){
                         android.os.ParcelUuid __u = (android.os.ParcelUuid) u;
                         Service _u = Paper.book("uuid").read(__u.toString());
-                        saveUUID(_u);
+                        _u.save();
                         if(!device.services.contains(_u.uuid)) device.services.add(_u.uuid);
                     }
-                    saveDevice(device);
+                    device.save();
                 }
-                try{for(Callable<Void> c : uuidFoundCallableList) c.call();}catch (Exception e){e.printStackTrace();}
+                try{for(Callable<Void> c : sdpScanFinshedCallableList) c.call();}catch (Exception e){e.printStackTrace();}
                 doScanOnNextDevice();
             }
         }

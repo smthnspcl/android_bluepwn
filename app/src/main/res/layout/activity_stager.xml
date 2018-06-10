@@ -66,6 +66,7 @@
         android:layout_alignBottom="@+id/stages"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:id="@+id/add"
         android:src="@drawable/ic_add_white_48dp"/>
 
 </RelativeLayout>

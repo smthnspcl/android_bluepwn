@@ -10,7 +10,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.paperdb.Paper;
 
-public class UUIDActivity extends AppCompatActivity {
+public class ServiceActivity extends AppCompatActivity {
     @BindView(R.id.nameEditText) EditText nameET;
     @BindView(R.id.uuidEditText) EditText uuidET;
 
@@ -27,7 +27,7 @@ public class UUIDActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_uuid);
+        setContentView(R.layout.activity_service);
         ButterKnife.bind(this);
         service = Paper.book("parcelUuid").read(getIntent().getStringExtra("service"));
         uuidET.setText(service.uuid);

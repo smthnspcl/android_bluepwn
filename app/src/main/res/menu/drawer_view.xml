@@ -4,7 +4,6 @@
         android:id="@+id/MenuBluetooth"
         android:title="bluetooth"
         android:icon="@drawable/ic_bluetooth_white_48dp"/>
-
     <item
         android:id="@+id/MenuScans"
         android:title="scans"
@@ -14,30 +13,29 @@
         android:title="devices"
         android:icon="@drawable/baseline_devices_white_48"/>
     <item
+        android:id="@+id/MenuStages"
+        android:title="stages"
+        android:icon="@drawable/baseline_format_list_bulleted_white_48"/>
+    <item
         android:id="@+id/MenuStagers"
         android:title="stagers"
         android:icon="@drawable/baseline_format_list_bulleted_white_48"/>
-
     <item
         android:id="@+id/MenuUuids"
         android:title="services"
         android:icon="@drawable/baseline_format_list_bulleted_white_48"/>
-
     <item
         android:id="@+id/MenuMap"
         android:title="map"
         android:icon="@drawable/baseline_map_white_48"/>
-
     <item
         android:id="@+id/MenuSync"
         android:title="sync"
         android:icon="@drawable/baseline_sync_white_48"/>
-
     <item
         android:id="@+id/MenuSettings"
         android:title="settings"
         android:icon="@drawable/ic_settings_white_48dp"/>
-
     <item
         android:id="@+id/MenuExit"
         android:title="exit"

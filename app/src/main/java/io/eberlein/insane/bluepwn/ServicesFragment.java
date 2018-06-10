@@ -17,13 +17,13 @@ import android.widget.Spinner;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class UUIDsFragment extends Fragment {
+public class ServicesFragment extends Fragment {
 
     @BindView(R.id.query) AutoCompleteTextView query;
     @BindView(R.id.spinner) Spinner spinner;
     @BindView(R.id.recycler) RecyclerView recycler;
 
-    private UUIDAdapter uuidAdapter;
+    private ServiceAdapter uuidAdapter;
     private static final String[] selectionSpinnerItems = {
             "id", "name", "description", "protocol"
     };
@@ -31,7 +31,7 @@ public class UUIDsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        uuidAdapter = new UUIDAdapter();
+        uuidAdapter = new ServiceAdapter();
     }
 
     @Nullable
@@ -40,12 +40,12 @@ public class UUIDsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_objectlist_search, container, false);
         ButterKnife.bind(this, v);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        uuidAdapter.addAll(LocalDatabase.getAllUUIDs());
+        uuidAdapter.addAll(LocalDatabase.getAllServices());
         recycler.setAdapter(uuidAdapter);
-        uuidAdapter.setOnItemClickListener(new UUIDAdapter.OnItemClickListener() {
+        uuidAdapter.setOnItemClickListener(new ServiceAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
-                Intent i = new Intent(getContext(), UUIDActivity.class); // todo parceluuid activity
+                Intent i = new Intent(getContext(), ServiceActivity.class); // todo parceluuid activity
                 // switch between actions using this uuid and devices having that uuid
                 // display list in recycler
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

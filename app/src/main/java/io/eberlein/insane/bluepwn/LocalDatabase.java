@@ -25,9 +25,9 @@ public class LocalDatabase {
         return scans;
     }
 
-    public static List<Service> getAllUUIDs(){
+    public static List<Service> getAllServices(){
         List<Service> services = new ArrayList<>();
-        for(String u : Paper.book("uuid").getAllKeys()) services.add(Paper.book("uuid").read(u));
+        for(String u : Paper.book("service").getAllKeys()) services.add(Paper.book("service").read(u));
         return services;
     }
 

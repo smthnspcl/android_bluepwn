@@ -27,7 +27,7 @@ public class DeviceActivity extends AppCompatActivity {
     @BindView(R.id.tvManufacturer) TextView tvManufacturer;
     @BindView(R.id.actionRecycler) RecyclerView actionRecycler;
 
-    UUIDAdapter uuidAdapter;
+    ServiceAdapter uuidAdapter;
     BluetoothAdapter bluetoothAdapter;
     Device device;
     private Gson gson;
@@ -55,9 +55,9 @@ public class DeviceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_device);
         ButterKnife.bind(this);
         gson = new Gson();
-        uuidAdapter = new UUIDAdapter();
+        uuidAdapter = new ServiceAdapter();
         device = Paper.book("device").read(getIntent().getStringExtra("address"));
-        List<Service> services = device.getUUIDs();
+        List<Service> services = device.getServices();
         uuidAdapter.addAll(services);
         tvMac.setText(device.address);
         tvName.setText(device.name);
@@ -67,10 +67,10 @@ public class DeviceActivity extends AppCompatActivity {
         tvManufacturer.setText(device.manufacturer);
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         actionRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        uuidAdapter.setOnItemClickListener(new UUIDAdapter.OnItemClickListener() {
+        uuidAdapter.setOnItemClickListener(new ServiceAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
-                Intent i = new Intent(getApplicationContext(), UUIDActivity.class);
+                Intent i = new Intent(getApplicationContext(), ServiceActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.putExtra("uuid", uuidAdapter.get(p).uuid.toString());
                 startActivity(i);

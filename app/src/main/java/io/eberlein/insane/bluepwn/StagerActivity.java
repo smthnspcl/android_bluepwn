@@ -1,8 +1,15 @@
 package io.eberlein.insane.bluepwn;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import java.util.Date;
@@ -19,6 +26,30 @@ public class StagerActivity extends AppCompatActivity {
 
      @BindView(R.id.name) EditText name;
      @BindView(R.id.save) Button save;
+     @BindView(R.id.stage) AutoCompleteTextView stage; // todo autocomplete
+     @BindView(R.id.stages) RecyclerView stages;
+
+     private StageAdapter stageAdapter;
+
+     @OnClick(R.id.newStage)
+     public void newStageButtonClicked(){
+         Intent i = new Intent(this, StageActivity.class); // todo StageActivity
+         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+         startActivity(i);
+     }
+
+     @OnClick(R.id.add)
+     public void addButtonClicked(){
+         AlertDialog.Builder b = new AlertDialog.Builder(this);
+         LayoutInflater i = this.getLayoutInflater();
+         b.setView(i.inflate(R.layout.dialog_stage, null));
+         b.setPositiveButton("save", new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialog, int which) {
+                 stageAdapter.add(Paper.book("stage").read(stage.getText().toString()));
+             }
+         });
+     }
 
      @OnClick(R.id.save)
      public void saveButtonClicked(){
@@ -35,9 +66,12 @@ public class StagerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_stager);
         ButterKnife.bind(this);
         initFromIntent();
+        stageAdapter = new StageAdapter();
+        stages.setLayoutManager(new LinearLayoutManager(this));
+        stages.setAdapter(stageAdapter);
     }
 
-    private void initFromIntent(){
+    private void initFromIntent(){ // todo fill stages
          Bundle b = getIntent().getExtras();
          if(b != null){
              String uuid = getIntent().getExtras().getString("uuid");

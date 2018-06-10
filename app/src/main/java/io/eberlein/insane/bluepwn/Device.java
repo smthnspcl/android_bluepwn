@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.paperdb.Paper;
+
 // todo extract important information from https://en.wikipedia.org/wiki/List_of_Bluetooth_profiles
 // todo script to pull tables https://www.bluetooth.com/specifications/assigned-numbers/service-discovery
 
@@ -19,7 +21,6 @@ public class Device {
     Date lastModified;
 
     List<String> services;
-    List<String> descriptors;
     List<String> locations;
 
     public List<Location> getLocations() {
@@ -30,10 +31,22 @@ public class Device {
         return locations;
     }
 
-    public List<Service> getUUIDs(){
+    public List<Service> getServices(){
         List<Service> services = new ArrayList<>();
-        for(Service u : LocalDatabase.getAllUUIDs()) {if(this.services.contains(u.uuid)) services.add(u);}
+        for(Service u : LocalDatabase.getAllServices()) {if(this.services.contains(u.uuid)) services.add(u);}
         return services;
+    }
+
+    void save(){
+        Paper.book("device").write(address, this);
+    }
+
+    void updateServices(List<Service> services){
+        for(Service s : services) updateServices(s);
+    }
+
+    void updateServices(Service service){
+        if(!this.services.contains(service.uuid)) this.services.add(service.uuid);
     }
 
     Device(){}
@@ -47,7 +60,6 @@ public class Device {
         lastModified = new Date();
         locations = new ArrayList<>();
         services = new ArrayList<>();
-        descriptors = new ArrayList<>();
     }
 
     public Device(String address, String name, String manufacturer, String bond, String type, Date lastModified){
