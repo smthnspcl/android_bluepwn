@@ -151,13 +151,11 @@ public class ScanService extends IntentService {
     }
 
     private void doScanOnNextDevice(){
-        System.out.println("doScanOnNextDevice");
         if(prioritize.equals("gatt")){ if(toGattScanDevices.size() > 0) {System.out.println("gatt"); doGattScanOnNextDevice();} else if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice(); }
         else if(prioritize.equals("sdp")){System.out.println("sdp"); if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice(); else if(toGattScanDevices.size() > 0) doGattScanOnNextDevice(); }
     }
 
     private void doSdpScanOnNextDevice(){
-        System.out.println("doSdpScanOnNextDevice");
         if(toSdpScanDevices.size() > 0) {
             bluetoothAdapter.getRemoteDevice(toSdpScanDevices.get(0).address).fetchUuidsWithSdp();
             toSdpScanDevices.remove(0);
@@ -165,7 +163,6 @@ public class ScanService extends IntentService {
     }
 
     private void doGattScanOnNextDevice(){
-        System.out.println("doGattScanOnNextDevice");
         if(toGattScanDevices.size() > 0) {
             bluetoothAdapter.getRemoteDevice(toGattScanDevices.get(0).address).connectGatt(context, false, new BluetoothGattCallback() {
                 @Override
@@ -256,14 +253,15 @@ public class ScanService extends IntentService {
                 if(uuids != null && device != null){
                     for(Parcelable u : uuids){
                         android.os.ParcelUuid __u = (android.os.ParcelUuid) u;
-                        Service _u = Paper.book("uuid").read(__u.toString());
+                        Service _u = Service.getExistingOrNew(__u.getUuid().toString());
                         _u.save();
                         if(!device.services.contains(_u.uuid)) device.services.add(_u.uuid);
                     }
                     device.save();
+
+                    try{for(Callable<Void> c : sdpScanFinshedCallableList) c.call();}catch (Exception e){e.printStackTrace();}
+                    doScanOnNextDevice();
                 }
-                try{for(Callable<Void> c : sdpScanFinshedCallableList) c.call();}catch (Exception e){e.printStackTrace();}
-                doScanOnNextDevice();
             }
         }
     };
