@@ -25,9 +25,9 @@ public class DeviceActivity extends AppCompatActivity {
     @BindView(R.id.tvBond) TextView tvBond;
     @BindView(R.id.locationCountLabel) TextView locationCountLabel;
     @BindView(R.id.tvManufacturer) TextView tvManufacturer;
-    @BindView(R.id.actionRecycler) RecyclerView actionRecycler;
+    @BindView(R.id.recycler) RecyclerView recycler;
 
-    ServiceAdapter uuidAdapter;
+    ServiceAdapter serviceAdapter;
     BluetoothAdapter bluetoothAdapter;
     Device device;
     private Gson gson;
@@ -55,10 +55,8 @@ public class DeviceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_device);
         ButterKnife.bind(this);
         gson = new Gson();
-        uuidAdapter = new ServiceAdapter();
+        serviceAdapter = new ServiceAdapter();
         device = Paper.book("device").read(getIntent().getStringExtra("address"));
-        List<Service> services = device.getServices();
-        uuidAdapter.addAll(services);
         tvMac.setText(device.address);
         tvName.setText(device.name);
         tvType.setText(device.type);
@@ -66,13 +64,13 @@ public class DeviceActivity extends AppCompatActivity {
         locationCountLabel.setText(String.valueOf(device.getLocations().size()));
         tvManufacturer.setText(device.manufacturer);
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        actionRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        uuidAdapter.setOnItemClickListener(new ServiceAdapter.OnItemClickListener() {
+        recycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        serviceAdapter.setOnItemClickListener(new ServiceAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
                 Intent i = new Intent(getApplicationContext(), ServiceActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("uuid", uuidAdapter.get(p).uuid.toString());
+                i.putExtra("service", serviceAdapter.get(p).uuid.toString());
                 startActivity(i);
             }
         });
@@ -82,7 +80,7 @@ public class DeviceActivity extends AppCompatActivity {
             case "classic": onBluetoothClassic(); break;
             default: onBluetoothElse();
         }
-        actionRecycler.setAdapter(uuidAdapter);
+        recycler.setAdapter(serviceAdapter);
     }
 
 
@@ -108,5 +106,10 @@ public class DeviceActivity extends AppCompatActivity {
         super.onPause();
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        serviceAdapter.empty();
+        serviceAdapter.addAll(device.getServices());
+    }
 }

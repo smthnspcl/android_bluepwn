@@ -7,7 +7,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.concurrent.Callable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -15,13 +18,18 @@ import butterknife.OnClick;
 import io.paperdb.Paper;
 
 public class SyncFragment extends Fragment {
+    @BindView(R.id.sync) Button sync;
     @BindView(R.id.ouiSyncStatusLabel) TextView ouiSyncStatusLabel;
-    @BindView(R.id.actionsSyncStatusLabel) TextView actionsSyncStatusLabel;
     @BindView(R.id.devicesSyncStatusLabel) TextView devicesSyncStatusLabel;
+    @BindView(R.id.uuidsSyncStatusLabel) TextView uuidsSyncStatusLabel;
+    @BindView(R.id.locationsSyncStatusLabel) TextView locationsSyncStatusLabel;
+    @BindView(R.id.scansSyncStatusLabel) TextView scansSyncStatusLabel;
+    @BindView(R.id.stagersSyncStatusLabel) TextView stagersSyncStatusLabel;
+    @BindView(R.id.stagesSyncStatusLabel) TextView stagesSyncStatusLabel;
 
-    @OnClick(R.id.checkSyncBtn)
+    @OnClick(R.id.sync)
     public void syncBtnClicked(){
-        database.sync();
+
     }
 
     private RemoteDatabase database;

@@ -13,12 +13,14 @@ import io.paperdb.Paper;
 public class ServiceActivity extends AppCompatActivity {
     @BindView(R.id.nameEditText) EditText nameET;
     @BindView(R.id.uuidEditText) EditText uuidET;
+    @BindView(R.id.descriptionEditText) EditText descriptionET;
 
-    @OnClick(R.id.saveBtn)
+    @OnClick(R.id.save)
     public void saveBtnClicked(){
         service.name = nameET.getText().toString();
         service.uuid = uuidET.getText().toString();
-        Paper.book("service").write(service.uuid, service);
+        service.description = descriptionET.getText().toString();
+        service.save();
         finish();
     }
 
@@ -29,8 +31,9 @@ public class ServiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service);
         ButterKnife.bind(this);
-        service = Paper.book("parcelUuid").read(getIntent().getStringExtra("service"));
+        service = Paper.book("service").read(getIntent().getStringExtra("service"));
         uuidET.setText(service.uuid);
         nameET.setText(service.name);
+        descriptionET.setText(service.description);
     }
 }

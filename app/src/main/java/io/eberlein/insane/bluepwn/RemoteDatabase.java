@@ -1,6 +1,7 @@
 package io.eberlein.insane.bluepwn;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -11,12 +12,11 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.concurrent.Callable;
 
 import io.paperdb.Paper;
 
 public class RemoteDatabase {
-
-
     private static final String DEVICES_TABLE = "device";
     private static final String ACTIONS_TABLE = "action";
     private static final String LOCATIONS_TABLE = "location";
@@ -30,6 +30,14 @@ public class RemoteDatabase {
     };
 
     private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:MM:SS", Locale.getDefault());
+
+    private Callable<Void> onOuiFinished;
+    private Callable<Void> onUUIDFinished;
+    private Callable<Void> onScanFinished;
+    private Callable<Void> onStageFinished;
+    private Callable<Void> onStagerFinished;
+    private Callable<Void> onDeviceFinished;
+    private Callable<Void> onLocationFinished;
 
     private RemoteDBSettings settings;
     private String cookie;
@@ -74,7 +82,7 @@ public class RemoteDatabase {
         }
     }
 
-    void sync(){
+    boolean sync(){
         if(cookie != null && !cookie.isEmpty()){
             Toast.makeText(context, "cooking not null; syncing", Toast.LENGTH_SHORT).show();
             for(String table : TABLES) {
@@ -94,9 +102,11 @@ public class RemoteDatabase {
                             }
                         });
             }
+            return true;
         } else {
             Toast.makeText(context, "cookie null; trying to get new cookie", Toast.LENGTH_SHORT).show();
             getCookie();
         }
+        return false;
     }
 }

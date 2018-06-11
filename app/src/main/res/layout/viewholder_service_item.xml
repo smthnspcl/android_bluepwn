@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="34dp">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:id="@+id/service" />
+        android:id="@+id/service"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:text="placeholder"/>
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:id="@+id/name"/>
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:text="placeholder"/>
 
-</LinearLayout>
+</RelativeLayout>

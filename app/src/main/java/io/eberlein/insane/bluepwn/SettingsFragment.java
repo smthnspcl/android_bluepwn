@@ -16,6 +16,11 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import io.paperdb.Paper;
 
+// todo
+// layers pls
+// drop/burn individual books in own activity
+// database settings in own activity
+// ui settings in own activity
 public class SettingsFragment extends Fragment{
 
     @BindView(R.id.serverEditText) EditText server;

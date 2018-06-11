@@ -8,7 +8,11 @@ public class RemoteDBSettings {
     private Boolean ssl;
 
     RemoteDBSettings(){
-
+        this.server = "";
+        this.authentication = false;
+        this.username = "";
+        this.password = "";
+        this.ssl = false;
     }
 
     RemoteDBSettings(String server, Boolean authentication, String username, String password, Boolean ssl){

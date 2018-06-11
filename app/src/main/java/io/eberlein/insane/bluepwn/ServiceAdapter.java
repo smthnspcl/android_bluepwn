@@ -73,7 +73,9 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
     }
 
     void addAll(List<Service> services){
-        this.services.addAll(services); }
+        this.services.addAll(services);
+        notifyDataSetChanged();
+    }
 
     void add(Service service){
         for(Service u : services){

@@ -49,11 +49,8 @@ public class BluetoothFragment extends Fragment {
                 continuousScanningCheckbox.setChecked(false);
                 scanService.cancelScanning();
             } else {
-                scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
                 scanService.scan();
             }
-        } else {
-            Toast.makeText(getContext(), "scanService has not been bound", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -110,6 +107,7 @@ public class BluetoothFragment extends Fragment {
             scanService.discoveryStartedCallableList.add(new Callable<Void>() {
                 @Override
                 public Void call() {
+                    scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
                     scan = scanService.scan;
                     return null;
                 }
