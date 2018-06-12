@@ -107,7 +107,7 @@ public class BluetoothFragment extends Fragment {
             scanService.discoveryStartedCallableList.add(new Callable<Void>() {
                 @Override
                 public Void call() {
-                    scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
+                    if(scanService.isScanning()) scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
                     scan = scanService.scan;
                     return null;
                 }

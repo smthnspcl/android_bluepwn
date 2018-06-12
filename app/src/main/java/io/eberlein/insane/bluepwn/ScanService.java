@@ -101,7 +101,6 @@ public class ScanService extends IntentService {
 
     public void cancelScanning(){
         bluetoothAdapter.cancelDiscovery();
-        Toast.makeText(context, "stopped scanning", Toast.LENGTH_SHORT).show();
     }
 
     public ScanService() {
