@@ -37,7 +37,7 @@
     <EditText
         android:id="@+id/descriptionEditText"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="100dp"
         android:layout_below="@id/nameEditText"
         android:layout_alignStart="@+id/uuidEditText"
         android:layout_marginTop="8dp"
@@ -47,5 +47,25 @@
         android:layout_marginEnd="16dp"
         android:hint="description" />
 
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/recycler"
+        android:layout_below="@+id/descriptionEditText"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add_white_48dp"
+        android:id="@+id/add"
+        android:layout_alignEnd="@id/recycler"
+        android:layout_alignBottom="@id/recycler"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"/>
 
 </RelativeLayout>

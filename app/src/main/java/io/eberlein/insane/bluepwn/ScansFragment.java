@@ -37,7 +37,7 @@ public class ScansFragment extends Fragment {
         ButterKnife.bind(this, v);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         recycler.setAdapter(scans);
-        scans.addAll(LocalDatabase.getAllScans());
+        scans.addAll(Scan.get());
         scans.setOnItemClickListener(new ScanAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {

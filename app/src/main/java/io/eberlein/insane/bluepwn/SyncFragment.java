@@ -29,7 +29,7 @@ public class SyncFragment extends Fragment {
 
     @OnClick(R.id.sync)
     public void syncBtnClicked(){
-
+        database.sync();
     }
 
     private RemoteDatabase database;

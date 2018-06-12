@@ -49,7 +49,7 @@ public class LocationsActivity extends AppCompatActivity {
         locations = new LocationAdapter();
         String e = getIntent().getStringExtra("locations");
         if(e != null) populateWithSuppliedLocations(e);
-        else locations.addAll(LocalDatabase.getAllLocations());
+        else locations.addAll(Location.get());
         locationsRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         locationsRecycler.setAdapter(locations);
         locations.setOnItemClickListener(new LocationAdapter.OnItemClickListener() {

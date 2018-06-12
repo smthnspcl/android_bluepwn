@@ -12,12 +12,26 @@ public class Service {
     String description;
 
     List<String> characteristics;
+    List<String> stagers;
+
+    List<Characteristic> getCharacteristics(){
+        List<Characteristic> characteristics = new ArrayList<>();
+        for(String c : this.characteristics) characteristics.add(Paper.book("characteristic").read(c));
+        return characteristics;
+    }
+
+    List<Stager> getStagers(){
+        List<Stager> stagers = new ArrayList<>();
+        for(String s : this.stagers) stagers.add(Paper.book("stager").read(s));
+        return stagers;
+    }
 
     Service(){
         characteristics = new ArrayList<>();
         uuid = UUID.randomUUID().toString();
         name = "";
         description = "";
+        stagers = new ArrayList<>();
     }
 
     Service(String uuid){
@@ -25,6 +39,7 @@ public class Service {
         this.name = "";
         this.description = "";
         characteristics = new ArrayList<>();
+        stagers = new ArrayList<>();
     }
 
     Service(String uuid, String name){
@@ -32,6 +47,7 @@ public class Service {
         this.name = name;
         this.description = "";
         characteristics = new ArrayList<>();
+        stagers = new ArrayList<>();
     }
 
     Service(String uuid, String name, String description){
@@ -39,6 +55,7 @@ public class Service {
         this.name = name;
         this.description = description;
         characteristics = new ArrayList<>();
+        stagers = new ArrayList<>();
     }
 
     Service(String uuid, String name, String description, List<String> characteristics){
@@ -46,6 +63,15 @@ public class Service {
         this.name = name;
         this.description = description;
         this.characteristics = characteristics;
+        stagers = new ArrayList<>();
+    }
+
+    Service(String uuid, String name, String description, List<String> characteristics, List<String> stagers){
+        this.uuid = uuid;
+        this.name = name;
+        this.description = description;
+        this.characteristics = characteristics;
+        this.stagers = stagers;
     }
 
     static Service getExistingOrNew(String uuid){
@@ -56,5 +82,15 @@ public class Service {
 
     void save(){
         Paper.book("service").write(uuid, this);
+    }
+
+    static Service get(String uuid){
+        return Paper.book("service").read(uuid);
+    }
+
+    static List<Service> get(){
+        List<Service> services = new ArrayList<>();
+        for(String s : Paper.book("service").getAllKeys()) services.add(Paper.book("service").read(s));
+        return services;
     }
 }

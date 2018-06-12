@@ -17,16 +17,17 @@ import java.util.concurrent.Callable;
 import io.paperdb.Paper;
 
 public class RemoteDatabase {
-    private static final String DEVICES_TABLE = "device";
-    private static final String ACTIONS_TABLE = "action";
-    private static final String LOCATIONS_TABLE = "location";
-    private static final String PARCELUUID_TABLE = "parcelUuid";
+    private static final String DEVICE_TABLE = "device";
+    private static final String STAGE_TABLE = "stage";
+    private static final String STAGER_TABLE = "stager";
+    private static final String LOCATION_TABLE = "location";
+    private static final String UUID_TABLE = "uuid";
     private static final String SCAN_TABLE = "scan";
     private static final String OUI_TABLE = "oui";
     // private static final String BLUEBORNE_COLLECTION = "blueborne";
 
     private static final String[] TABLES = {
-            DEVICES_TABLE, ACTIONS_TABLE, OUI_TABLE, LOCATIONS_TABLE, PARCELUUID_TABLE, SCAN_TABLE
+            DEVICE_TABLE, STAGE_TABLE, OUI_TABLE, STAGER_TABLE, LOCATION_TABLE, SCAN_TABLE, UUID_TABLE
     };
 
     private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:MM:SS", Locale.getDefault());

@@ -83,11 +83,19 @@ public class StagerActivity extends AppCompatActivity {
     private void initFromIntent(){ // todo fill stages
          Bundle b = getIntent().getExtras();
          if(b != null){
-             String uuid = getIntent().getExtras().getString("uuid");
-             Stager s = Paper.book("action").read(uuid, new Stager());
+             String uuid = getIntent().getExtras().getString("uuid"); // todo
+             Stager s = Paper.book("stager").read(uuid);
              if(s != null){
+
                  name.setText(s.name);
              }
          }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        stageAdapter.empty();
+        stageAdapter.addAll(Stage.get());
     }
 }

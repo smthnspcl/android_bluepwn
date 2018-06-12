@@ -31,8 +31,22 @@ public class Location {
     }
     */
 
-    public List<Device> getDevicesWithinRadius(float radius){
-        return new ArrayList<>();
+    void save(){
+        Paper.book("location").write(id, this);
+    }
+
+    static Location get(String id){
+        return Paper.book("location").read(id);
+    }
+
+    static List<Location> get(){
+        List<Location> locations = new ArrayList<>();
+        for(String l : Paper.book("location").getAllKeys()) locations.add(Paper.book("location").read(l));
+        return locations;
+    }
+
+    static List<Location> getWithinRadius(Location location, Integer radius){
+        return new ArrayList<>(); // todo
     }
 
     public Location(){

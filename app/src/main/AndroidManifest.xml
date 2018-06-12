@@ -36,7 +36,11 @@
         <activity android:name=".ServiceActivity"/>
         <activity android:name=".LocationActivity"/>
         <activity android:name=".DatabaseSettingsActivity"/>
+        <activity android:name=".RemoteDatabaseSettingsActivity"/>
         <activity android:name=".StageActivity"/>
+        <activity android:name=".LocalDatabaseSettingsActivity"/>
+        <activity android:name=".ScanningSettingsActivity"/>
+        <activity android:name=".GeneralSettingsActivity"/>
         <service android:name=".ScanService"/>
     </application>
 

@@ -39,7 +39,7 @@ public class StagersFragment extends Fragment{
     public void submitQueryButtonClicked(){
         stagerAdapter.empty();
         //String q = selectionQuery.getText().toString();
-        /*if(q.isEmpty())*/ stagerAdapter.addAll(LocalDatabase.getAllStagers());
+        /*if(q.isEmpty())*/ stagerAdapter.addAll(Stager.get());
         /*else {
 
             Operator p = null;
@@ -105,11 +105,11 @@ public class StagersFragment extends Fragment{
     }
 
     private void init(){
-        List<Stager> stagers = LocalDatabase.getAllStagers();
+        List<Stager> stagers = Stager.get();
         initStagerRecycler(stagers);
         ArrayAdapter<Stager> actionArrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, stagers);
         selectionQuery.setAdapter(actionArrayAdapter);
-        selectionQuery.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, LocalDatabase.getAllStages()));
+        selectionQuery.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, Stage.get()));
         selectionSpinnerAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, selectionSpinnerAdapterItems);
         selectionSpinnerAdapter.notifyDataSetChanged();
         selectionSpinner.setAdapter(selectionSpinnerAdapter);

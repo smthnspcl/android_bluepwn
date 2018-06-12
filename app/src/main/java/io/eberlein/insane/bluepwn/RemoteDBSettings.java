@@ -1,5 +1,7 @@
 package io.eberlein.insane.bluepwn;
 
+import io.paperdb.Paper;
+
 public class RemoteDBSettings {
     private String server;
     private Boolean authentication;
@@ -21,6 +23,14 @@ public class RemoteDBSettings {
         this.username = username;
         this.password = password;
         this.ssl = ssl;
+    }
+
+    void save(){
+        Paper.book("settings").write("remote", this);
+    }
+
+    static RemoteDBSettings get(){
+        return Paper.book("settings").read("remote");
     }
 
     void setServer(String server){

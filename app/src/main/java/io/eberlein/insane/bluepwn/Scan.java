@@ -21,6 +21,16 @@ public class Scan {
         locations = new ArrayList<>();
     }
 
+    static Scan get(String id){
+        return Paper.book("scan").read(id);
+    }
+
+    static List<Scan> get(){
+        List<Scan> scans = new ArrayList<>();
+        for(String s : Paper.book("scan").getAllKeys()) scans.add(Paper.book("scan").read(s));
+        return scans;
+    }
+
     void save(){
         Paper.book("scan").write(id, this);
     }

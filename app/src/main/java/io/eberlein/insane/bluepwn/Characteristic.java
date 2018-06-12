@@ -46,6 +46,16 @@ public class Characteristic {
         Paper.book("characteristic").write(uuid, this);
     }
 
+    static List<Characteristic> get(){
+        List<Characteristic> characteristics = new ArrayList<>();
+        for(String c : Paper.book("characteristic").getAllKeys()) characteristics.add(Paper.book("characteristic").read(c));
+        return characteristics;
+    }
+
+    static Characteristic get(String uuid){
+        return Paper.book("characteristic").read(uuid);
+    }
+
     static Characteristic getExistingOrNew(BluetoothGattCharacteristic bgc){
         Characteristic c = Paper.book("characteristic").read(bgc.getUuid().toString());
         if(c == null) return new Characteristic(bgc);

@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import io.paperdb.Paper;
+
 public class Stager {
     List<Stage> stages;
     String id;
@@ -14,6 +16,9 @@ public class Stager {
 
     Stager(){
         id = UUID.randomUUID().toString();
+        name = "";
+        type = "";
+        lastModified = new Date();
         stages = new ArrayList<>();
     }
 
@@ -23,5 +28,19 @@ public class Stager {
         this.type = type;
         this.lastModified = lastModified;
         this.stages = stages;
+    }
+
+    void save(){
+        Paper.book("stager").write(id, this);
+    }
+
+    static Stager get(String id){
+        return Paper.book("stager").read(id);
+    }
+
+    static List<Stager> get(){
+        List<Stager> stagers = new ArrayList<>();
+        for(String s : Paper.book("stager").getAllKeys()) stagers.add(Paper.book("stager").read(s));
+        return stagers;
     }
 }

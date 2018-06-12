@@ -42,7 +42,7 @@ public class DevicesFragment extends Fragment {
     }
 
     private void initDeviceRecycler(){
-        List<Device> _devices = LocalDatabase.getAllDevices();
+        List<Device> _devices = Device.get();
         devices.addAll(_devices);
         devices.setOnItemClickListener(new DeviceAdapter.OnItemClickListener() {
             @Override

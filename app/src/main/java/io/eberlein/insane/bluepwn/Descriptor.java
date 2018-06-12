@@ -2,6 +2,9 @@ package io.eberlein.insane.bluepwn;
 
 import android.bluetooth.BluetoothGattDescriptor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.paperdb.Paper;
 
 public class Descriptor {
@@ -11,6 +14,16 @@ public class Descriptor {
     byte[] value;
 
     Descriptor(){}
+
+    static List<Descriptor> get(){
+        List<Descriptor> descs = new ArrayList<>();
+        for(String d : Paper.book("descriptor").getAllKeys()) descs.add(Paper.book("descriptor").read(d));
+        return descs;
+    }
+
+    static Descriptor get(String uuid){
+        return Paper.book("descriptor").read(uuid);
+    }
 
     Descriptor(BluetoothGattDescriptor d){
         this.uuid = d.getUuid().toString();

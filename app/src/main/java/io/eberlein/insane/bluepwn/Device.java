@@ -25,7 +25,7 @@ public class Device {
 
     public List<Location> getLocations() {
         List<Location> locations = new ArrayList<>();
-        for(Scan s : LocalDatabase.getAllScans()) {
+        for(Scan s : Scan.get()) {
             if (s.devices.contains(address)) locations.addAll(s.getLocations());
         }
         return locations;
@@ -33,12 +33,22 @@ public class Device {
 
     public List<Service> getServices(){
         List<Service> services = new ArrayList<>();
-        for(Service u : LocalDatabase.getAllServices()) {if(this.services.contains(u.uuid)) services.add(u);}
+        for(Service u : Service.get()) {if(this.services.contains(u.uuid)) services.add(u);}
         return services;
     }
 
     void save(){
         Paper.book("device").write(address, this);
+    }
+
+    static List<Device> get(){
+        List<Device> devices = new ArrayList<>();
+        for(String a : Paper.book("device").getAllKeys()) devices.add(Paper.book("device").read(a));
+        return devices;
+    }
+
+    static Device get(String address){
+        return Paper.book("device").read(address);
     }
 
     void updateServices(List<Service> services){

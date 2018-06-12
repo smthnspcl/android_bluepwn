@@ -25,7 +25,7 @@ public class ServicesFragment extends Fragment {
 
     private ServiceAdapter serviceAdapter;
     private static final String[] selectionSpinnerItems = {
-            "id", "name", "description", "protocol"
+            "id", "name", "description", "protocol" // todo
     };
 
     @Override
@@ -40,7 +40,7 @@ public class ServicesFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_objectlist_search, container, false);
         ButterKnife.bind(this, v);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        serviceAdapter.addAll(LocalDatabase.getAllServices());
+        serviceAdapter.addAll(Service.get());
         recycler.setAdapter(serviceAdapter);
         serviceAdapter.setOnItemClickListener(new ServiceAdapter.OnItemClickListener() {
             @Override
@@ -49,7 +49,7 @@ public class ServicesFragment extends Fragment {
                 // switch between actions using this uuid and devices having that uuid
                 // display list in recycler
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("uuid", serviceAdapter.get(p).uuid);
+                i.putExtra("service", serviceAdapter.get(p).uuid);
                 startActivity(i);
             }
         });
