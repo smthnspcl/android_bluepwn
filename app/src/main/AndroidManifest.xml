@@ -41,6 +41,7 @@
         <activity android:name=".LocalDatabaseSettingsActivity"/>
         <activity android:name=".ScanningSettingsActivity"/>
         <activity android:name=".GeneralSettingsActivity"/>
+        <activity android:name=".UISettingsActivity"/>
         <service android:name=".ScanService"/>
     </application>
 

@@ -51,7 +51,7 @@ public class StagerActivity extends AppCompatActivity {
          b.setNeutralButton("new", new DialogInterface.OnClickListener() {
              @Override
              public void onClick(DialogInterface dialog, int which) {
-                 Intent i = new Intent(getApplicationContext(), StageActivity.class); // todo StageActivity
+                 Intent i = new Intent(getApplicationContext(), StageActivity.class);
                  i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                  startActivity(i);
              }

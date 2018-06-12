@@ -29,7 +29,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
     class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.service) TextView uuid;
         @BindView(R.id.name) TextView name;
-        // todo amount of actions
+        @BindView(R.id.stagers) TextView stagers;
 
         Context context;
 
@@ -65,6 +65,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
         Service service = services.get(position);
         holder.name.setText(service.name);
         holder.uuid.setText(service.uuid);
+        holder.stagers.setText(String.valueOf(service.getStagers().size()));
     }
 
     @Override

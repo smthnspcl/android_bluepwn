@@ -2,7 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="34dp">
+    android:layout_height="64dp">
 
     <TextView
         android:id="@+id/service"
@@ -23,5 +23,24 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:text="placeholder"/>
+
+    <TextView
+        android:id="@+id/stagers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/name"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:text="#" />
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="103dp"
+        android:layout_alignBaseline="@id/stagers"
+        android:text="stagers:" />
 
 </RelativeLayout>

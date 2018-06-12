@@ -21,7 +21,8 @@ public class SettingsFragment extends Fragment {
             new SettingsItem("general", GeneralSettingsActivity.class),
             new SettingsItem("scanning", ScanningSettingsActivity.class),
             new SettingsItem("remote db", RemoteDatabaseSettingsActivity.class),
-            new SettingsItem("local db", LocalDatabaseSettingsActivity.class)
+            new SettingsItem("local db", LocalDatabaseSettingsActivity.class),
+            new SettingsItem("ui", UISettingsActivity.class)
     };
 
     @BindView(R.id.recycler) RecyclerView recycler;
