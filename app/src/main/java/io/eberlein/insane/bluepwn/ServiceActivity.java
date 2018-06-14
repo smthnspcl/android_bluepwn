@@ -15,16 +15,16 @@ import butterknife.OnClick;
 import io.paperdb.Paper;
 
 public class ServiceActivity extends AppCompatActivity {
-    @BindView(R.id.nameEditText) EditText nameET;
-    @BindView(R.id.uuidEditText) EditText uuidET;
-    @BindView(R.id.descriptionEditText) EditText descriptionET;
+    @BindView(R.id.name) EditText name;
+    @BindView(R.id.uuid) EditText uuid;
+    @BindView(R.id.description) EditText description;
     @BindView(R.id.recycler) RecyclerView recycler;
 
     @OnClick(R.id.save)
     public void saveBtnClicked(){
-        service.name = nameET.getText().toString();
-        service.uuid = uuidET.getText().toString();
-        service.description = descriptionET.getText().toString();
+        service.name = name.getText().toString();
+        service.uuid = uuid.getText().toString();
+        service.description = description.getText().toString();
         service.save();
         finish();
     }
@@ -33,7 +33,7 @@ public class ServiceActivity extends AppCompatActivity {
     public void addBtnClicked(){
         Intent i = new Intent(this, StagerActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.putExtra("service", service.uuid);
+        i.putExtra("uuid", service.uuid);
         startActivity(i);
     }
 
@@ -46,9 +46,9 @@ public class ServiceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_service);
         ButterKnife.bind(this);
         service = Paper.book("service").read(getIntent().getStringExtra("service"));
-        uuidET.setText(service.uuid);
-        nameET.setText(service.name);
-        descriptionET.setText(service.description);
+        uuid.setText(service.uuid);
+        name.setText(service.name);
+        description.setText(service.description);
         recycler.setLayoutManager(new LinearLayoutManager(this));
         stagerAdapter = new StagerAdapter();
         recycler.setAdapter(stagerAdapter);
@@ -57,7 +57,7 @@ public class ServiceActivity extends AppCompatActivity {
             public void onItemClick(View v, int p) {
                 Intent i = new Intent(getApplicationContext(), StagerActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("id", stagerAdapter.get(p).id);
+                i.putExtra("id", stagerAdapter.get(p).uuid);
                 startActivity(i);
             }
         });

@@ -27,16 +27,16 @@ public class StagersFragment extends Fragment{
            "id", "name", "hex", "data", "macPrefix"
     };
 
-    @BindView(R.id.selectionSpinner) Spinner selectionSpinner;
-    @BindView(R.id.selectionQuery) AutoCompleteTextView selectionQuery;
-    @BindView(R.id.actionsRecycler) RecyclerView actionRecycler;
-    @BindView(R.id.addBtn) FloatingActionButton addButton;
+    @BindView(R.id.spinner) Spinner selectionSpinner;
+    @BindView(R.id.query) AutoCompleteTextView selectionQuery;
+    @BindView(R.id.recycler) RecyclerView recycler;
+    @BindView(R.id.addRecyclerItem) FloatingActionButton addRecyclerItem;
 
     private StagerAdapter stagerAdapter;
     private ArrayAdapter<String> selectionSpinnerAdapter;
 
-    @OnClick(R.id.submitQueryButton)
-    public void submitQueryButtonClicked(){
+    @OnClick(R.id.search)
+    public void searchBtnClicked(){
         stagerAdapter.empty();
         //String q = selectionQuery.getText().toString();
         /*if(q.isEmpty())*/ stagerAdapter.addAll(Stager.get());
@@ -62,7 +62,7 @@ public class StagersFragment extends Fragment{
         }*/
     }
 
-    @OnClick(R.id.addBtn)
+    @OnClick(R.id.addRecyclerItem)
     public void addStagerButtonClicked(){
         Intent i = new Intent(getContext(), StagerActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -78,7 +78,7 @@ public class StagersFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v =  inflater.inflate(R.layout.fragment_stagers, container, false);
+        View v =  inflater.inflate(R.layout.objectlist_search, container, false);
         ButterKnife.bind(this, v);
         return v;
     }
@@ -91,14 +91,14 @@ public class StagersFragment extends Fragment{
 
     private void initStagerRecycler(List<Stager> stagers){
         stagerAdapter.addAll(stagers);
-        actionRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        actionRecycler.setAdapter(stagerAdapter);
+        recycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        recycler.setAdapter(stagerAdapter);
         stagerAdapter.setOnItemClickListener(new StagerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
                 Intent i = new Intent(getContext(), StagerActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("id", stagers.get(p).id);
+                i.putExtra("id", stagers.get(p).uuid);
                 startActivity(i);
             }
         });

@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,12 +24,13 @@ import io.paperdb.Paper;
 // todo fix duplicating items
 
 public class StagerActivity extends AppCompatActivity {
-
+     @BindView(R.id.service) EditText service;
      @BindView(R.id.name) EditText name;
      @BindView(R.id.save) Button save;
-     @BindView(R.id.stages) RecyclerView stages;
+     @BindView(R.id.recycler) RecyclerView recycler;
 
      private StageAdapter stageAdapter;
+     private Stager stager;
 
      @OnClick(R.id.add)
      public void addButtonClicked(){
@@ -63,9 +65,10 @@ public class StagerActivity extends AppCompatActivity {
      @OnClick(R.id.save)
      public void saveButtonClicked(){
         Stager s = new Stager();
+        s.uuid = service.getText().toString();
         s.name = name.getText().toString();
         s.lastModified = new Date();
-        Paper.book("action").write(s.id, s);
+        s.save();
         finish();
      }
 
@@ -74,27 +77,26 @@ public class StagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stager);
         ButterKnife.bind(this);
-        initFromIntent();
+        stager = Stager.get(getIntent().getStringExtra("uuid"));
         stageAdapter = new StageAdapter();
-        stages.setLayoutManager(new LinearLayoutManager(this));
-        stages.setAdapter(stageAdapter);
-    }
-
-    private void initFromIntent(){ // todo fill stages
-         Bundle b = getIntent().getExtras();
-         if(b != null){
-             String uuid = getIntent().getExtras().getString("uuid"); // todo
-             Stager s = Paper.book("stager").read(uuid);
-             if(s != null){
-
-                 name.setText(s.name);
-             }
-         }
+        recycler.setLayoutManager(new LinearLayoutManager(this));
+        recycler.setAdapter(stageAdapter);
+        stageAdapter.setOnItemClickListener(new StageAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int p) {
+                Intent i = new Intent(getApplicationContext(), StageActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.putExtra("id", stageAdapter.get(p).id);
+                startActivity(i);
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        name.setText(stager.name);
+        service.setText(stager.uuid);
         stageAdapter.empty();
         stageAdapter.addAll(Stage.get());
     }

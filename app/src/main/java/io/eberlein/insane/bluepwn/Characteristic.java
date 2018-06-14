@@ -7,6 +7,8 @@ import java.util.List;
 
 import io.paperdb.Paper;
 
+import static io.eberlein.insane.bluepwn.Static.TABLE_CHARACTERISTIC;
+
 public class Characteristic {
 
     Integer permssions;
@@ -43,21 +45,21 @@ public class Characteristic {
     }
 
     void save(){
-        Paper.book("characteristic").write(uuid, this);
+        Paper.book(TABLE_CHARACTERISTIC).write(uuid, this);
     }
 
     static List<Characteristic> get(){
         List<Characteristic> characteristics = new ArrayList<>();
-        for(String c : Paper.book("characteristic").getAllKeys()) characteristics.add(Paper.book("characteristic").read(c));
+        for(String c : Paper.book(TABLE_CHARACTERISTIC).getAllKeys()) characteristics.add(Paper.book(TABLE_CHARACTERISTIC).read(c));
         return characteristics;
     }
 
     static Characteristic get(String uuid){
-        return Paper.book("characteristic").read(uuid);
+        return Paper.book(TABLE_CHARACTERISTIC).read(uuid);
     }
 
     static Characteristic getExistingOrNew(BluetoothGattCharacteristic bgc){
-        Characteristic c = Paper.book("characteristic").read(bgc.getUuid().toString());
+        Characteristic c = Paper.book(TABLE_CHARACTERISTIC).read(bgc.getUuid().toString());
         if(c == null) return new Characteristic(bgc);
         else return c;
     }

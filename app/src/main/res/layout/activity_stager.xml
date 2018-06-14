@@ -9,45 +9,30 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="11dp"
+        android:layout_marginBottom="16dp"
         android:text="save" />
-
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="11dp"
-        android:layout_marginTop="12dp"
-        android:id="@+id/space4" />
-
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/space4"
-        android:layout_marginEnd="11dp"
-        android:id="@+id/space7" />
 
     <EditText
         android:id="@+id/name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/space7"
-        android:layout_alignStart="@+id/space4"
-        android:layout_alignTop="@+id/space4"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:ems="10"
         android:hint="name"
-        android:inputType="textPersonName" />
+        android:inputType="text" />
 
     <AutoCompleteTextView
         android:id="@+id/service"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/name"
+        android:layout_alignStart="@+id/name"
         android:layout_below="@+id/name"
-        android:layout_marginTop="11dp"
-        android:layout_toEndOf="@+id/space4"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
         android:hint="service" />
 
     <android.support.v7.widget.RecyclerView
@@ -55,15 +40,17 @@
         android:layout_height="315dp"
         android:layout_below="@id/service"
         android:layout_marginTop="8dp"
-        android:id="@+id/stages">
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:id="@+id/recycler">
 
     </android.support.v7.widget.RecyclerView>
 
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/stages"
-        android:layout_alignBottom="@+id/stages"
+        android:layout_alignEnd="@id/recycler"
+        android:layout_alignBottom="@+id/recycler"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:id="@+id/add"

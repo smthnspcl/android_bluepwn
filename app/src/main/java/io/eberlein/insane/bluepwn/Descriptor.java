@@ -7,6 +7,8 @@ import java.util.List;
 
 import io.paperdb.Paper;
 
+import static io.eberlein.insane.bluepwn.Static.TABLE_DESCRIPTOR;
+
 public class Descriptor {
     String uuid;
     String name;
@@ -17,12 +19,12 @@ public class Descriptor {
 
     static List<Descriptor> get(){
         List<Descriptor> descs = new ArrayList<>();
-        for(String d : Paper.book("descriptor").getAllKeys()) descs.add(Paper.book("descriptor").read(d));
+        for(String d : Paper.book(TABLE_DESCRIPTOR).getAllKeys()) descs.add(Paper.book(TABLE_DESCRIPTOR).read(d));
         return descs;
     }
 
     static Descriptor get(String uuid){
-        return Paper.book("descriptor").read(uuid);
+        return Paper.book(TABLE_DESCRIPTOR).read(uuid);
     }
 
     Descriptor(BluetoothGattDescriptor d){
@@ -40,7 +42,7 @@ public class Descriptor {
     }
 
     void save(){
-        Paper.book("descriptor").write(uuid, this);
+        Paper.book(TABLE_DESCRIPTOR).write(uuid, this);
     }
 
     static String getPermissionsString(int permissions){
@@ -48,7 +50,7 @@ public class Descriptor {
     }
 
     static Descriptor getExistingOrNew(BluetoothGattDescriptor descriptor){
-        Descriptor d = Paper.book("descriptor").read(descriptor.getUuid().toString());
+        Descriptor d = Paper.book(TABLE_DESCRIPTOR).read(descriptor.getUuid().toString());
         if(d == null) return new Descriptor(descriptor);
         else return d;
     }

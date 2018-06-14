@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import io.paperdb.Paper;
 
+import static io.eberlein.insane.bluepwn.Static.TABLE_LOCATION;
+
 public class Location {
     String id;
     float accuracy;
@@ -32,16 +34,16 @@ public class Location {
     */
 
     void save(){
-        Paper.book("location").write(id, this);
+        Paper.book(TABLE_LOCATION).write(id, this);
     }
 
     static Location get(String id){
-        return Paper.book("location").read(id);
+        return Paper.book(TABLE_LOCATION).read(id);
     }
 
     static List<Location> get(){
         List<Location> locations = new ArrayList<>();
-        for(String l : Paper.book("location").getAllKeys()) locations.add(Paper.book("location").read(l));
+        for(String l : Paper.book(TABLE_LOCATION).getAllKeys()) locations.add(Paper.book(TABLE_LOCATION).read(l));
         return locations;
     }
 

@@ -5,6 +5,8 @@ import java.util.List;
 
 import io.paperdb.Paper;
 
+import static io.eberlein.insane.bluepwn.Static.TABLE_OUI;
+
 public class OuiEntry {
     String registry;
     String assignment;
@@ -21,16 +23,16 @@ public class OuiEntry {
     }
 
     void save(){
-        Paper.book("oui").write(assignment, this);
+        Paper.book(TABLE_OUI).write(assignment, this);
     }
 
     static OuiEntry get(String assignment){
-        return Paper.book("oui").read(assignment);
+        return Paper.book(TABLE_OUI).read(assignment);
     }
 
     static List<OuiEntry> get(){
         List<OuiEntry> ouiEntries = new ArrayList<>();
-        for(String o : Paper.book("oui").getAllKeys()) ouiEntries.add(Paper.book("oui").read(o));
+        for(String o : Paper.book(TABLE_OUI).getAllKeys()) ouiEntries.add(Paper.book(TABLE_OUI).read(o));
         return ouiEntries;
     }
 }

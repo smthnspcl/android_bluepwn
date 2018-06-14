@@ -73,7 +73,7 @@ public class StagerAdapter extends RecyclerView.Adapter<StagerAdapter.ViewHolder
 
     void add(Stager stager){
         for(Stager s : stagers){
-            if(s.id.equals(stager.id)){
+            if(s.uuid.equals(stager.uuid)){
                 stagers.set(stagers.indexOf(s), stager);
                 notifyItemChanged(stagers.indexOf(stager));
                 return;

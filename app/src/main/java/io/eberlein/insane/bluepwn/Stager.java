@@ -9,21 +9,21 @@ import io.paperdb.Paper;
 
 public class Stager {
     List<Stage> stages;
-    String id;
+    String uuid;
     String name;
     String type;
     Date lastModified;
 
     Stager(){
-        id = UUID.randomUUID().toString();
+        uuid = UUID.randomUUID().toString();
         name = "";
         type = "";
         lastModified = new Date();
         stages = new ArrayList<>();
     }
 
-    Stager(String id, String name, String type, Date lastModified, List<Stage> stages){
-        this.id = id;
+    Stager(String uuid, String name, String type, Date lastModified, List<Stage> stages){
+        this.uuid = uuid;
         this.name = name;
         this.type = type;
         this.lastModified = lastModified;
@@ -31,11 +31,12 @@ public class Stager {
     }
 
     void save(){
-        Paper.book("stager").write(id, this);
+        Paper.book("stager").write(uuid, this);
     }
 
-    static Stager get(String id){
-        return Paper.book("stager").read(id);
+    static Stager get(String uuid){
+        if(uuid != null) return Paper.book("stager").read(uuid);
+        return new Stager();
     }
 
     static List<Stager> get(){

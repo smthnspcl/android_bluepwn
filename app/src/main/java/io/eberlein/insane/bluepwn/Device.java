@@ -8,6 +8,8 @@ import java.util.List;
 
 import io.paperdb.Paper;
 
+import static io.eberlein.insane.bluepwn.Static.TABLE_DEVICE;
+
 // todo extract important information from https://en.wikipedia.org/wiki/List_of_Bluetooth_profiles
 // todo script to pull tables https://www.bluetooth.com/specifications/assigned-numbers/service-discovery
 
@@ -38,17 +40,17 @@ public class Device {
     }
 
     void save(){
-        Paper.book("device").write(address, this);
+        Paper.book(TABLE_DEVICE).write(address, this);
     }
 
     static List<Device> get(){
         List<Device> devices = new ArrayList<>();
-        for(String a : Paper.book("device").getAllKeys()) devices.add(Paper.book("device").read(a));
+        for(String a : Paper.book(TABLE_DEVICE).getAllKeys()) devices.add(Paper.book(TABLE_DEVICE).read(a));
         return devices;
     }
 
     static Device get(String address){
-        return Paper.book("device").read(address);
+        return Paper.book(TABLE_DEVICE).read(address);
     }
 
     void updateServices(List<Service> services){

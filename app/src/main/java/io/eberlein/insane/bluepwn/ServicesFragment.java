@@ -37,7 +37,7 @@ public class ServicesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_objectlist_search, container, false);
+        View v = inflater.inflate(R.layout.objectlist_search, container, false);
         ButterKnife.bind(this, v);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         serviceAdapter.addAll(Service.get());

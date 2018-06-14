@@ -6,6 +6,10 @@ import java.util.UUID;
 
 import io.paperdb.Paper;
 
+import static io.eberlein.insane.bluepwn.Static.TABLE_CHARACTERISTIC;
+import static io.eberlein.insane.bluepwn.Static.TABLE_SERVICE;
+import static io.eberlein.insane.bluepwn.Static.TABLE_STAGER;
+
 public class Service {
     String uuid;
     String name;
@@ -16,13 +20,13 @@ public class Service {
 
     List<Characteristic> getCharacteristics(){
         List<Characteristic> characteristics = new ArrayList<>();
-        for(String c : this.characteristics) characteristics.add(Paper.book("characteristic").read(c));
+        for(String c : this.characteristics) characteristics.add(Paper.book(TABLE_CHARACTERISTIC).read(c));
         return characteristics;
     }
 
     List<Stager> getStagers(){
         List<Stager> stagers = new ArrayList<>();
-        for(String s : this.stagers) stagers.add(Paper.book("stager").read(s));
+        for(String s : this.stagers) stagers.add(Paper.book(TABLE_STAGER).read(s));
         return stagers;
     }
 
@@ -75,22 +79,22 @@ public class Service {
     }
 
     static Service getExistingOrNew(String uuid){
-        Service s = Paper.book("service").read(uuid);
+        Service s = Paper.book(TABLE_SERVICE).read(uuid);
         if(s == null) return new Service(uuid);
         else return s;
     }
 
     void save(){
-        Paper.book("service").write(uuid, this);
+        Paper.book(TABLE_SERVICE).write(uuid, this);
     }
 
     static Service get(String uuid){
-        return Paper.book("service").read(uuid);
+        return Paper.book(TABLE_SERVICE).read(uuid);
     }
 
     static List<Service> get(){
         List<Service> services = new ArrayList<>();
-        for(String s : Paper.book("service").getAllKeys()) services.add(Paper.book("service").read(s));
+        for(String s : Paper.book(TABLE_SERVICE).getAllKeys()) services.add(Paper.book(TABLE_SERVICE).read(s));
         return services;
     }
 }
