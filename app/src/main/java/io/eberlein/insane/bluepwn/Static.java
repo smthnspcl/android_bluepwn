@@ -17,7 +17,19 @@ public class Static {
     static final Integer EVENT_SDP_SCAN_FINISHED = 3;
     static final Integer EVENT_GATT_SCAN_FINISHED = 4;
     static final Integer EVENT_TO_SCAN_DEVICES_EMPTY = 5;
+    static final Integer EVENT_START_SCANNING = 6;
+    static final Integer EVENT_STOP_SCANNING = 7;
 
-    public static final int BLUETOOTH_RESULT = 0;
-    public static final int LOCATION_RESULT = 1;
+    static final int BLUETOOTH_RESULT = 0;
+    static final int LOCATION_RESULT = 1;
+
+    static final String TYPE_DUAL = "dual";
+    static final String TYPE_LE = "le";
+    static final String TYPE_CLASSIC = "classic";
+    static final String TYPE_UNKNOWN = "unknown";
+
+    static final String BOND_BONDED = "bonded";
+    static final String BOND_BONDING = "bonding";
+    static final String BOND_UNKNOWN = "unknown";
+    static final String BOND_NONE = "none";
 }

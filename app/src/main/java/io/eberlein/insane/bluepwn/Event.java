@@ -5,6 +5,8 @@ import static io.eberlein.insane.bluepwn.Static.EVENT_DISCOVERY_FINISHED;
 import static io.eberlein.insane.bluepwn.Static.EVENT_DISCOVERY_STARTED;
 import static io.eberlein.insane.bluepwn.Static.EVENT_GATT_SCAN_FINISHED;
 import static io.eberlein.insane.bluepwn.Static.EVENT_SDP_SCAN_FINISHED;
+import static io.eberlein.insane.bluepwn.Static.EVENT_START_SCANNING;
+import static io.eberlein.insane.bluepwn.Static.EVENT_STOP_SCANNING;
 import static io.eberlein.insane.bluepwn.Static.EVENT_TO_SCAN_DEVICES_EMPTY;
 
 public class Event {
@@ -18,12 +20,6 @@ public class Event {
 class EventDiscoveryStarted extends Event {
     public EventDiscoveryStarted(){
         super(EVENT_DISCOVERY_STARTED);
-    }
-}
-
-class EventDiscoveryFinished extends Event {
-    public EventDiscoveryFinished(){
-        super(EVENT_DISCOVERY_FINISHED);
     }
 }
 
@@ -52,5 +48,34 @@ class EventGATTScanFinished extends Event {
 class EventToScanDevicesEmpty extends Event {
     public EventToScanDevicesEmpty(){
         super(EVENT_TO_SCAN_DEVICES_EMPTY);
+    }
+}
+
+class EventSetContinuousScanning {
+    public final Boolean value;
+
+    public EventSetContinuousScanning(Boolean value){
+        this.value = value;
+    }
+}
+
+class EventSetPrioritize {
+    public final String value;
+
+    public EventSetPrioritize(String value){
+        this.value = value;
+    }
+}
+
+class EventStopScanning extends Event {
+
+    public EventStopScanning(){
+        super(EVENT_STOP_SCANNING);
+    }
+}
+
+class EventStartScanning extends Event {
+    public EventStartScanning(){
+        super(EVENT_START_SCANNING);
     }
 }

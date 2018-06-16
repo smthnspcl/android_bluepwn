@@ -10,6 +10,8 @@ import io.paperdb.Paper;
 import static io.eberlein.insane.bluepwn.Static.TABLE_DEVICE;
 import static io.eberlein.insane.bluepwn.Static.TABLE_LOCATION;
 import static io.eberlein.insane.bluepwn.Static.TABLE_SCAN;
+import static io.eberlein.insane.bluepwn.Static.TYPE_CLASSIC;
+import static io.eberlein.insane.bluepwn.Static.TYPE_LE;
 
 public class Scan {
     String id;
@@ -33,6 +35,24 @@ public class Scan {
         List<Scan> scans = new ArrayList<>();
         for(String s : Paper.book(TABLE_SCAN).getAllKeys()) scans.add(Paper.book(TABLE_SCAN).read(s));
         return scans;
+    }
+
+    List<Device> getGATTDevices(){
+        List<Device> devices = new ArrayList<>();
+        for(String d : this.devices) {
+            Device _d = Device.get(d);
+            if(_d.type.equals(TYPE_LE)) devices.add(_d);
+        }
+        return devices;
+    }
+
+    List<Device> getClassicDevices(){
+        List<Device> devices = new ArrayList<>();
+        for(String d : this.devices) {
+            Device _d = Device.get(d);
+            if(_d.type.equals(TYPE_CLASSIC)) devices.add(_d);
+        }
+        return devices;
     }
 
     void save(){

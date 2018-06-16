@@ -8,7 +8,15 @@ import java.util.List;
 
 import io.paperdb.Paper;
 
+import static io.eberlein.insane.bluepwn.Static.BOND_BONDED;
+import static io.eberlein.insane.bluepwn.Static.BOND_BONDING;
+import static io.eberlein.insane.bluepwn.Static.BOND_NONE;
+import static io.eberlein.insane.bluepwn.Static.BOND_UNKNOWN;
 import static io.eberlein.insane.bluepwn.Static.TABLE_DEVICE;
+import static io.eberlein.insane.bluepwn.Static.TYPE_CLASSIC;
+import static io.eberlein.insane.bluepwn.Static.TYPE_DUAL;
+import static io.eberlein.insane.bluepwn.Static.TYPE_LE;
+import static io.eberlein.insane.bluepwn.Static.TYPE_UNKNOWN;
 
 // todo extract important information from https://en.wikipedia.org/wiki/List_of_Bluetooth_profiles
 // todo script to pull tables https://www.bluetooth.com/specifications/assigned-numbers/service-discovery
@@ -55,6 +63,10 @@ public class Device {
         return new Device();
     }
 
+    void populateIfEmpty(BluetoothDevice device){
+        if(address.isEmpty()) setValues(device);
+    }
+
     void updateServices(List<Service> services){
         for(Service s : services) updateServices(s);
     }
@@ -63,7 +75,16 @@ public class Device {
         if(!this.services.contains(service.uuid)) this.services.add(service.uuid);
     }
 
-    Device(){}
+    Device(){
+        address = "";
+        name = "";
+        manufacturer = "";
+        bond = "";
+        type = "";
+        lastModified = new Date();
+        services = new ArrayList<>();
+        locations = new ArrayList<>();
+    }
 
     public Device(BluetoothDevice device){
         setValues(device);
@@ -92,28 +113,28 @@ public class Device {
     private String getTypeAsString(int _type){
         switch (_type){
             case BluetoothDevice.DEVICE_TYPE_UNKNOWN:
-                return "unknown";
+                return TYPE_UNKNOWN;
             case BluetoothDevice.DEVICE_TYPE_CLASSIC:
-                return "classic";
+                return TYPE_CLASSIC;
             case BluetoothDevice.DEVICE_TYPE_LE:
-                return "le";
+                return TYPE_LE;
             case BluetoothDevice.DEVICE_TYPE_DUAL:
-                return "dual";
+                return TYPE_DUAL;
             default:
-                return "none";
+                return TYPE_UNKNOWN;
         }
     }
 
     private String getBondStateAsString(int _state){
         switch (_state){
             case BluetoothDevice.BOND_NONE:
-                return "none";
+                return BOND_NONE;
             case BluetoothDevice.BOND_BONDING:
-                return "bonding";
+                return BOND_BONDING;
             case BluetoothDevice.BOND_BONDED:
-                return "bonded";
+                return BOND_BONDED;
             default:
-                return "unknown";
+                return BOND_UNKNOWN;
         }
     }
 }
