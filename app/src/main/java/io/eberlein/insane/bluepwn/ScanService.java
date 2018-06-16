@@ -17,37 +17,38 @@ import android.location.LocationManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.Parcelable;
+import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
-
+import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
-
-import io.paperdb.Paper;
+import top.wuhaojie.bthelper.BtHelperClient;
+import top.wuhaojie.bthelper.OnSearchDeviceListener;
 
 // todo fix stop scanning when locked
 
 public class ScanService extends IntentService {
     private final IBinder binder = new ScanBinder();
 
-    private BluetoothAdapter bluetoothAdapter;
     private LocationManager locationManager;
     private GPSLocationListener locationListener;
+
     Scan scan;
+
     private Boolean continuousScanning = false;
+
     private Context context;
+    private ResultReceiver receiver;
 
     private String prioritize = "gatt";
     private List<Device> toSdpScanDevices;
     private List<Device> toGattScanDevices;
 
-    List<Callable<Void>> deviceDiscoveredCallableList;
-    List<Callable<Void>> discoveryFinishedCallableList;
-    List<Callable<Void>> discoveryStartedCallableList;
-    List<Callable<Void>> sdpScanFinshedCallableList;
-    List<Callable<Void>> gattScanFinishedCallableList;
+    private BtHelperClient bt;
+    private BluetoothAdapter btAdapter;
+
 
     public class ScanBinder extends Binder {
         ScanService getService() {
@@ -83,33 +84,57 @@ public class ScanService extends IntentService {
         context = getApplicationContext();
         initGPS();
         registerReceivers();
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(!bluetoothAdapter.isEnabled()) bluetoothAdapter.enable();
+        bt = BtHelperClient.from(context);
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(!btAdapter.isEnabled()) btAdapter.enable();
     }
 
     public Boolean isScanning(){
-        return bluetoothAdapter.isDiscovering();
+        return btAdapter.isDiscovering();
     }
 
     public void scan(){
-        if(bluetoothAdapter.isEnabled()){
-            if(!bluetoothAdapter.isDiscovering()) {bluetoothAdapter.startDiscovery(); Toast.makeText(context, "scanning", Toast.LENGTH_SHORT).show();}
+        if(btAdapter.isEnabled()){
+            if(!btAdapter.isDiscovering()) {
+                bt.searchDevices(new OnSearchDeviceListener() {
+                    @Override
+                    public void onStartDiscovery() {
+                        EventBus.getDefault().post(new EventDiscoveryStarted());
+                    }
+
+                    @Override
+                    public void onNewDeviceFounded(BluetoothDevice bluetoothDevice) {
+                        Device device = Device.get(bluetoothDevice.getAddress());
+                        if(device.address.equals("")) device.setValues(bluetoothDevice);
+                        if(locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) device.locations.add(locationListener.currentLocation.id);
+                        device.save();
+                        if(!scan.devices.contains(device.address)) scan.devices.add(device.address);
+                        scan.save();
+                        EventBus.getDefault().post(new EventDeviceDiscovered(device));
+                    }
+
+                    @Override
+                    public void onSearchCompleted(List<BluetoothDevice> list, List<BluetoothDevice> list1) {
+                        EventBus.getDefault().post(new EventDiscoveryFinished());
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        EventBus.getDefault().post(new EventDiscoveryFinished());
+                    }
+                });
+            }
         } else {
-            bluetoothAdapter.enable();
+            btAdapter.enable();
         }
     }
 
     public void cancelScanning(){
-        bluetoothAdapter.cancelDiscovery();
+        btAdapter.cancelDiscovery();
     }
 
     public ScanService() {
         super("ScanService");
-        deviceDiscoveredCallableList = new ArrayList<>();
-        discoveryFinishedCallableList = new ArrayList<>();
-        discoveryStartedCallableList = new ArrayList<>();
-        sdpScanFinshedCallableList = new ArrayList<>();
-        gattScanFinishedCallableList = new ArrayList<>();
         scan = new Scan();
         toSdpScanDevices = new ArrayList<>();
         toGattScanDevices = new ArrayList<>();
@@ -125,14 +150,12 @@ public class ScanService extends IntentService {
     }
 
     private void registerReceivers(){
-        context.registerReceiver(onDeviceDiscoveredReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
-        context.registerReceiver(onDiscoveryFinishedReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
         context.registerReceiver(onDiscoveryStartedReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
         context.registerReceiver(onUuidFoundReceiver, new IntentFilter(BluetoothDevice.ACTION_UUID));
     }
 
     private void unregisterReceivers(){
-        for(BroadcastReceiver br : Arrays.asList(onDeviceDiscoveredReceiver, onDiscoveryFinishedReceiver, onDiscoveryStartedReceiver, onUuidFoundReceiver)){
+        for(BroadcastReceiver br : Arrays.asList(onDiscoveryStartedReceiver, onUuidFoundReceiver)){
             try { context.unregisterReceiver(br); } catch (RuntimeException e){e.printStackTrace();}
         }
     }
@@ -140,8 +163,15 @@ public class ScanService extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         unregisterReceivers();
-        bluetoothAdapter.disable();
+        btAdapter.disable();
+    }
+
+    @Override
+    public void onStart(@Nullable Intent intent, int startId) {
+        EventBus.getDefault().register(this);
+        super.onStart(intent, startId);
     }
 
     @Override
@@ -149,21 +179,30 @@ public class ScanService extends IntentService {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void doScanOnNextDevice(){
-        if(prioritize.equals("gatt")){ if(toGattScanDevices.size() > 0) {System.out.println("gatt"); doGattScanOnNextDevice();} else if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice(); }
-        else if(prioritize.equals("sdp")){System.out.println("sdp"); if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice(); else if(toGattScanDevices.size() > 0) doGattScanOnNextDevice(); }
+    void doScanOnNextDevice(){
+        if(toGattScanDevices.size() == 0 && toSdpScanDevices.size() == 0) {
+            if(continuousScanning) scan();
+            else {EventBus.getDefault().post(new EventToScanDevicesEmpty());}
+        } else {
+            if(prioritize.equals("gatt")){
+                if(toGattScanDevices.size() > 0) { doGattScanOnNextDevice();}
+                else if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice(); }
+            else if(prioritize.equals("sdp")){
+                if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice();
+                else if(toGattScanDevices.size() > 0) doGattScanOnNextDevice(); }
+        }
+
     }
 
     private void doSdpScanOnNextDevice(){
         if(toSdpScanDevices.size() > 0) {
-            bluetoothAdapter.getRemoteDevice(toSdpScanDevices.get(0).address).fetchUuidsWithSdp();
-            toSdpScanDevices.remove(0);
+            btAdapter.getRemoteDevice(toSdpScanDevices.get(0).address).fetchUuidsWithSdp();
         }
     }
 
     private void doGattScanOnNextDevice(){
         if(toGattScanDevices.size() > 0) {
-            bluetoothAdapter.getRemoteDevice(toGattScanDevices.get(0).address).connectGatt(context, false, new BluetoothGattCallback() {
+            btAdapter.getRemoteDevice(toGattScanDevices.get(0).address).connectGatt(context, false, new BluetoothGattCallback() {
                 @Override
                 public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
                     if(newState == BluetoothProfile.STATE_CONNECTED){
@@ -191,53 +230,26 @@ public class ScanService extends IntentService {
                             device.updateServices(service);
                         }
                         device.save();
-                        for(Callable<Void> c : gattScanFinishedCallableList){try {c.call();}catch (Exception e){e.printStackTrace();}}
+                        EventBus.getDefault().post(new EventGATTScanFinished());
+                        toGattScanDevices.remove(0);
+                        doScanOnNextDevice();
                     }
                 }
             });
-            toGattScanDevices.remove(0);
         }
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-
+        receiver = intent.getParcelableExtra("receiver");
     }
-
-    BroadcastReceiver onDeviceDiscoveredReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(BluetoothDevice.ACTION_FOUND.equals(intent.getAction())){
-                Device d = new Device(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
-                if(locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) d.locations.add(locationListener.currentLocation.id);
-                d.save();
-                if(!scan.devices.contains(d.address)) scan.devices.add(d.address);
-                scan.save();
-                try{for(Callable<Void> c : deviceDiscoveredCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
-            }
-        }
-    };
-    BroadcastReceiver onDiscoveryFinishedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(intent.getAction())){
-                scan.save();
-                toSdpScanDevices = scan.getDevicesWithType("classic");
-                toSdpScanDevices.addAll(scan.getDevicesWithType("dual"));
-                toGattScanDevices = scan.getDevicesWithType("le");
-                toGattScanDevices.addAll(scan.getDevicesWithType("dual"));
-                doScanOnNextDevice();
-                try{for(Callable<Void> c : discoveryFinishedCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
-            }
-        }
-    };
 
     BroadcastReceiver onDiscoveryStartedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(intent.getAction())){
                 if(!continuousScanning) scan = new Scan();
-                try{for(Callable<Void> c : discoveryStartedCallableList) c.call();}catch (Exception e) {e.printStackTrace();}
+                EventBus.getDefault().post(new EventDiscoveryStarted());
             }
         }
     };
@@ -248,7 +260,7 @@ public class ScanService extends IntentService {
             if(BluetoothDevice.ACTION_UUID.equals(intent.getAction())){
                 BluetoothDevice d = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Parcelable[] uuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
-                Device device = Paper.book("device").read(d.getAddress());
+                Device device = Device.get(d.getAddress());
                 if(uuids != null && device != null){
                     for(Parcelable u : uuids){
                         android.os.ParcelUuid __u = (android.os.ParcelUuid) u;
@@ -257,8 +269,8 @@ public class ScanService extends IntentService {
                         if(!device.services.contains(_u.uuid)) device.services.add(_u.uuid);
                     }
                     device.save();
-
-                    try{for(Callable<Void> c : sdpScanFinshedCallableList) c.call();}catch (Exception e){e.printStackTrace();}
+                    // toSdpScanDevices.remove(0);
+                    EventBus.getDefault().post(new EventSDPScanFinished());
                     doScanOnNextDevice();
                 }
             }

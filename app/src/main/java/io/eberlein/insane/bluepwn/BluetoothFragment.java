@@ -20,15 +20,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.Toast;
-
-import java.util.List;
-import java.util.concurrent.Callable;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+
 
 
 public class BluetoothFragment extends Fragment {
@@ -59,6 +59,28 @@ public class BluetoothFragment extends Fragment {
     private Scan scan;
     private Boolean bound = false;
 
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onDeviceDiscovered(EventDeviceDiscovered e){
+        // scan service must be bound
+        devices.empty();
+        devices.addAll();
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onDiscoveryFinished(EventDiscoveryFinished e){
+        scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onDiscoveryStarted(EventDiscoveryStarted e){
+        scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onToScanDevicesEmpty(EventToScanDevicesEmpty e){
+        System.out.println("to scan devices empty");
+    }
+
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -70,48 +92,6 @@ public class BluetoothFragment extends Fragment {
             } else {
                 scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
             }
-
-            scanService.deviceDiscoveredCallableList.add(new Callable<Void>() {
-                @Override
-                public Void call() {
-                    List<Device> deviceList = scanService.scan.getDevices();
-                    devices.add(deviceList.get(deviceList.size() - 1));
-                    return null;
-                }
-            });
-
-            scanService.discoveryFinishedCallableList.add(new Callable<Void>() {
-                @Override
-                public Void call() {
-                    if(!scanService.getContinuousScanning()) scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
-                    return null;
-                }
-            });
-
-            scanService.sdpScanFinshedCallableList.add(new Callable<Void>() {
-                @Override
-                public Void call() {
-                    devices.addAll(scanService.scan.getDevices());
-                    return null;
-                }
-            });
-
-            scanService.gattScanFinishedCallableList.add(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    devices.addAll(scanService.scan.getDevices());
-                    return null;
-                }
-            });
-
-            scanService.discoveryStartedCallableList.add(new Callable<Void>() {
-                @Override
-                public Void call() {
-                    if(scanService.isScanning()) scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
-                    scan = scanService.scan;
-                    return null;
-                }
-            });
         }
 
         @Override
@@ -127,10 +107,18 @@ public class BluetoothFragment extends Fragment {
         devices = new DeviceAdapter();
     }
 
+    void startService(){
+        Intent i = new Intent(getActivity(), ScanService.class);
+        getContext().bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
-        getContext().bindService(new Intent(getActivity(), ScanService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+        EventBus.getDefault().register(this);
+        if(scan == null) {scan = new Scan();}
+        devices.addAll(scan.getDevices());
+        startService();
     }
 
     @Nullable
@@ -153,21 +141,9 @@ public class BluetoothFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // todo find way to load last scan
-        if(scan == null) {scan = new Scan();}
-        devices.addAll(scan.getDevices());
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         getContext().unbindService(serviceConnection);
     }
 

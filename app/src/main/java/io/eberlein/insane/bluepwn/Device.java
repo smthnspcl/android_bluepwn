@@ -50,7 +50,9 @@ public class Device {
     }
 
     static Device get(String address){
-        return Paper.book(TABLE_DEVICE).read(address);
+        Device d = Paper.book(TABLE_DEVICE).read(address);
+        if(d != null) return d;
+        return new Device();
     }
 
     void updateServices(List<Service> services){
@@ -64,14 +66,7 @@ public class Device {
     Device(){}
 
     public Device(BluetoothDevice device){
-        address = device.getAddress();
-        name = device.getName();
-        manufacturer = "todo";
-        bond = getBondStateAsString(device.getBondState());
-        type = getTypeAsString(device.getType());
-        lastModified = new Date();
-        locations = new ArrayList<>();
-        services = new ArrayList<>();
+        setValues(device);
     }
 
     public Device(String address, String name, String manufacturer, String bond, String type, Date lastModified){
@@ -81,6 +76,17 @@ public class Device {
         this.bond = bond;
         this.type = type;
         this.lastModified = lastModified;
+    }
+
+    void setValues(BluetoothDevice device){
+        address = device.getAddress();
+        name = device.getName();
+        manufacturer = "todo";
+        bond = getBondStateAsString(device.getBondState());
+        type = getTypeAsString(device.getType());
+        lastModified = new Date();
+        locations = new ArrayList<>();
+        services = new ArrayList<>();
     }
 
     private String getTypeAsString(int _type){
