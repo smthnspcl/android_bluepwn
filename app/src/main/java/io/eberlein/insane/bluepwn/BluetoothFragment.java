@@ -67,7 +67,7 @@ public class BluetoothFragment extends Fragment {
     private DeviceAdapter devices;
     private Scan scan;
 
-    private String prioritize = "gatt";
+    private String prioritize = TYPE_LE;
     private List<Device> toSdpScanDevices;
     private List<Device> toGattScanDevices;
 
@@ -116,8 +116,6 @@ public class BluetoothFragment extends Fragment {
             if(intent.getAction().equals(BluetoothDevice.ACTION_FOUND)){
                 BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Device device = Device.get(bluetoothDevice.getAddress());
-                Gson g = new Gson();
-                System.out.println(g.toJson(device));
                 device.populateIfEmpty(bluetoothDevice);
                 if(device.address.equals("")) device.setValues(bluetoothDevice);
                 if(locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) device.locations.add(locationListener.currentLocation.id);
@@ -257,10 +255,10 @@ public class BluetoothFragment extends Fragment {
             if(continuousScanningCheckbox.isChecked()) scan();
             else {EventBus.getDefault().post(new EventToScanDevicesEmpty());}
         } else {
-            if(prioritize.equals("gatt")){
+            if(prioritize.equals(TYPE_LE)){
                 if(toGattScanDevices.size() > 0) { doGattScanOnNextDevice();}
                 else if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice(); }
-            else if(prioritize.equals("sdp")){
+            else if(prioritize.equals(TYPE_CLASSIC)){
                 if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice();
                 else if(toGattScanDevices.size() > 0) doGattScanOnNextDevice(); }
         }
@@ -302,9 +300,6 @@ public class BluetoothFragment extends Fragment {
                             service.save();
                             device.updateServices(service);
                         }
-                        System.out.println("discovered");
-                        System.out.println(device.getServices().size());
-                        System.out.println("services");
                         device.save();
                         EventBus.getDefault().post(new EventGATTScanFinished());
                         toGattScanDevices.remove(0);

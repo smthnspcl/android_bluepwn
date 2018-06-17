@@ -45,7 +45,7 @@ public class ServiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service);
         ButterKnife.bind(this);
-        service = Paper.book("service").read(getIntent().getStringExtra("service"));
+        service = Service.getExistingOrNew(getIntent().getStringExtra("uuid"));
         uuid.setText(service.uuid);
         name.setText(service.name);
         description.setText(service.description);
@@ -57,7 +57,7 @@ public class ServiceActivity extends AppCompatActivity {
             public void onItemClick(View v, int p) {
                 Intent i = new Intent(getApplicationContext(), StagerActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("id", stagerAdapter.get(p).uuid);
+                i.putExtra("uuid", stagerAdapter.get(p).uuid);
                 startActivity(i);
             }
         });

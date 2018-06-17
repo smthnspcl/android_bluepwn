@@ -18,6 +18,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.paperdb.Paper;
 
+import static io.eberlein.insane.bluepwn.Static.TYPE_CLASSIC;
+import static io.eberlein.insane.bluepwn.Static.TYPE_DUAL;
+import static io.eberlein.insane.bluepwn.Static.TYPE_LE;
+
 public class DeviceActivity extends AppCompatActivity {
     @BindView(R.id.tvMac) TextView tvMac;
     @BindView(R.id.tvName) TextView tvName;
@@ -70,14 +74,15 @@ public class DeviceActivity extends AppCompatActivity {
             public void onItemClick(View v, int p) {
                 Intent i = new Intent(getApplicationContext(), ServiceActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("service", serviceAdapter.get(p).uuid.toString());
+                i.putExtra("uuid", serviceAdapter.get(p).uuid.toString());
                 startActivity(i);
             }
         });
 
         switch (device.type){
-            case "le": onBluetoothLe(); break;
-            case "classic": onBluetoothClassic(); break;
+            case TYPE_LE: onBluetoothLe(); break;
+            case TYPE_CLASSIC: onBluetoothClassic(); break;
+            case TYPE_DUAL: onBluetoothDual(); break;
             default: onBluetoothElse();
         }
         recycler.setAdapter(serviceAdapter);
@@ -89,6 +94,10 @@ public class DeviceActivity extends AppCompatActivity {
     }
 
     void onBluetoothClassic(){
+
+    }
+
+    void onBluetoothDual(){
 
     }
 

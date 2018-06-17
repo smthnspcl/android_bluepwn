@@ -41,7 +41,7 @@ public class StagerActivity extends AppCompatActivity {
              @Override
              public void onClick(DialogInterface dialog, int which) {
                  AutoCompleteTextView stage = findViewById(R.id.stage);
-                 stageAdapter.add(Paper.book("stage").read(stage.getText().toString()));
+                 stageAdapter.add(Stage.get(stage.getText().toString()));
              }
          });
          b.setNegativeButton("close", new DialogInterface.OnClickListener() {
@@ -77,7 +77,6 @@ public class StagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stager);
         ButterKnife.bind(this);
-        stager = Stager.get(getIntent().getStringExtra("uuid"));
         stageAdapter = new StageAdapter();
         recycler.setLayoutManager(new LinearLayoutManager(this));
         recycler.setAdapter(stageAdapter);
@@ -95,6 +94,7 @@ public class StagerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        stager = Stager.get(getIntent().getStringExtra("uuid"));
         name.setText(stager.name);
         service.setText(stager.uuid);
         stageAdapter.empty();
