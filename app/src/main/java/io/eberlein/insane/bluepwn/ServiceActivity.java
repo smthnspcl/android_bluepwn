@@ -33,7 +33,7 @@ public class ServiceActivity extends AppCompatActivity {
     public void addBtnClicked(){
         Intent i = new Intent(this, StagerActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.putExtra("uuid", service.uuid);
+        i.putExtra("service", service.uuid);
         startActivity(i);
     }
 

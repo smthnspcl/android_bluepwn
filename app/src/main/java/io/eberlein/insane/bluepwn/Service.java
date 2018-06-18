@@ -79,6 +79,8 @@ public class Service {
     }
 
     static Service getExistingOrNew(String uuid){
+        System.out.println("getexistingornew");
+        System.out.println(uuid);
         Service s = Paper.book(TABLE_SERVICE).read(uuid);
         if(s == null) return new Service(uuid);
         else return s;

@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.concurrent.Callable;
 
 import butterknife.BindView;
@@ -34,12 +36,18 @@ public class SyncFragment extends Fragment {
 
     private RemoteDatabase database;
 
+    @Subscribe
+    public void onGotCookie(EventGotCookie e){
+        ouiSyncStatusLabel.setText("ready");
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_sync, container, false);
         ButterKnife.bind(this, v);
         database = new RemoteDatabase(getContext(), Paper.book("settings").read("remote"));
+
         return v;
     }
 }

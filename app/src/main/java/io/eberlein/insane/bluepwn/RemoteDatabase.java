@@ -32,14 +32,6 @@ public class RemoteDatabase {
 
     private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:MM:SS", Locale.getDefault());
 
-    private Callable<Void> onOuiFinished;
-    private Callable<Void> onUUIDFinished;
-    private Callable<Void> onScanFinished;
-    private Callable<Void> onStageFinished;
-    private Callable<Void> onStagerFinished;
-    private Callable<Void> onDeviceFinished;
-    private Callable<Void> onLocationFinished;
-
     private RemoteDBSettings settings;
     private String cookie;
     private Context context;
@@ -48,11 +40,10 @@ public class RemoteDatabase {
     RemoteDatabase(Context context, RemoteDBSettings settings){
         this.context = context;
         this.settings = settings;
-        getCookie();
         gson = new Gson();
     }
 
-    private void getCookie(){
+    void getCookie(){
         JsonObject j = new JsonObject();
         j.addProperty("username", settings.getUsername());
         j.addProperty("password", settings.getPassword());

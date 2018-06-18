@@ -4,6 +4,7 @@ import static io.eberlein.insane.bluepwn.Static.EVENT_DEVICE_DISCOVERED;
 import static io.eberlein.insane.bluepwn.Static.EVENT_DISCOVERY_FINISHED;
 import static io.eberlein.insane.bluepwn.Static.EVENT_DISCOVERY_STARTED;
 import static io.eberlein.insane.bluepwn.Static.EVENT_GATT_SCAN_FINISHED;
+import static io.eberlein.insane.bluepwn.Static.EVENT_GOT_COOKIE;
 import static io.eberlein.insane.bluepwn.Static.EVENT_SDP_SCAN_FINISHED;
 import static io.eberlein.insane.bluepwn.Static.EVENT_START_SCANNING;
 import static io.eberlein.insane.bluepwn.Static.EVENT_STOP_SCANNING;
@@ -39,9 +40,11 @@ class EventSDPScanFinished extends Event {
     }
 }
 
-class EventGATTScanFinished extends Event {
-    public EventGATTScanFinished(){
-        super(EVENT_GATT_SCAN_FINISHED);
+class EventGATTScanFinished {
+    public final Device device;
+
+    public EventGATTScanFinished(Device device){
+        this.device = device;
     }
 }
 
@@ -78,4 +81,8 @@ class EventStartScanning extends Event {
     public EventStartScanning(){
         super(EVENT_START_SCANNING);
     }
+}
+
+class EventGotCookie extends Event {
+    public EventGotCookie(){ super(EVENT_GOT_COOKIE);}
 }

@@ -95,13 +95,18 @@ public class BluetoothFragment extends Fragment {
                 Parcelable[] uuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
                 Device device = Device.get(d.getAddress());
                 if(uuids != null && device != null){
+                    System.out.println("uuid found");
+                    System.out.println(device.address);
                     for(Parcelable u : uuids){
                         android.os.ParcelUuid __u = (android.os.ParcelUuid) u;
                         Service _u = Service.getExistingOrNew(__u.getUuid().toString());
+                        System.out.println("classic uuid");
+                        System.out.println(_u.uuid);
                         _u.save();
                         if(!device.services.contains(_u.uuid)) device.services.add(_u.uuid);
                     }
                     device.save();
+                    devices.add(device);
                     if(toSdpScanDevices.size() >= 1) toSdpScanDevices.remove(0);
                     EventBus.getDefault().post(new EventSDPScanFinished());
                     doScanOnNextDevice();
@@ -121,6 +126,7 @@ public class BluetoothFragment extends Fragment {
                 if(locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) device.locations.add(locationListener.currentLocation.id);
                 device.save();
                 if(!scan.devices.contains(device.address)) scan.devices.add(device.address);
+                devices.add(device);
                 scan.save();
                 if(device.type.equals(TYPE_CLASSIC) || device.type.equals(TYPE_DUAL)) toSdpScanDevices.add(device);
                 if(device.type.equals(TYPE_LE) || device.type.equals(TYPE_DUAL)) toGattScanDevices.add(device);
@@ -144,7 +150,7 @@ public class BluetoothFragment extends Fragment {
 
     @Subscribe
     public void onDeviceDiscovered(EventDeviceDiscovered e){
-        devices.add(e.device);
+
     }
 
     @Subscribe
@@ -167,10 +173,13 @@ public class BluetoothFragment extends Fragment {
     }
 
     @Subscribe
-    public void onGATTScanFinished(EventGATTScanFinished e){ }
+    public void onGATTScanFinished(EventGATTScanFinished e){
+        devices.add(e.device);
+    }
 
     @Subscribe
-    public void onSDPScanFinished(EventSDPScanFinished e){ }
+    public void onSDPScanFinished(EventSDPScanFinished e){
+    }
 
     private void initGPS(){
         locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
@@ -251,14 +260,18 @@ public class BluetoothFragment extends Fragment {
     }
 
     void doScanOnNextDevice(){
+        System.out.println("netdevicescan");
         if(toGattScanDevices.size() == 0 && toSdpScanDevices.size() == 0) {
+            System.out.println("scandevicesempty");
             if(continuousScanningCheckbox.isChecked()) scan();
             else {EventBus.getDefault().post(new EventToScanDevicesEmpty());}
         } else {
             if(prioritize.equals(TYPE_LE)){
+                System.out.println("scanning le");
                 if(toGattScanDevices.size() > 0) { doGattScanOnNextDevice();}
                 else if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice(); }
             else if(prioritize.equals(TYPE_CLASSIC)){
+                System.out.println("scanning classic");
                 if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice();
                 else if(toGattScanDevices.size() > 0) doGattScanOnNextDevice(); }
         }
@@ -286,7 +299,10 @@ public class BluetoothFragment extends Fragment {
                     if(status == BluetoothGatt.GATT_SUCCESS){
                         Device device = toGattScanDevices.get(0);
                         for(BluetoothGattService s : gatt.getServices()){
+                            System.out.println(s.getUuid().toString());
                             Service service = Service.getExistingOrNew(s.getUuid().toString());
+                            System.out.println("gatt service discovered");
+                            System.out.println(s.getUuid());
                             for(BluetoothGattCharacteristic c : s.getCharacteristics()){
                                 Characteristic characteristic = Characteristic.getExistingOrNew(c);
                                 if(!service.characteristics.contains(characteristic.uuid)) service.characteristics.add(characteristic.uuid);
@@ -298,10 +314,10 @@ public class BluetoothFragment extends Fragment {
                                 characteristic.save();
                             }
                             service.save();
-                            device.updateServices(service);
+                            if(!device.services.contains(service.uuid)) device.services.add(service.uuid);
                         }
                         device.save();
-                        EventBus.getDefault().post(new EventGATTScanFinished());
+                        EventBus.getDefault().post(new EventGATTScanFinished(device));
                         toGattScanDevices.remove(0);
                         doScanOnNextDevice();
                     }

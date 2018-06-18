@@ -18,8 +18,6 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemSelected;
-import io.paperdb.Paper;
 
 // todo fix duplicating items
 
@@ -31,6 +29,7 @@ public class StagerActivity extends AppCompatActivity {
 
      private StageAdapter stageAdapter;
      private Stager stager;
+     private Service _service;
 
      @OnClick(R.id.add)
      public void addButtonClicked(){
@@ -77,6 +76,7 @@ public class StagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stager);
         ButterKnife.bind(this);
+        _service = Service.get(getIntent().getStringExtra("service"));
         stageAdapter = new StageAdapter();
         recycler.setLayoutManager(new LinearLayoutManager(this));
         recycler.setAdapter(stageAdapter);
@@ -94,7 +94,7 @@ public class StagerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        stager = Stager.get(getIntent().getStringExtra("uuid"));
+        stager = Stager.get(null);
         name.setText(stager.name);
         service.setText(stager.uuid);
         stageAdapter.empty();
