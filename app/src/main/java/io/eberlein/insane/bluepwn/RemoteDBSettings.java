@@ -2,12 +2,15 @@ package io.eberlein.insane.bluepwn;
 
 import io.paperdb.Paper;
 
+import static io.eberlein.insane.bluepwn.Static.KEY_REMOTE_DATABASE_SETTINGS;
+import static io.eberlein.insane.bluepwn.Static.TABLE_SETTINGS;
+
 public class RemoteDBSettings {
-    private String server;
-    private Boolean authentication;
-    private String username;
-    private String password;
-    private Boolean ssl;
+    String server;
+    Boolean authentication;
+    String username;
+    String password;
+    Boolean ssl;
 
     RemoteDBSettings(){
         this.server = "";
@@ -26,50 +29,12 @@ public class RemoteDBSettings {
     }
 
     void save(){
-        Paper.book("settings").write("remote", this);
+        Paper.book(TABLE_SETTINGS).write(KEY_REMOTE_DATABASE_SETTINGS, this);
     }
 
     static RemoteDBSettings get(){
-        return Paper.book("settings").read("remote");
-    }
-
-    void setServer(String server){
-        this.server = server;
-    }
-
-    public void setAuthentication(Boolean authentication) {
-        this.authentication = authentication;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setSsl(Boolean ssl) {
-        this.ssl = ssl;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Boolean getAuthentication() {
-        return authentication;
-    }
-
-    public Boolean getSsl() {
-        return ssl;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getServer() {
-        return server;
-    }
-
-    public String getUsername() {
-        return username;
+        RemoteDBSettings rdbs = Paper.book(TABLE_SETTINGS).read(KEY_REMOTE_DATABASE_SETTINGS);
+        if(rdbs == null) return new RemoteDBSettings();
+        return rdbs;
     }
 }

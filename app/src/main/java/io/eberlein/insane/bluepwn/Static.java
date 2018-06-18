@@ -10,6 +10,9 @@ public class Static {
     static final String TABLE_DEVICE = "device";
     static final String TABLE_DESCRIPTOR = "descriptor";
     static final String TABLE_CHARACTERISTIC = "characteristic";
+    static final String TABLE_SETTINGS = "settings";
+
+    static final String KEY_REMOTE_DATABASE_SETTINGS = "remote";
 
     static final Integer EVENT_DISCOVERY_STARTED = 0;
     static final Integer EVENT_DISCOVERY_FINISHED = 1;

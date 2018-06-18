@@ -23,19 +23,19 @@ public class RemoteDatabaseSettingsActivity extends AppCompatActivity{
     private RemoteDBSettings remoteDBSettings;
 
     private void populateSettings(){
-        server.setText(remoteDBSettings.getServer());
-        username.setText(remoteDBSettings.getUsername());
-        password.setText(remoteDBSettings.getPassword());
-        authenticationCheckbox.setChecked(remoteDBSettings.getAuthentication() != null);
-        sslCheckbox.setChecked(remoteDBSettings.getSsl());
+        server.setText(remoteDBSettings.server);
+        username.setText(remoteDBSettings.username);
+        password.setText(remoteDBSettings.password);
+        authenticationCheckbox.setChecked(remoteDBSettings.authentication != null);
+        sslCheckbox.setChecked(remoteDBSettings.ssl);
     }
 
     private void saveSettings(){
-        remoteDBSettings.setServer(server.getText().toString());
-        remoteDBSettings.setAuthentication(authenticationCheckbox.isChecked());
-        remoteDBSettings.setUsername(username.getText().toString());
-        remoteDBSettings.setPassword(password.getText().toString());
-        remoteDBSettings.setSsl(sslCheckbox.isChecked());
+        remoteDBSettings.server = server.getText().toString();
+        remoteDBSettings.authentication = authenticationCheckbox.isChecked();
+        remoteDBSettings.username = username.getText().toString();
+        remoteDBSettings.password = password.getText().toString();
+        remoteDBSettings.ssl = sslCheckbox.isChecked();
         remoteDBSettings.save();
         Toast.makeText(this, "settings saved", Toast.LENGTH_SHORT).show();
     }
@@ -44,12 +44,12 @@ public class RemoteDatabaseSettingsActivity extends AppCompatActivity{
     public void authenticationCheckboxChanged(){
         username.setEnabled(authenticationCheckbox.isChecked());
         password.setEnabled(authenticationCheckbox.isChecked());
-        remoteDBSettings.setAuthentication(authenticationCheckbox.isChecked());
+        remoteDBSettings.authentication = authenticationCheckbox.isChecked();
     }
 
     @OnCheckedChanged(R.id.sslCheckbox)
     public void sslCheckboxChanged(){
-        remoteDBSettings.setSsl(sslCheckbox.isChecked());
+        remoteDBSettings.ssl = sslCheckbox.isChecked();
     }
 
     @OnClick(R.id.saveBtn)
