@@ -80,6 +80,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
     }
 
     void add(Device device){
+        if(device.address.isEmpty()) return;
         for(Device d : devices){
             if(d.address.equals(device.address)){
                 devices.set(devices.indexOf(d), device);

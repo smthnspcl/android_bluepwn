@@ -39,6 +39,5 @@ dependencies {
     implementation 'com.github.MKergall:osmbonuspack:6.5.1'
     implementation 'io.paperdb:paperdb:2.6'
     implementation 'com.koushikdutta.ion:ion:2.+'
-    implementation 'com.github.a-voyager:BluetoothHelper:f71d40a98b'
     implementation 'org.greenrobot:eventbus:3.1.1'
 }

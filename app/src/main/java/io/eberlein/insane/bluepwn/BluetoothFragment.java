@@ -29,7 +29,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import com.google.gson.Gson;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -39,7 +38,6 @@ import java.util.concurrent.Callable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import top.wuhaojie.bthelper.BtHelperClient;
 import static io.eberlein.insane.bluepwn.Static.TYPE_CLASSIC;
 import static io.eberlein.insane.bluepwn.Static.TYPE_DUAL;
 import static io.eberlein.insane.bluepwn.Static.TYPE_LE;
@@ -71,7 +69,6 @@ public class BluetoothFragment extends Fragment {
     private List<Device> toSdpScanDevices;
     private List<Device> toGattScanDevices;
 
-    private BtHelperClient bt;
     private BluetoothAdapter btAdapter;
 
     private LocationManager locationManager;
@@ -95,21 +92,15 @@ public class BluetoothFragment extends Fragment {
                 Parcelable[] uuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
                 Device device = Device.get(d.getAddress());
                 if(uuids != null && device != null){
-                    System.out.println("uuid found");
-                    System.out.println(device.address);
                     for(Parcelable u : uuids){
                         android.os.ParcelUuid __u = (android.os.ParcelUuid) u;
                         Service _u = Service.getExistingOrNew(__u.getUuid().toString());
-                        System.out.println("classic uuid");
-                        System.out.println(_u.uuid);
                         _u.save();
                         if(!device.services.contains(_u.uuid)) device.services.add(_u.uuid);
                     }
                     device.save();
-                    devices.add(device);
-                    if(toSdpScanDevices.size() >= 1) toSdpScanDevices.remove(0);
-                    EventBus.getDefault().post(new EventSDPScanFinished());
-                    doScanOnNextDevice();
+                    EventBus.getDefault().post(new EventSDPScanFinished(device));
+
                 }
             }
         }
@@ -122,14 +113,10 @@ public class BluetoothFragment extends Fragment {
                 BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Device device = Device.get(bluetoothDevice.getAddress());
                 device.populateIfEmpty(bluetoothDevice);
-                if(device.address.equals("")) device.setValues(bluetoothDevice);
+                if(device.address.isEmpty()) device.setValues(bluetoothDevice);
                 if(locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) device.locations.add(locationListener.currentLocation.id);
                 device.save();
-                if(!scan.devices.contains(device.address)) scan.devices.add(device.address);
-                devices.add(device);
                 scan.save();
-                if(device.type.equals(TYPE_CLASSIC) || device.type.equals(TYPE_DUAL)) toSdpScanDevices.add(device);
-                if(device.type.equals(TYPE_LE) || device.type.equals(TYPE_DUAL)) toGattScanDevices.add(device);
                 EventBus.getDefault().post(new EventDeviceDiscovered(device));
             }
         }
@@ -145,12 +132,16 @@ public class BluetoothFragment extends Fragment {
     private final BroadcastReceiver[] broadcastReceivers = {
             onDeviceDiscoveredReceiver,
             onDiscoveryStartedReceiver,
-            onUuidFoundReceiver
+            onUuidFoundReceiver,
+            onDiscoveryFinishedReceiver
     };
 
     @Subscribe
     public void onDeviceDiscovered(EventDeviceDiscovered e){
-
+        if(e.device.type.equals(TYPE_CLASSIC) || e.device.type.equals(TYPE_DUAL)) toSdpScanDevices.add(e.device);
+        if(e.device.type.equals(TYPE_LE) || e.device.type.equals(TYPE_DUAL)) toGattScanDevices.add(e.device);
+        if(!scan.devices.contains(e.device.address)) scan.devices.add(e.device.address);
+        devices.add(e.device);
     }
 
     @Subscribe
@@ -172,13 +163,18 @@ public class BluetoothFragment extends Fragment {
         if(btAdapter.isDiscovering()) btAdapter.cancelDiscovery();
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGATTScanFinished(EventGATTScanFinished e){
         devices.add(e.device);
+        toGattScanDevices.remove(0);
+        doScanOnNextDevice();
     }
 
     @Subscribe
     public void onSDPScanFinished(EventSDPScanFinished e){
+        devices.add(e.device);
+        if(toSdpScanDevices.size() >= 1) toSdpScanDevices.remove(0);
+        doScanOnNextDevice();
     }
 
     private void initGPS(){
@@ -206,7 +202,6 @@ public class BluetoothFragment extends Fragment {
         requestPermissions();
         initGPS();
         registerReceivers();
-        bt = BtHelperClient.from(getContext());
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         if(!btAdapter.isEnabled()) btAdapter.enable();
         devices = new DeviceAdapter();
@@ -260,18 +255,14 @@ public class BluetoothFragment extends Fragment {
     }
 
     void doScanOnNextDevice(){
-        System.out.println("netdevicescan");
         if(toGattScanDevices.size() == 0 && toSdpScanDevices.size() == 0) {
-            System.out.println("scandevicesempty");
             if(continuousScanningCheckbox.isChecked()) scan();
             else {EventBus.getDefault().post(new EventToScanDevicesEmpty());}
         } else {
             if(prioritize.equals(TYPE_LE)){
-                System.out.println("scanning le");
                 if(toGattScanDevices.size() > 0) { doGattScanOnNextDevice();}
                 else if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice(); }
             else if(prioritize.equals(TYPE_CLASSIC)){
-                System.out.println("scanning classic");
                 if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice();
                 else if(toGattScanDevices.size() > 0) doGattScanOnNextDevice(); }
         }
@@ -286,6 +277,7 @@ public class BluetoothFragment extends Fragment {
 
     private void doGattScanOnNextDevice(){
         if(toGattScanDevices.size() > 0) {
+            System.out.println("gatt scan");
             btAdapter.getRemoteDevice(toGattScanDevices.get(0).address).connectGatt(getContext(), false, new BluetoothGattCallback() {
                 @Override
                 public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -297,12 +289,9 @@ public class BluetoothFragment extends Fragment {
                 @Override
                 public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                     if(status == BluetoothGatt.GATT_SUCCESS){
-                        Device device = toGattScanDevices.get(0);
+                        Device device = Device.get(gatt.getDevice().getAddress());
                         for(BluetoothGattService s : gatt.getServices()){
-                            System.out.println(s.getUuid().toString());
                             Service service = Service.getExistingOrNew(s.getUuid().toString());
-                            System.out.println("gatt service discovered");
-                            System.out.println(s.getUuid());
                             for(BluetoothGattCharacteristic c : s.getCharacteristics()){
                                 Characteristic characteristic = Characteristic.getExistingOrNew(c);
                                 if(!service.characteristics.contains(characteristic.uuid)) service.characteristics.add(characteristic.uuid);
@@ -318,8 +307,6 @@ public class BluetoothFragment extends Fragment {
                         }
                         device.save();
                         EventBus.getDefault().post(new EventGATTScanFinished(device));
-                        toGattScanDevices.remove(0);
-                        doScanOnNextDevice();
                     }
                 }
             });

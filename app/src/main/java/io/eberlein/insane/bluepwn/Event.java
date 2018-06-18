@@ -34,9 +34,10 @@ class EventDeviceDiscovered extends Event {
     }
 }
 
-class EventSDPScanFinished extends Event {
-    public EventSDPScanFinished(){
-        super(EVENT_SDP_SCAN_FINISHED);
+class EventSDPScanFinished {
+    public final Device device;
+    public EventSDPScanFinished(Device device){
+        this.device = device;
     }
 }
 
