@@ -74,7 +74,7 @@ public class DeviceActivity extends AppCompatActivity {
             public void onItemClick(View v, int p) {
                 Intent i = new Intent(getApplicationContext(), ServiceActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("uuid", serviceAdapter.get(p).uuid.toString());
+                i.putExtra("uuid", serviceAdapter.get(p).uuid);
                 startActivity(i);
             }
         });
