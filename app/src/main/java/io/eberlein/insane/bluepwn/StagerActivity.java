@@ -85,7 +85,7 @@ public class StagerActivity extends AppCompatActivity {
             public void onItemClick(View v, int p) {
                 Intent i = new Intent(getApplicationContext(), StageActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("id", stageAdapter.get(p).id);
+                i.putExtra("uuid", stageAdapter.get(p).uuid);
                 startActivity(i);
             }
         });

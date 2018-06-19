@@ -114,7 +114,7 @@ public class BluetoothFragment extends Fragment {
                 Device device = Device.get(bluetoothDevice.getAddress());
                 device.populateIfEmpty(bluetoothDevice);
                 if(device.address.isEmpty()) device.setValues(bluetoothDevice);
-                if(locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) device.locations.add(locationListener.currentLocation.id);
+                if(locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) device.locations.add(locationListener.currentLocation.uuid);
                 device.save();
                 scan.save();
                 EventBus.getDefault().post(new EventDeviceDiscovered(device));
@@ -184,7 +184,7 @@ public class BluetoothFragment extends Fragment {
         locationListener.onLocationChangedFunctions.add(new Callable<Void>() {
             @Override
             public Void call() {
-                if(scan != null && locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) scan.locations.add(locationListener.currentLocation.id);
+                if(scan != null && locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) scan.locations.add(locationListener.currentLocation.uuid);
                 return null;
             }
         });

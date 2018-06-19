@@ -43,7 +43,7 @@ public class ScansFragment extends Fragment {
             public void onItemClick(View v, int p) {
                 Intent i = new Intent(getContext(), ScanActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("id", scans.get(p).id);
+                i.putExtra("uuid", scans.get(p).uuid);
                 startActivity(i);
             }
         });

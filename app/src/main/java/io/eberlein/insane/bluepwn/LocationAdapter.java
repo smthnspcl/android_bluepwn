@@ -79,7 +79,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
     void add(Location location){
         for(Location l : locations){
-            if(l.id.equals(location.id)){
+            if(l.uuid.equals(location.uuid)){
                 locations.set(locations.indexOf(l), location);
                 notifyItemChanged(locations.indexOf(location));
                 return;

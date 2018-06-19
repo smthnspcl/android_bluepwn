@@ -84,6 +84,18 @@ class EventStartScanning extends Event {
     }
 }
 
-class EventGotCookie extends Event {
-    public EventGotCookie(){ super(EVENT_GOT_COOKIE);}
+class EventGotCookie {
+    public final String cookie;
+
+    public EventGotCookie(String cookie){
+        this.cookie = cookie;
+    }
+}
+
+class EventSyncFinished {
+    public final Boolean success;
+
+    public EventSyncFinished(Boolean success){
+        this.success = success;
+    }
 }

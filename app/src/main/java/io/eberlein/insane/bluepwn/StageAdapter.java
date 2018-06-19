@@ -73,7 +73,7 @@ public class StageAdapter extends RecyclerView.Adapter<StageAdapter.ViewHolder>{
 
     void add(Stage stage){
         for(Stage s : stages){
-            if(s.id.equals(stage.id)){
+            if(s.uuid.equals(stage.uuid)){
                 stages.set(stages.indexOf(s), stage);
                 notifyItemChanged(stages.indexOf(stage));
                 return;

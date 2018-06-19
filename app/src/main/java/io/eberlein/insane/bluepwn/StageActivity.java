@@ -40,7 +40,7 @@ public class StageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stage);
         ButterKnife.bind(this);
-        stage = Stage.get(getIntent().getStringExtra("id"));
+        stage = Stage.get(getIntent().getStringExtra("uuid"));
     }
 
     private void setDataType(){

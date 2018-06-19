@@ -14,14 +14,14 @@ import static io.eberlein.insane.bluepwn.Static.TYPE_CLASSIC;
 import static io.eberlein.insane.bluepwn.Static.TYPE_LE;
 
 public class Scan {
-    String id;
+    String uuid;
     Date timestamp;
 
     List<String> devices;
     List<String> locations;
 
     public Scan(){
-        id = UUID.randomUUID().toString();
+        uuid = UUID.randomUUID().toString();
         timestamp = new Date();
         devices = new ArrayList<>();
         locations = new ArrayList<>();
@@ -56,7 +56,7 @@ public class Scan {
     }
 
     void save(){
-        Paper.book(TABLE_SCAN).write(id, this);
+        Paper.book(TABLE_SCAN).write(uuid, this);
     }
 
     public List<Device> getDevices(){

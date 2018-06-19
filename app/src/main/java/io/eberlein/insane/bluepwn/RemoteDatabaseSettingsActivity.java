@@ -32,6 +32,7 @@ public class RemoteDatabaseSettingsActivity extends AppCompatActivity{
 
     private void saveSettings(){
         remoteDBSettings.server = server.getText().toString();
+        if(!remoteDBSettings.server.endsWith("/")) remoteDBSettings.server += "/";
         remoteDBSettings.authentication = authenticationCheckbox.isChecked();
         remoteDBSettings.username = username.getText().toString();
         remoteDBSettings.password = password.getText().toString();

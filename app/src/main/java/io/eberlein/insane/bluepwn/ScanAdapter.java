@@ -1,19 +1,15 @@
 package io.eberlein.insane.bluepwn;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 
 public class ScanAdapter extends RecyclerView.Adapter<ScanAdapter.ViewHolder>{
@@ -80,7 +76,7 @@ public class ScanAdapter extends RecyclerView.Adapter<ScanAdapter.ViewHolder>{
 
     void add(Scan scan){
         for(Scan s : scans){
-            if(s.id.equals(scan.id)){
+            if(s.uuid.equals(scan.uuid)){
                 scans.set(scans.indexOf(s), scan);
                 notifyItemChanged(scans.indexOf(scan));
                 return;

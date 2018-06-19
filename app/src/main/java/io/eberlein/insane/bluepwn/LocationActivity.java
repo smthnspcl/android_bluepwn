@@ -9,7 +9,6 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.paperdb.Paper;
 
 public class LocationActivity extends AppCompatActivity {
     @BindView(R.id.latitudeTextView) TextView latitude;
@@ -31,7 +30,7 @@ public class LocationActivity extends AppCompatActivity {
         location.city = city.getText().toString();
         location.street = street.getText().toString();
         location.note = note.getText().toString();
-        Paper.book("location").write(location.id, location);
+        location.save();
         finish();
     }
 
@@ -42,13 +41,13 @@ public class LocationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
         ButterKnife.bind(this);
-        String id = getIntent().getStringExtra("id");
+        String id = getIntent().getStringExtra("uuid");
         if(id != null) setContentValues(id);
         else location = new Location();
     }
 
-    private void setContentValues(String id){
-        location = Paper.book("location").read(id);
+    private void setContentValues(String uuid){
+        location = Location.get(uuid);
         latitude.setText(String.valueOf(location.latitude));
         longitude.setText(String.valueOf(location.longitude));
         altitude.setText(String.valueOf(location.altitude));

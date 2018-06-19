@@ -10,7 +10,7 @@ import io.paperdb.Paper;
 import static io.eberlein.insane.bluepwn.Static.TABLE_LOCATION;
 
 public class Location {
-    String id;
+    String uuid;
     float accuracy;
     double altitude;
     double longitude;
@@ -34,7 +34,7 @@ public class Location {
     */
 
     void save(){
-        Paper.book(TABLE_LOCATION).write(id, this);
+        Paper.book(TABLE_LOCATION).write(uuid, this);
     }
 
     static Location get(String id){
@@ -52,7 +52,7 @@ public class Location {
     }
 
     public Location(){
-        id = UUID.randomUUID().toString();
+        uuid = UUID.randomUUID().toString();
         accuracy = 0;
         altitude = 0;
         longitude = 0;
@@ -63,7 +63,7 @@ public class Location {
     }
 
     public Location(String id, float accuracy, double altitude, double longitude, double latitude, long timestamp, float speed){
-        this.id = id;
+        this.uuid = id;
         this.accuracy = accuracy;
         this.altitude = altitude;
         this.longitude = longitude;
@@ -74,7 +74,7 @@ public class Location {
     }
 
     public Location(android.location.Location location){
-        id = UUID.randomUUID().toString();
+        uuid = UUID.randomUUID().toString();
         accuracy = location.getAccuracy();
         altitude = location.getAltitude();
         longitude = location.getLongitude();

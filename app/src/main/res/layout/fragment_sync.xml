@@ -16,9 +16,9 @@
         android:id="@+id/syncStatusLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/textView"
-        android:layout_marginEnd="16dp"
+        android:layout_toEndOf="@id/textView"
+        android:layout_marginStart="196dp"
         android:text="not checked" />
 
     <Button
@@ -88,10 +88,10 @@
         android:layout_below="@id/textView9"
         android:layout_marginTop="8dp"
         android:layout_toEndOf="@+id/textView"
-        android:text="uuids" />
+        android:text="services" />
 
     <TextView
-        android:id="@+id/uuidsSyncStatusLabel"
+        android:id="@+id/servicesSyncStatusLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/syncStatusLabel"
@@ -148,5 +148,41 @@
         android:layout_alignStart="@+id/syncStatusLabel"
         android:layout_alignTop="@+id/textView21"
         android:text="not checked" />
+
+    <TextView
+        android:id="@+id/textView17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView21"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/textView"
+        android:text="characteristics" />
+
+    <TextView
+        android:id="@+id/characteristicsSyncStatusLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/syncStatusLabel"
+        android:layout_below="@id/textView21"
+        android:layout_marginTop="8dp"
+        android:text="not checked" />
+
+    <TextView
+        android:id="@+id/textView23"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView17"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/textView"
+        android:text="descriptors" />
+
+    <TextView
+        android:id="@+id/descriptorsSyncStatusLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/syncStatusLabel"
+        android:layout_below="@id/textView17"
+        android:layout_marginTop="8dp"
+        android:text="TextView" />
 
 </RelativeLayout>

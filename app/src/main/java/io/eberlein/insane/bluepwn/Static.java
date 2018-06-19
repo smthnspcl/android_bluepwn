@@ -36,4 +36,11 @@ public class Static {
     static final String BOND_BONDING = "bonding";
     static final String BOND_UNKNOWN = "unknown";
     static final String BOND_NONE = "none";
+
+    static final String URL_TABLE_VARIABLE = "{{TBL}}";
+    static final String URL_AUTHENTICATE = "api/authenticate";
+    static final String URL_TABLE_DIFFERENCE = "api/{{TBL}}/difference";
+    static final String URL_TABLE_UPDATE = "api/{{TBL}}/update";
+    static final String URL_TABLE_KEYS = "api/{{TBL}}/keys";
+    static final String URL_TABLE_GET = "api/{{TBL}}/get";
 }

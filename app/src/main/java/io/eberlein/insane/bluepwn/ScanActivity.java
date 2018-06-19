@@ -10,13 +10,10 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.paperdb.Paper;
 
 public class ScanActivity extends AppCompatActivity {
 
@@ -33,7 +30,7 @@ public class ScanActivity extends AppCompatActivity {
     @OnClick(R.id.locationCountLabel)
     public void locationLabelClicked(){
         Intent i = new Intent(this, LocationsActivity.class);
-        i.putExtra("scan_id", scan.id);
+        i.putExtra("scan_id", scan.uuid);
         startActivity(i);
     }
 
@@ -44,7 +41,7 @@ public class ScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
         ButterKnife.bind(this);
-        scan = Paper.book("scan").read(getIntent().getStringExtra("id"), new Scan());
+        scan = Scan.get(getIntent().getStringExtra("uuid"));
         devices = new DeviceAdapter();
         devices.addAll(scan.getDevices());
         devicesRecycler.setLayoutManager(new LinearLayoutManager(this));

@@ -9,14 +9,14 @@ import io.paperdb.Paper;
 import static io.eberlein.insane.bluepwn.Static.TABLE_STAGE;
 
 public class Stage {
-    String id;
+    String uuid;
     String name;
     String data;
 
     String dataType;
 
     void save(){
-        Paper.book(TABLE_STAGE).write(id, this);
+        Paper.book(TABLE_STAGE).write(uuid, this);
     }
 
     static Stage get(String id){
@@ -31,14 +31,14 @@ public class Stage {
     }
 
     Stage(){
-        id = UUID.randomUUID().toString();
+        uuid = UUID.randomUUID().toString();
         name = "";
         data = "";
         dataType = "";
     }
 
     Stage(String id, String name){
-        this.id = id;
+        this.uuid = id;
         this.name = name;
     }
 }

@@ -59,7 +59,7 @@ public class LocationsActivity extends AppCompatActivity {
             public void onItemClick(View v, int p) {
                 Intent i = new Intent(getApplicationContext(), LocationActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("id", locations.get(p).id);
+                i.putExtra("uuid", locations.get(p).uuid);
                 startActivity(i);
             }
         });

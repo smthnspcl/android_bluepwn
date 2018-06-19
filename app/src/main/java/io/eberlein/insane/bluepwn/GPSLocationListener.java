@@ -23,7 +23,7 @@ public class GPSLocationListener implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         currentLocation = new io.eberlein.insane.bluepwn.Location(location);
-        Paper.book("location").write(currentLocation.id, currentLocation);
+        Paper.book("location").write(currentLocation.uuid, currentLocation);
         for(Callable<Void> c : onLocationChangedFunctions) {
             try {
                 c.call();
