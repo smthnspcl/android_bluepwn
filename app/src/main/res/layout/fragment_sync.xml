@@ -183,6 +183,6 @@
         android:layout_alignStart="@+id/syncStatusLabel"
         android:layout_below="@id/textView17"
         android:layout_marginTop="8dp"
-        android:text="TextView" />
+        android:text="not checked" />
 
 </RelativeLayout>

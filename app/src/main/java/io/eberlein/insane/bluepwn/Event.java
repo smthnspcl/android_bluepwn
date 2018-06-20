@@ -1,5 +1,10 @@
 package io.eberlein.insane.bluepwn;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import java.util.List;
+
 import static io.eberlein.insane.bluepwn.Static.EVENT_DEVICE_DISCOVERED;
 import static io.eberlein.insane.bluepwn.Static.EVENT_DISCOVERY_FINISHED;
 import static io.eberlein.insane.bluepwn.Static.EVENT_DISCOVERY_STARTED;
@@ -97,5 +102,35 @@ class EventSyncFinished {
 
     public EventSyncFinished(Boolean success){
         this.success = success;
+    }
+}
+
+class EventGotObjects {
+    public final String table;
+    public final JsonArray objects;
+
+    EventGotObjects(String table, JsonArray objects){
+        this.table = table;
+        this.objects = objects;
+    }
+}
+
+class EventGotDifference {
+    public final String table;
+    public final JsonArray keys;
+
+    EventGotDifference(String table, JsonArray keys){
+        this.table = table;
+        this.keys = keys;
+    }
+}
+
+class EventSyncFailed {
+    public final String msg;
+    public final String table;
+
+    EventSyncFailed(String table, String msg){
+        this.table = table;
+        this.msg = msg;
     }
 }

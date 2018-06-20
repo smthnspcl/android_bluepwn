@@ -19,6 +19,8 @@ import com.koushikdutta.ion.Ion;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,6 +44,7 @@ import static io.eberlein.insane.bluepwn.Static.URL_AUTHENTICATE;
 import static io.eberlein.insane.bluepwn.Static.URL_TABLE_DIFFERENCE;
 import static io.eberlein.insane.bluepwn.Static.URL_TABLE_GET;
 import static io.eberlein.insane.bluepwn.Static.URL_TABLE_VARIABLE;
+import static io.eberlein.insane.bluepwn.Static.jsonArrayToStringList;
 
 public class SyncFragment extends Fragment {
     @BindView(R.id.sync) Button sync;
@@ -102,13 +105,36 @@ public class SyncFragment extends Fragment {
     @Subscribe
     public void onGotCookie(EventGotCookie e){
         if(e != null){
-            ouiSyncStatusLabel.setText("ready");
+            syncStatusLabel.setText("ready");
             sync.setText("sync");
             cookie = e.cookie;
         } else {
             syncStatusLabel.setText("cookie null");
             sync.setText("get cookie");
         }
+    }
+
+    @Subscribe
+    public void onGotObjects(EventGotObjects e){
+        TextView tv = tableToTextView(e.table);
+        tv.setText(String.valueOf(e.objects.size()));
+        // todo insert/update
+        tv.setText("synced");
+    }
+
+    @Subscribe
+    public void onGotDifference(EventGotDifference e){
+        TextView tv = tableToTextView(e.table);
+        tv.setText(String.valueOf(e.keys.size()));
+        syncStatusLabel.setText("getting objects");
+        getObjects(e.table, e.keys);
+    }
+
+    @Subscribe
+    public void onSyncFailed(EventSyncFailed e){
+        TextView tv = tableToTextView(e.table);
+        syncStatusLabel.setText("failed");
+        tv.setText(e.msg);
     }
 
     public SyncFragment(){
@@ -167,17 +193,8 @@ public class SyncFragment extends Fragment {
                 });
     }
 
-    private List<String> getKeys(JsonArray a){
-        List<String> keys = new ArrayList<>();
-        System.out.println("got {{I}} keys".replace("{{I}}", String.valueOf(a.size())));
-        for(JsonElement e : a) keys.add(e.getAsString());
-        return keys;
-    }
-
-    private void getObjects(String table, List<String> keys){
-        JsonObject r = new JsonObject();
-        r.addProperty("username", settings.username);
-        r.addProperty("cookie", cookie);
+    private void getObjects(String table, JsonArray keys){
+        JsonObject r = generateCookieRequestBody();
         r.addProperty("keys", gson.toJson(keys));
         Ion.with(getContext()).load(settings.server + URL_TABLE_GET.replace(URL_TABLE_VARIABLE, table))
                 .setJsonObjectBody(r)
@@ -186,42 +203,50 @@ public class SyncFragment extends Fragment {
                     @Override
                     public void onCompleted(Exception e, JsonObject result) {
                         if(!result.isJsonNull()){
-                            // todo Eventbus call / set label
+                            EventBus.getDefault().post(new EventGotObjects(table, result.getAsJsonArray()));
+                        } else {
+                            EventBus.getDefault().post(new EventSyncFailed(table, "no objects"));
                         }
                     }
                 });
     }
 
-    void sync(){
+    private JsonObject generateCookieRequestBody(){
+        JsonObject r = new JsonObject();
+        r.addProperty("username", settings.username);
+        r.addProperty("cookie", cookie);
+        return r;
+    }
+
+    private void setObjects(String table, List<String> keys){
+
+    }
+
+    private void difference(String table){
+        syncStatusLabel.setText("getting difference");
+        JsonObject r = generateCookieRequestBody();
+        r.addProperty("keys", gson.toJson(Paper.book(table).getAllKeys()));
+        Ion.with(getContext()).load(settings.server + URL_TABLE_DIFFERENCE.replace(URL_TABLE_VARIABLE, table))
+                .setJsonObjectBody(r)
+                .asJsonObject()
+                .setCallback(new FutureCallback<JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
+                        if(!result.isJsonNull()) {
+                            EventBus.getDefault().post(new EventGotDifference(table, result.getAsJsonArray()));
+                        } else {
+                            EventBus.getDefault().post(new EventSyncFailed(table, "no keys"));
+                        }
+                    }
+                });
+    }
+
+    private void sync(){
         if(cookie != null && !cookie.isEmpty()){
             syncStatusLabel.setText("syncing");
-            List<String> keys = new ArrayList<>();
-            for(String table : TABLES) {
-                TextView tv = tableToTextView(table);
-                JsonObject j = new JsonObject();
-                j.addProperty("username", settings.username);
-                j.addProperty("cookie", cookie);
-                j.addProperty("keys", gson.toJson(Paper.book(table).getAllKeys()));
-                Ion.with(getContext()).load(settings.server + URL_TABLE_DIFFERENCE.replace(URL_TABLE_VARIABLE, table))
-                        .setJsonObjectBody(j)
-                        .asJsonObject()
-                        .setCallback(new FutureCallback<JsonObject>() {
-                            @Override
-                            public void onCompleted(Exception e, JsonObject result) {
-                                if(!result.isJsonNull()){
-                                    if(result.has("keys")){
-                                        List<String> keys = getKeys(result.getAsJsonArray("keys"));
-                                        tv.setText(String.valueOf(keys.size()));
-                                        getObjects(table, keys);
-                                    } else {
-                                        tv.setText("failed");
-                                    }
-
-                                }
-                            }
-                        });
-            }
-
+            for(String table : TABLES) difference(table);
+        } else {
+            syncStatusLabel.setText("cookie null");
         }
     }
 }

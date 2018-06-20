@@ -1,5 +1,11 @@
 package io.eberlein.insane.bluepwn;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Static {
     static final String TABLE_STAGE = "stage";
     static final String TABLE_STAGER = "stager";
@@ -43,4 +49,10 @@ public class Static {
     static final String URL_TABLE_UPDATE = "api/{{TBL}}/update";
     static final String URL_TABLE_KEYS = "api/{{TBL}}/keys";
     static final String URL_TABLE_GET = "api/{{TBL}}/get";
+
+    static List<String> jsonArrayToStringList(JsonArray l){
+        List<String> r = new ArrayList<>();
+        for(JsonElement e : l) r.add(e.getAsString());
+        return r;
+    }
 }
