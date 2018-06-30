@@ -146,6 +146,7 @@ public class BluetoothFragment extends Fragment {
 
     @Subscribe
     public void onToScanDevicesEmpty(EventToScanDevicesEmpty e){
+        System.out.println("toscan devices null");
         if(continuousScanningCheckbox.isChecked()){
             scan();
         } else {
@@ -156,6 +157,7 @@ public class BluetoothFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onStartScanning(EventStartScanning e){
         scan();
+        scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
     }
 
     @Subscribe
@@ -173,7 +175,6 @@ public class BluetoothFragment extends Fragment {
     @Subscribe
     public void onSDPScanFinished(EventSDPScanFinished e){
         devices.add(e.device);
-        if(toSdpScanDevices.size() >= 1) toSdpScanDevices.remove(0);
         doScanOnNextDevice();
     }
 
@@ -196,6 +197,7 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().setTitle("scan");
         toGattScanDevices = new ArrayList<>();
         toSdpScanDevices = new ArrayList<>();
         EventBus.getDefault().register(this);
@@ -255,18 +257,11 @@ public class BluetoothFragment extends Fragment {
     }
 
     void doScanOnNextDevice(){
-        if(toGattScanDevices.size() == 0 && toSdpScanDevices.size() == 0) {
-            if(continuousScanningCheckbox.isChecked()) scan();
-            else {EventBus.getDefault().post(new EventToScanDevicesEmpty());}
-        } else {
-            if(prioritize.equals(TYPE_LE)){
-                if(toGattScanDevices.size() > 0) { doGattScanOnNextDevice();}
-                else if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice(); }
-            else if(prioritize.equals(TYPE_CLASSIC)){
-                if(toSdpScanDevices.size() > 0) doSdpScanOnNextDevice();
-                else if(toGattScanDevices.size() > 0) doGattScanOnNextDevice(); }
+        if(toGattScanDevices.isEmpty() && toSdpScanDevices.isEmpty())EventBus.getDefault().post(new EventToScanDevicesEmpty());
+        else {
+            if(!toGattScanDevices.isEmpty()) doGattScanOnNextDevice();
+            if(!toSdpScanDevices.isEmpty()) doSdpScanOnNextDevice();
         }
-
     }
 
     private void doSdpScanOnNextDevice(){
@@ -277,7 +272,6 @@ public class BluetoothFragment extends Fragment {
 
     private void doGattScanOnNextDevice(){
         if(toGattScanDevices.size() > 0) {
-            System.out.println("gatt scan");
             btAdapter.getRemoteDevice(toGattScanDevices.get(0).address).connectGatt(getContext(), false, new BluetoothGattCallback() {
                 @Override
                 public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {

@@ -36,6 +36,7 @@ public class DevicesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.objectlist_search, container, false);
+        getActivity().setTitle("devices");
         ButterKnife.bind(this, v);
         initDeviceRecycler();
         return v;

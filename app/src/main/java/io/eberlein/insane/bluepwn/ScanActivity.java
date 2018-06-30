@@ -41,6 +41,7 @@ public class ScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
         ButterKnife.bind(this);
+        setTitle("scan");
         scan = Scan.get(getIntent().getStringExtra("uuid"));
         devices = new DeviceAdapter();
         devices.addAll(scan.getDevices());

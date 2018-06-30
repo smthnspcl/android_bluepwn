@@ -68,6 +68,8 @@ public class StagerActivity extends AppCompatActivity {
         s.name = name.getText().toString();
         s.lastModified = new Date();
         s.save();
+        _service.stagers.add(s.uuid);
+        _service.save();
         finish();
      }
 
@@ -76,7 +78,8 @@ public class StagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stager);
         ButterKnife.bind(this);
-        _service = Service.get(getIntent().getStringExtra("service"));
+        _service = Service.get(getIntent().getStringExtra("uuid"));
+        setTitle("stager: " + "");
         stageAdapter = new StageAdapter();
         recycler.setLayoutManager(new LinearLayoutManager(this));
         recycler.setAdapter(stageAdapter);

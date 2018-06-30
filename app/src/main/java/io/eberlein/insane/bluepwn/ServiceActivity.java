@@ -33,7 +33,7 @@ public class ServiceActivity extends AppCompatActivity {
     public void addBtnClicked(){
         Intent i = new Intent(this, StagerActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.putExtra("service", service.uuid);
+        i.putExtra("uuid", service.uuid);
         startActivity(i);
     }
 
@@ -46,6 +46,7 @@ public class ServiceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_service);
         ButterKnife.bind(this);
         service = Service.getExistingOrNew(getIntent().getStringExtra("uuid"));
+        setTitle("service: " + service.name);
         uuid.setText(service.uuid);
         name.setText(service.name);
         description.setText(service.description);

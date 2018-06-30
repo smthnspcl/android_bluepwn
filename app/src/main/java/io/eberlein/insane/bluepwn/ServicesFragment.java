@@ -31,6 +31,7 @@ public class ServicesFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().setTitle("services");
         serviceAdapter = new ServiceAdapter();
     }
 

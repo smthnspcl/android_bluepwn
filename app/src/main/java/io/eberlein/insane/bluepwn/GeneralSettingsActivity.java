@@ -8,5 +8,13 @@ public class GeneralSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_general_settings);
+        setTitle("general");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // todo
     }
 }

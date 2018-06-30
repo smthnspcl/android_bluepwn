@@ -48,6 +48,7 @@ public class LocationActivity extends AppCompatActivity {
 
     private void setContentValues(String uuid){
         location = Location.get(uuid);
+        setTitle(String.valueOf(location.latitude) + "; " + String.valueOf(location.longitude));
         latitude.setText(String.valueOf(location.latitude));
         longitude.setText(String.valueOf(location.longitude));
         altitude.setText(String.valueOf(location.altitude));

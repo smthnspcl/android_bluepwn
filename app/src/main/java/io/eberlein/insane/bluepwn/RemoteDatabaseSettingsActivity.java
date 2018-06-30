@@ -62,6 +62,7 @@ public class RemoteDatabaseSettingsActivity extends AppCompatActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_database_settings);
+        setTitle("remote database");
         ButterKnife.bind(this);
         remoteDBSettings = new RemoteDBSettings();
         username.setEnabled(false);

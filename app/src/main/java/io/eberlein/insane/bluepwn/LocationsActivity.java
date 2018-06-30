@@ -47,6 +47,7 @@ public class LocationsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.objectlist_search);
         ButterKnife.bind(this);
+        setTitle("locations");
         gson = new Gson();
         locations = new LocationAdapter();
         String e = getIntent().getStringExtra("locations");

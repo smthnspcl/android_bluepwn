@@ -28,6 +28,7 @@ public class ScansFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         scans = new ScanAdapter();
+        getActivity().setTitle("scans");
     }
 
     @Nullable
