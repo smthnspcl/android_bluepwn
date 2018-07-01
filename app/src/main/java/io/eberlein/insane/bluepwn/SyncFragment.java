@@ -21,6 +21,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import butterknife.BindView;
@@ -41,7 +42,10 @@ import static io.eberlein.insane.bluepwn.Static.TABLE_STAGER;
 import static io.eberlein.insane.bluepwn.Static.URL_AUTHENTICATE;
 import static io.eberlein.insane.bluepwn.Static.URL_TABLE_DIFFERENCE;
 import static io.eberlein.insane.bluepwn.Static.URL_TABLE_GET;
+import static io.eberlein.insane.bluepwn.Static.URL_TABLE_SET;
 import static io.eberlein.insane.bluepwn.Static.URL_TABLE_VARIABLE;
+import static io.eberlein.insane.bluepwn.Static.classToTable;
+import static io.eberlein.insane.bluepwn.Static.tableToClass;
 
 public class SyncFragment extends Fragment {
     @BindView(R.id.sync) Button sync;
@@ -118,8 +122,16 @@ public class SyncFragment extends Fragment {
     @Subscribe
     public void onGotDifference(EventGotDifference e){
         TextView tv = tableToTextView(e.table);
-        tv.setText(String.valueOf(e.keys.size()));
-        getObjects(e.table, e.keys);
+        tv.setText(String.valueOf(e.want.size()));
+        getObjects(e.table, e.have);
+        setObjects(e.table, e.want);
+    }
+
+    @Subscribe
+    public void onSetObjects(EventSetObjects e){
+        TextView tv = tableToTextView(e.table);
+        tv.setText(String.valueOf(e.success));
+        syncStatusLabel.setText("done");
     }
 
     @Subscribe
@@ -148,6 +160,7 @@ public class SyncFragment extends Fragment {
     public void onResume() {
         super.onResume();
         settings = RemoteDBSettings.get();
+        classToTable(settings.getClass());
     }
 
     @Nullable
@@ -164,6 +177,7 @@ public class SyncFragment extends Fragment {
     }
 
     void getCookie(){
+        syncStatusLabel.setText("getting cookie");
         JsonObject j = new JsonObject();
         j.addProperty("username", settings.username);
         j.addProperty("password", settings.password);
@@ -205,6 +219,26 @@ public class SyncFragment extends Fragment {
                 });
     }
 
+    private void setObjects(String table, JsonArray keys){
+        syncStatusLabel.setText("settings objects");
+        JsonArray objs = new JsonArray();
+        for(JsonElement e : keys){
+            objs.add(gson.toJson(Paper.book(table).read(e.getAsString())));
+        }
+        JsonObject r = generateCookieRequestBody();
+        r.addProperty("objs", gson.toJson(objs));
+        Ion.with(getContext()).load(settings.server + URL_TABLE_SET.replace(URL_TABLE_VARIABLE, table))
+                .setJsonObjectBody(r)
+                .asJsonObject()
+                .setCallback(new FutureCallback<JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
+                        if(result != null) {if(!result.isJsonNull()) EventBus.getDefault().post(new EventSetObjects(table, result.get("success").getAsBoolean()));}
+                        else EventBus.getDefault().post(new EventSyncFailed(table, "set failed"));
+                    }
+                });
+    }
+
     private JsonObject generateCookieRequestBody(){
         JsonObject r = new JsonObject();
         r.addProperty("username", settings.username);
@@ -224,7 +258,7 @@ public class SyncFragment extends Fragment {
                     public void onCompleted(Exception e, JsonObject result) {
                         Boolean success = false;
                         if(result != null) if(!result.isJsonNull()) success = true;
-                        if(success)EventBus.getDefault().post(new EventGotDifference(table, result.getAsJsonArray("keys")));
+                        if(success) {System.out.println(result.toString()); EventBus.getDefault().post(new EventGotDifference(table, result.getAsJsonArray("want"), result.getAsJsonArray("have")));}
                         else EventBus.getDefault().post(new EventSyncFailed(table, "no keys"));
                     }
                 });

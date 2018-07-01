@@ -117,11 +117,13 @@ class EventGotObjects {
 
 class EventGotDifference {
     public final String table;
-    public final JsonArray keys;
+    public final JsonArray want;
+    public final JsonArray have;
 
-    EventGotDifference(String table, JsonArray keys){
+    EventGotDifference(String table, JsonArray want, JsonArray have){
         this.table = table;
-        this.keys = keys;
+        this.want = want;
+        this.have = have;
     }
 }
 
@@ -132,5 +134,15 @@ class EventSyncFailed {
     EventSyncFailed(String table, String msg){
         this.table = table;
         this.msg = msg;
+    }
+}
+
+class EventSetObjects {
+    public final String table;
+    public final Boolean success;
+
+    EventSetObjects(String table, Boolean success){
+        this.table = table;
+        this.success = success;
     }
 }

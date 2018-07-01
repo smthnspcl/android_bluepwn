@@ -4,28 +4,29 @@ import android.bluetooth.BluetoothGattCharacteristic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import io.paperdb.Paper;
 
 import static io.eberlein.insane.bluepwn.Static.TABLE_CHARACTERISTIC;
 
-public class Characteristic {
+public class Characteristic extends DatabaseObject {
 
     Integer permssions;
     Integer properties;
     Integer writeType;
-    String uuid;
     String name;
     byte[] value;
 
     List<String> descriptors;
 
     Characteristic(){
+        super(UUID.randomUUID().toString());
         descriptors = new ArrayList<>();
     }
 
     Characteristic(BluetoothGattCharacteristic c){
-        this.uuid = c.getUuid().toString();
+        super(c.getUuid().toString());
         this.permssions = c.getPermissions();
         this.properties = c.getProperties();
         this.value = c.getValue();
@@ -35,23 +36,13 @@ public class Characteristic {
     }
 
     Characteristic(String uuid, String name, Integer permissions, Integer properties, Integer writeType, byte[] value){
-        this.uuid = uuid;
+        super(uuid);
         this.name = name;
         this.permssions = permissions;
         this.properties = properties;
         this.value = value;
         this.writeType = writeType;
         this.descriptors = new ArrayList<>();
-    }
-
-    void save(){
-        Paper.book(TABLE_CHARACTERISTIC).write(uuid, this);
-    }
-
-    static List<Characteristic> get(){
-        List<Characteristic> characteristics = new ArrayList<>();
-        for(String c : Paper.book(TABLE_CHARACTERISTIC).getAllKeys()) characteristics.add(Paper.book(TABLE_CHARACTERISTIC).read(c));
-        return characteristics;
     }
 
     static Characteristic get(String uuid){

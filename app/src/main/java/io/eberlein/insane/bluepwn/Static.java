@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Static {
@@ -22,6 +23,37 @@ public class Static {
             TABLE_STAGE, TABLE_STAGER, TABLE_SERVICE, TABLE_SCAN, TABLE_OUI, TABLE_LOCATION,
             TABLE_DEVICE, TABLE_DESCRIPTOR, TABLE_CHARACTERISTIC
     };
+
+    static Class tableToClass(String table) {
+        switch (table){
+            case TABLE_STAGE: return Stage.class;
+            case TABLE_STAGER: return Stager.class;
+            case TABLE_SERVICE: return Service.class;
+            case TABLE_SCAN: return Scan.class;
+            case TABLE_OUI: return OuiEntry.class;
+            case TABLE_LOCATION: return Location.class;
+            case TABLE_DEVICE: return Device.class;
+            case TABLE_DESCRIPTOR: return Descriptor.class;
+            case TABLE_CHARACTERISTIC: return Characteristic.class;
+            default: return null;
+        }
+    }
+
+    static String classToTable(Class c){
+        switch (c.getSimpleName()){
+            case "RemoteDBSettings": return TABLE_SETTINGS;
+            case "Characteristic": return TABLE_CHARACTERISTIC;
+            case "Descriptor": return TABLE_DESCRIPTOR;
+            case "Device": return TABLE_DEVICE;
+            case "Location": return TABLE_LOCATION;
+            case "OuiEntry": return TABLE_OUI;
+            case "Scan": return TABLE_SCAN;
+            case "Service": return TABLE_SERVICE;
+            case "Stager": return TABLE_STAGER;
+            case "Stage": return TABLE_STAGE;
+            default: return null;
+        }
+    }
 
     static final String KEY_REMOTE_DATABASE_SETTINGS = "remote";
 
@@ -51,9 +83,8 @@ public class Static {
     static final String URL_TABLE_VARIABLE = "{{TBL}}";
     static final String URL_AUTHENTICATE = "api/authenticate";
     static final String URL_TABLE_DIFFERENCE = "api/{{TBL}}/difference";
-    static final String URL_TABLE_UPDATE = "api/{{TBL}}/update";
-    static final String URL_TABLE_KEYS = "api/{{TBL}}/keys";
     static final String URL_TABLE_GET = "api/{{TBL}}/get";
+    static final String URL_TABLE_SET = "api/{{TBL}}/set";
 
     static List<String> jsonArrayToStringList(JsonArray l){
         List<String> r = new ArrayList<>();
