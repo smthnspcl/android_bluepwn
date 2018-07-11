@@ -97,4 +97,12 @@ public class Service {
         for(String s : Paper.book(TABLE_SERVICE).getAllKeys()) services.add(Paper.book(TABLE_SERVICE).read(s));
         return services;
     }
+
+    void updateCharacteristics(Characteristic c){
+        if(!characteristics.contains(c.uuid)) characteristics.add(c.uuid);
+    }
+
+    void updateCharacteristics(Characteristic[] cA){
+        for(Characteristic c : cA) updateCharacteristics(c);
+    }
 }

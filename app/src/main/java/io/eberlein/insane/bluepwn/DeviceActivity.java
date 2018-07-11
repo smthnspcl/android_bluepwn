@@ -60,7 +60,7 @@ public class DeviceActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         gson = new Gson();
         serviceAdapter = new ServiceAdapter();
-        device = Device.get(getIntent().getStringExtra("address"));
+        device = Device.getExistingOrNew(getIntent().getStringExtra("address"));
         setTitle("dev: " + device.address);
         serviceAdapter.addAll(device.getServices());
         tvMac.setText(device.address);

@@ -97,52 +97,22 @@ class EventGotCookie {
     }
 }
 
-class EventSyncFinished {
-    public final Boolean success;
-
-    public EventSyncFinished(Boolean success){
-        this.success = success;
-    }
-}
-
-class EventGotObjects {
-    public final String table;
-    public final JsonArray objects;
-
-    EventGotObjects(String table, JsonArray objects){
-        this.table = table;
-        this.objects = objects;
-    }
-}
-
 class EventGotDifference {
     public final String table;
-    public final JsonArray want;
-    public final JsonArray have;
+    public final JsonArray differences;
 
-    EventGotDifference(String table, JsonArray want, JsonArray have){
+    public EventGotDifference(String table, JsonArray differences) {
         this.table = table;
-        this.want = want;
-        this.have = have;
+        this.differences = differences;
     }
 }
 
 class EventSyncFailed {
-    public final String msg;
     public final String table;
+    public final String msg;
 
-    EventSyncFailed(String table, String msg){
+    public EventSyncFailed (String table, String msg){
         this.table = table;
         this.msg = msg;
-    }
-}
-
-class EventSetObjects {
-    public final String table;
-    public final Boolean success;
-
-    EventSetObjects(String table, Boolean success){
-        this.table = table;
-        this.success = success;
     }
 }

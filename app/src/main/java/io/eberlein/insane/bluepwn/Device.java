@@ -57,7 +57,7 @@ public class Device {
         return devices;
     }
 
-    static Device get(String address){
+    static Device getExistingOrNew(String address){
         Device d = Paper.book(TABLE_DEVICE).read(address);
         if(d != null) return d;
         return new Device();

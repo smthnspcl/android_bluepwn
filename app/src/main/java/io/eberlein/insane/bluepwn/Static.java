@@ -56,6 +56,7 @@ public class Static {
     }
 
     static final String KEY_REMOTE_DATABASE_SETTINGS = "remote";
+    static final String KEY_SCAN_SETTINGS = "scan";
 
     static final Integer EVENT_DISCOVERY_STARTED = 0;
     static final Integer EVENT_DISCOVERY_FINISHED = 1;

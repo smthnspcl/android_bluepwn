@@ -29,6 +29,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_below="@id/continuousScanningCheckbox"
-        android:layout_marginTop="64dp" />
+        android:layout_marginTop="64dp"
+        android:scrollbars="vertical"/>
 
 </RelativeLayout>

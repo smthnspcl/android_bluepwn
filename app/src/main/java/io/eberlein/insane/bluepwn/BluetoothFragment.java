@@ -64,8 +64,8 @@ public class BluetoothFragment extends Fragment {
 
     private DeviceAdapter devices;
     private Scan scan;
+    private ScanSettings settings;
 
-    private String prioritize = TYPE_LE;
     private List<Device> toSdpScanDevices;
     private List<Device> toGattScanDevices;
 
@@ -90,7 +90,7 @@ public class BluetoothFragment extends Fragment {
             if(BluetoothDevice.ACTION_UUID.equals(intent.getAction())){
                 BluetoothDevice d = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Parcelable[] uuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
-                Device device = Device.get(d.getAddress());
+                Device device = Device.getExistingOrNew(d.getAddress());
                 if(uuids != null && device != null){
                     for(Parcelable u : uuids){
                         android.os.ParcelUuid __u = (android.os.ParcelUuid) u;
@@ -111,7 +111,7 @@ public class BluetoothFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals(BluetoothDevice.ACTION_FOUND)){
                 BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                Device device = Device.get(bluetoothDevice.getAddress());
+                Device device = Device.getExistingOrNew(bluetoothDevice.getAddress());
                 device.populateIfEmpty(bluetoothDevice);
                 if(device.address.isEmpty()) device.setValues(bluetoothDevice);
                 if(locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) device.locations.add(locationListener.currentLocation.uuid);
@@ -168,6 +168,7 @@ public class BluetoothFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGATTScanFinished(EventGATTScanFinished e){
         devices.add(e.device);
+        System.out.println("gatt scan finished");
         toGattScanDevices.remove(0);
         doScanOnNextDevice();
     }
@@ -175,6 +176,7 @@ public class BluetoothFragment extends Fragment {
     @Subscribe
     public void onSDPScanFinished(EventSDPScanFinished e){
         devices.add(e.device);
+        System.out.println("sdp scan finished");
         doScanOnNextDevice();
     }
 
@@ -198,6 +200,7 @@ public class BluetoothFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle("scan");
+        settings = ScanSettings.get();
         toGattScanDevices = new ArrayList<>();
         toSdpScanDevices = new ArrayList<>();
         EventBus.getDefault().register(this);
@@ -265,43 +268,46 @@ public class BluetoothFragment extends Fragment {
     }
 
     private void doSdpScanOnNextDevice(){
-        if(toSdpScanDevices.size() > 0) {
-            btAdapter.getRemoteDevice(toSdpScanDevices.get(0).address).fetchUuidsWithSdp();
-        }
+        if(toSdpScanDevices.size() > 0) btAdapter.getRemoteDevice(toSdpScanDevices.get(0).address).fetchUuidsWithSdp();
     }
 
     private void doGattScanOnNextDevice(){
         if(toGattScanDevices.size() > 0) {
-            btAdapter.getRemoteDevice(toGattScanDevices.get(0).address).connectGatt(getContext(), false, new BluetoothGattCallback() {
+            System.out.println("doing gatt scan");
+            Device device = toGattScanDevices.get(0);
+            BluetoothDevice d = btAdapter.getRemoteDevice(device.address);
+            d.connectGatt(getContext(), false, new BluetoothGattCallback() {
                 @Override
                 public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-                    if(newState == BluetoothProfile.STATE_CONNECTED){
+                    super.onConnectionStateChange(gatt, status, newState);
+                    if(newState == BluetoothProfile.STATE_DISCONNECTED || newState == BluetoothProfile.STATE_DISCONNECTING) {
+                        EventBus.getDefault().post(new EventGATTScanFinished(device));
+                    } else if(newState == BluetoothProfile.STATE_CONNECTED){
                         gatt.discoverServices();
                     }
                 }
 
                 @Override
                 public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-                    if(status == BluetoothGatt.GATT_SUCCESS){
-                        Device device = Device.get(gatt.getDevice().getAddress());
-                        for(BluetoothGattService s : gatt.getServices()){
-                            Service service = Service.getExistingOrNew(s.getUuid().toString());
-                            for(BluetoothGattCharacteristic c : s.getCharacteristics()){
-                                Characteristic characteristic = Characteristic.getExistingOrNew(c);
-                                if(!service.characteristics.contains(characteristic.uuid)) service.characteristics.add(characteristic.uuid);
-                                for(BluetoothGattDescriptor d : c.getDescriptors()){
-                                    Descriptor descriptor = Descriptor.getExistingOrNew(d);
-                                    if(!characteristic.descriptors.contains(descriptor.uuid)) characteristic.descriptors.add(descriptor.uuid);
-                                    descriptor.save();
-                                }
-                                characteristic.save();
+                    super.onServicesDiscovered(gatt, status);
+                    List<BluetoothGattService> services = gatt.getServices();
+                    for(BluetoothGattService s : services) {
+                        Service service = Service.getExistingOrNew(s.getUuid().toString());
+                        for(BluetoothGattCharacteristic c : s.getCharacteristics()){
+                            Characteristic characteristic = Characteristic.getExistingOrNew(c);
+                            for(BluetoothGattDescriptor d : c.getDescriptors()){
+                                Descriptor descriptor = Descriptor.getExistingOrNew(d);
+                                characteristic.updateDescriptors(descriptor);
+                                descriptor.save();
                             }
-                            service.save();
-                            if(!device.services.contains(service.uuid)) device.services.add(service.uuid);
+                            service.updateCharacteristics(characteristic);
+                            characteristic.save();
                         }
-                        device.save();
-                        EventBus.getDefault().post(new EventGATTScanFinished(device));
+                        device.updateServices(service);
+                        service.save();
                     }
+                    device.save();
+                    gatt.disconnect();
                 }
             });
         }

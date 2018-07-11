@@ -69,7 +69,8 @@
         android:layout_alignEnd="@+id/space9"
         android:layout_below="@+id/selectionSpinner"
         android:layout_marginTop="11dp"
-        android:layout_toEndOf="@+id/space5" />
+        android:layout_toEndOf="@+id/space5"
+        android:scrollbars="vertical"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addBtn"

@@ -11,10 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
-
-
 import org.osmdroid.config.Configuration;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.paperdb.Paper;

@@ -45,6 +45,11 @@ public class Characteristic extends DatabaseObject {
         this.descriptors = new ArrayList<>();
     }
 
+    void updateDescriptors(Descriptor d){
+        String u = d.uuid;
+        if(!descriptors.contains(u)) descriptors.add(u);
+    }
+
     static Characteristic get(String uuid){
         return Paper.book(TABLE_CHARACTERISTIC).read(uuid);
     }
