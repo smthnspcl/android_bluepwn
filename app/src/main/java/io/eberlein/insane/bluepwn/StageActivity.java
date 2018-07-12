@@ -38,6 +38,7 @@ public class StageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         setContentView(R.layout.activity_stage);
         ButterKnife.bind(this);
         stage = Stage.get(getIntent().getStringExtra("uuid"));
@@ -63,6 +64,7 @@ public class StageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.onResume(this.getClass());
         name.setText(stage.name);
         data.setText(stage.data);
         setDataType();
@@ -71,6 +73,7 @@ public class StageActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.onPause(this.getClass());
         stage.save();
     }
 }

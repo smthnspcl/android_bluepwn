@@ -14,6 +14,7 @@ public class ScanningSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         setContentView(R.layout.activity_scan_settings);
         setTitle("scan settings");
         ButterKnife.bind(this);
@@ -23,6 +24,7 @@ public class ScanningSettingsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.onDestroy(this.getClass());
         settings.save();
         Toast.makeText(this, "saved", Toast.LENGTH_SHORT).show();
     }

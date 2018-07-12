@@ -31,6 +31,7 @@ public class ServicesFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         getActivity().setTitle("services");
         serviceAdapter = new ServiceAdapter();
     }
@@ -56,5 +57,29 @@ public class ServicesFragment extends Fragment {
         });
         spinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, selectionSpinnerItems));
         return v;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.onDestroy(this.getClass());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.onResume(this.getClass());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.onStart(this.getClass());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.onStop(this.getClass());
     }
 }

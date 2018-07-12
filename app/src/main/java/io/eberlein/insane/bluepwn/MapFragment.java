@@ -46,6 +46,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         requestPermissions();
         initGPS();
     }
@@ -59,6 +60,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        Log.onStop(this.getClass());
         mapView.onPause();
     }
 
@@ -87,6 +89,7 @@ public class MapFragment extends Fragment {
     }
 
     private void initGPS(){
+        Log.initGPS(this.getClass());
         locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         locationListener = new GPSLocationListener();
         try{
@@ -94,6 +97,7 @@ public class MapFragment extends Fragment {
         } catch (SecurityException e) {
             e.printStackTrace();
         }
+        Log.initGPSFinished(this.getClass());
     }
 
     private void requestPermissions(){

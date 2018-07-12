@@ -16,7 +16,15 @@ public class DatabaseSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         setContentView(R.layout.activity_remote_database_settings);
         ButterKnife.bind(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.onCreate(this.getClass());
+        // save
     }
 }

@@ -56,6 +56,7 @@ public class DeviceActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         setContentView(R.layout.activity_device);
         ButterKnife.bind(this);
         gson = new Gson();
@@ -110,11 +111,13 @@ public class DeviceActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.onDestroy(this.getClass());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.onDestroy(this.getClass());
     }
 
     @Override

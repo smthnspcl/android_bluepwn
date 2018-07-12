@@ -8,5 +8,12 @@ public class LocalDatabaseSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.onDestroy(this.getClass());
     }
 }

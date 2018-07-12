@@ -72,6 +72,7 @@ public class StagersFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         stagerAdapter = new StagerAdapter();
     }
 
@@ -86,6 +87,7 @@ public class StagersFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
+        Log.onResume(this.getClass());
         init();
     }
 

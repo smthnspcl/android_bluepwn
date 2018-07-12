@@ -61,6 +61,7 @@ public class RemoteDatabaseSettingsActivity extends AppCompatActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         setContentView(R.layout.activity_remote_database_settings);
         setTitle("remote database");
         ButterKnife.bind(this);
@@ -75,6 +76,7 @@ public class RemoteDatabaseSettingsActivity extends AppCompatActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.onDestroy(this.getClass());
         saveSettings();
     }
 

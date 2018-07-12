@@ -100,7 +100,6 @@ public class BluetoothFragment extends Fragment {
                     }
                     device.save();
                     EventBus.getDefault().post(new EventSDPScanFinished(device));
-
                 }
             }
         }
@@ -138,6 +137,7 @@ public class BluetoothFragment extends Fragment {
 
     @Subscribe
     public void onDeviceDiscovered(EventDeviceDiscovered e){
+        Log.log(this.getClass(), "discovered " + e.device.address);
         if(e.device.type.equals(TYPE_CLASSIC) || e.device.type.equals(TYPE_DUAL)) toSdpScanDevices.add(e.device);
         if(e.device.type.equals(TYPE_LE) || e.device.type.equals(TYPE_DUAL)) toGattScanDevices.add(e.device);
         if(!scan.devices.contains(e.device.address)) scan.devices.add(e.device.address);
@@ -146,7 +146,7 @@ public class BluetoothFragment extends Fragment {
 
     @Subscribe
     public void onToScanDevicesEmpty(EventToScanDevicesEmpty e){
-        System.out.println("toscan devices null");
+        Log.log(this.getClass(), "no devices in sdp/gatt queue");
         if(continuousScanningCheckbox.isChecked()){
             scan();
         } else {
@@ -157,30 +157,35 @@ public class BluetoothFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onStartScanning(EventStartScanning e){
         scan();
-        scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
+
     }
 
     @Subscribe
     public void onStopScanning(EventStopScanning e){
-        if(btAdapter.isDiscovering()) btAdapter.cancelDiscovery();
+        if(btAdapter.isDiscovering()) {
+            btAdapter.cancelDiscovery();
+            Log.log(this.getClass(), "scanning stopped");
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGATTScanFinished(EventGATTScanFinished e){
         devices.add(e.device);
-        System.out.println("gatt scan finished");
+        Log.log(this.getClass(), "gatt scan for " + e.device.address + " finished");
         toGattScanDevices.remove(0);
         doScanOnNextDevice();
     }
 
     @Subscribe
     public void onSDPScanFinished(EventSDPScanFinished e){
+        Log.log(this.getClass(), "sdp scan for " + e.device.address + " finished");
         devices.add(e.device);
-        System.out.println("sdp scan finished");
+        if(toSdpScanDevices.size() > 0) toSdpScanDevices.remove(0);
         doScanOnNextDevice();
     }
 
     private void initGPS(){
+        Log.initGPS(this.getClass());
         locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         locationListener = new GPSLocationListener();
 
@@ -194,11 +199,13 @@ public class BluetoothFragment extends Fragment {
 
         try{ locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
         } catch (SecurityException e) { e.printStackTrace(); }
+        Log.initGPSFinished(this.getClass());
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         getActivity().setTitle("scan");
         settings = ScanSettings.get();
         toGattScanDevices = new ArrayList<>();
@@ -216,6 +223,7 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        Log.onStart(this.getClass());
         if(scan == null) {scan = new Scan();}
         devices.addAll(scan.getDevices());
     }
@@ -223,6 +231,7 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        Log.onStop(this.getClass());
     }
 
     @Nullable
@@ -230,6 +239,7 @@ public class BluetoothFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v =  inflater.inflate(R.layout.fragment_bluetooth, container, false);
         ButterKnife.bind(this, v);
+        continuousScanningCheckbox.setChecked(false);
         scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
         deviceRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         deviceRecycler.setAdapter(devices);
@@ -247,12 +257,14 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.onDestroy(this.getClass());
         EventBus.getDefault().unregister(this);
         unregisterReceivers();
         btAdapter.disable();
     }
 
     private void requestPermissions(){
+        Log.log(this.getClass(), "requesting permissions");
         if(!(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED))
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.BLUETOOTH}, Static.BLUETOOTH_RESULT);
         if(!(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED))
@@ -260,7 +272,7 @@ public class BluetoothFragment extends Fragment {
     }
 
     void doScanOnNextDevice(){
-        if(toGattScanDevices.isEmpty() && toSdpScanDevices.isEmpty())EventBus.getDefault().post(new EventToScanDevicesEmpty());
+        if(toGattScanDevices.isEmpty() && toSdpScanDevices.isEmpty()) EventBus.getDefault().post(new EventToScanDevicesEmpty());
         else {
             if(!toGattScanDevices.isEmpty()) doGattScanOnNextDevice();
             if(!toSdpScanDevices.isEmpty()) doSdpScanOnNextDevice();
@@ -268,21 +280,27 @@ public class BluetoothFragment extends Fragment {
     }
 
     private void doSdpScanOnNextDevice(){
-        if(toSdpScanDevices.size() > 0) btAdapter.getRemoteDevice(toSdpScanDevices.get(0).address).fetchUuidsWithSdp();
+        if(toSdpScanDevices.size() > 0) {
+            Device d = toSdpScanDevices.get(0);
+            Log.log(this.getClass(), "trying to sdp scan " + d.address);
+            btAdapter.getRemoteDevice(d.address).fetchUuidsWithSdp();
+        }
     }
 
     private void doGattScanOnNextDevice(){
         if(toGattScanDevices.size() > 0) {
-            System.out.println("doing gatt scan");
             Device device = toGattScanDevices.get(0);
+            Log.log(this.getClass(), "trying to gatt-scan " + device.address);
             BluetoothDevice d = btAdapter.getRemoteDevice(device.address);
             d.connectGatt(getContext(), false, new BluetoothGattCallback() {
                 @Override
                 public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
                     super.onConnectionStateChange(gatt, status, newState);
                     if(newState == BluetoothProfile.STATE_DISCONNECTED || newState == BluetoothProfile.STATE_DISCONNECTING) {
+                        Log.log(this.getClass(), "disconnected from " + device.address);
                         EventBus.getDefault().post(new EventGATTScanFinished(device));
                     } else if(newState == BluetoothProfile.STATE_CONNECTED){
+                        Log.log(this.getClass(), "connected to " + device.address);
                         gatt.discoverServices();
                     }
                 }
@@ -290,6 +308,7 @@ public class BluetoothFragment extends Fragment {
                 @Override
                 public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                     super.onServicesDiscovered(gatt, status);
+                    Log.log(this.getClass(), "discovered services for " + device.address);
                     List<BluetoothGattService> services = gatt.getServices();
                     for(BluetoothGattService s : services) {
                         Service service = Service.getExistingOrNew(s.getUuid().toString());
@@ -307,6 +326,7 @@ public class BluetoothFragment extends Fragment {
                         service.save();
                     }
                     device.save();
+                    Log.log(this.getClass(), "updated database entry for " + device.address);
                     gatt.disconnect();
                 }
             });
@@ -314,6 +334,7 @@ public class BluetoothFragment extends Fragment {
     }
 
     private void registerReceivers(){
+        Log.log(this.getClass(), "registering receivers");
         getContext().registerReceiver(onDiscoveryStartedReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
         getContext().registerReceiver(onUuidFoundReceiver, new IntentFilter(BluetoothDevice.ACTION_UUID));
         getContext().registerReceiver(onDeviceDiscoveredReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
@@ -321,12 +342,16 @@ public class BluetoothFragment extends Fragment {
     }
 
     private void unregisterReceivers(){
+        Log.log(this.getClass(), "unregistering receivers");
         for(BroadcastReceiver br : broadcastReceivers){
             try { getContext().unregisterReceiver(br); } catch (RuntimeException e){e.printStackTrace();}
         }
     }
 
     public void scan(){
-        if(btAdapter.isEnabled() && !btAdapter.isDiscovering()) btAdapter.startDiscovery();
+        if(btAdapter.isEnabled() && !btAdapter.isDiscovering()) {
+            btAdapter.startDiscovery();
+            Log.log(this.getClass(), "started scanning");
+        }
     }
 }

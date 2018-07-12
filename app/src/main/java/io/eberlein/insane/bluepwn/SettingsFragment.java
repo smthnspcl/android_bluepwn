@@ -56,4 +56,22 @@ public class SettingsFragment extends Fragment {
         adapter.empty();
         adapter.addAll(Arrays.asList(SETTINGS_ITEMS));
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.onStart(this.getClass());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.onStop(this.getClass());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.onDestroy(this.getClass());
+    }
 }

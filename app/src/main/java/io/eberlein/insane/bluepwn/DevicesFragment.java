@@ -29,6 +29,7 @@ public class DevicesFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         devices = new DeviceAdapter();
     }
 

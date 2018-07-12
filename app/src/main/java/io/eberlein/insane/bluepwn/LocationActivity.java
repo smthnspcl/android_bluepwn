@@ -39,6 +39,7 @@ public class LocationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         setContentView(R.layout.activity_location);
         ButterKnife.bind(this);
         String id = getIntent().getStringExtra("uuid");

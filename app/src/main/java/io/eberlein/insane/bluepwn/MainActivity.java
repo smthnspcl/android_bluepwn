@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         Context c = getApplicationContext();
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        Log.onDestroy(this.getClass());
         BluetoothAdapter.getDefaultAdapter().disable();
         super.onDestroy();
     }

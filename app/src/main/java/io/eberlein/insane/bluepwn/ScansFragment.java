@@ -27,6 +27,7 @@ public class ScansFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         scans = new ScanAdapter();
         getActivity().setTitle("scans");
     }
@@ -49,5 +50,29 @@ public class ScansFragment extends Fragment {
             }
         });
         return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.onStart(this.getClass());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.onStop(this.getClass());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.onResume(this.getClass());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.onDestroy(this.getClass());
     }
 }

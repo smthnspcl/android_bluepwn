@@ -67,7 +67,26 @@ public class ServiceActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.onResume(this.getClass());
         stagerAdapter.empty();
         stagerAdapter.addAll(service.getStagers());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.onStart(this.getClass());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.onStop(this.getClass());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.onDestroy(this.getClass());
     }
 }

@@ -45,6 +45,7 @@ public class LocationsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         setContentView(R.layout.objectlist_search);
         ButterKnife.bind(this);
         setTitle("locations");

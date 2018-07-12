@@ -76,6 +76,7 @@ public class StagerActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.onCreate(this.getClass());
         setContentView(R.layout.activity_stager);
         ButterKnife.bind(this);
         _service = Service.get(getIntent().getStringExtra("uuid"));
@@ -97,6 +98,7 @@ public class StagerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.onResume(this.getClass());
         stager = Stager.get(null);
         name.setText(stager.name);
         service.setText(stager.uuid);
