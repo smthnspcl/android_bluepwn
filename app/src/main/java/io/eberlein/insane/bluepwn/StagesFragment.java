@@ -26,7 +26,7 @@ public class StagesFragment extends Fragment {
     @BindView(R.id.spinner) Spinner selectionSpinner;
     @BindView(R.id.query) AutoCompleteTextView selectionQuery;
     @BindView(R.id.recycler) RecyclerView recycler;
-    @BindView(R.id.addRecyclerItem) FloatingActionButton addRecyclerItem;
+    @BindView(R.id.fab) FloatingActionButton fab;
 
     private StagerAdapter stagerAdapter;
     private ArrayAdapter<String> selectionSpinnerAdapter;

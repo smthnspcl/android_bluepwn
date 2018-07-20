@@ -13,6 +13,8 @@ public class ScanSettings {
     Boolean gattAutoConnect;
     Integer gattScanTimeout;
     TimeUnit gattScanTimeoutUnit;
+    Boolean discoverServices;
+    Boolean continuousScanningDefault;
 
 
     ScanSettings(){
@@ -20,6 +22,8 @@ public class ScanSettings {
         gattAutoConnect = false;
         gattScanTimeout = 5;
         gattScanTimeoutUnit = TimeUnit.SECONDS;
+        discoverServices = true;
+        continuousScanningDefault = false;
     }
 
     void save(){

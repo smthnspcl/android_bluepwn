@@ -18,11 +18,14 @@ public class Static {
     static final String TABLE_DESCRIPTOR = "descriptor";
     static final String TABLE_CHARACTERISTIC = "characteristic";
     static final String TABLE_SETTINGS = "settings";
+    static final String TABLE_NOTIFICATION = "notification";
 
     static final String[] TABLES = {
             TABLE_STAGE, TABLE_STAGER, TABLE_SERVICE, TABLE_SCAN, TABLE_OUI, TABLE_LOCATION,
             TABLE_DEVICE, TABLE_DESCRIPTOR, TABLE_CHARACTERISTIC
     };
+
+    static final String KEY_DELIMITER = "_";
 
     static Class tableToClass(String table) {
         switch (table){

@@ -87,20 +87,20 @@
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/onlyActions"
+        android:layout_below="@+id/onlyStagers"
         android:layout_centerHorizontal="true"
         android:scrollbars="vertical"/>
 
     <Switch
-        android:id="@+id/onlyActions"
+        android:id="@+id/onlyStagers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/nameTextView"
         android:layout_below="@+id/textView2"
-        android:text="only with action" />
+        android:text="only w/ stagers" />
 
     <Button
-        android:id="@+id/scanBtn"
+        android:id="@+id/scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -124,5 +124,13 @@
         android:layout_alignTop="@+id/nameTextView"
         android:layout_marginEnd="60dp"
         android:text="none" />
+
+    <Switch
+        android:id="@+id/notify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/recycler"
+        android:layout_alignEnd="@+id/scan"
+        android:text="notify when seen" />
 
 </RelativeLayout>

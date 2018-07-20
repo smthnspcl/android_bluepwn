@@ -14,6 +14,8 @@ import android.widget.Spinner;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout;
 
 import java.util.List;
 
@@ -26,7 +28,10 @@ public class LocationsActivity extends AppCompatActivity {
     @BindView(R.id.recycler) RecyclerView recycler;
     @BindView(R.id.spinner) Spinner spinner;
     @BindView(R.id.query) EditText query;
-    @BindView(R.id.addRecyclerItem) FloatingActionButton addRecyclerItem;
+    @BindView(R.id.fabLayout)
+    RapidFloatingActionLayout rfaLayout;
+    @BindView(R.id.fab)
+    RapidFloatingActionButton fab;
 
     private static final String[] searchSpinnerItems = {
             "longitude", "latitude", "timestamp", "zip", "city", "address"
@@ -35,7 +40,7 @@ public class LocationsActivity extends AppCompatActivity {
     private LocationAdapter locations;
     private Gson gson;
 
-    @OnClick(R.id.addRecyclerItem)
+    @OnClick(R.id.fab)
     public void addRecyclerItemBtnClicked(){
         Intent i = new Intent(this, LocationActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

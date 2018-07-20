@@ -38,7 +38,7 @@ public class RemoteDatabaseSettingsActivity extends AppCompatActivity{
         remoteDBSettings.password = password.getText().toString();
         remoteDBSettings.ssl = sslCheckbox.isChecked();
         remoteDBSettings.save();
-        Toast.makeText(this, "settings saved", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "saved", Toast.LENGTH_SHORT).show();
     }
 
     @OnCheckedChanged(R.id.authenticationCheckbox)
@@ -51,11 +51,6 @@ public class RemoteDatabaseSettingsActivity extends AppCompatActivity{
     @OnCheckedChanged(R.id.sslCheckbox)
     public void sslCheckboxChanged(){
         remoteDBSettings.ssl = sslCheckbox.isChecked();
-    }
-
-    @OnClick(R.id.saveBtn)
-    public void saveBtnClicked(){
-        saveSettings();
     }
 
     @Override

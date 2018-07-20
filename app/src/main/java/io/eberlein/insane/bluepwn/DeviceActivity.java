@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -15,9 +16,11 @@ import com.google.gson.Gson;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import io.paperdb.Paper;
 
+import static io.eberlein.insane.bluepwn.Static.TABLE_DEVICE;
 import static io.eberlein.insane.bluepwn.Static.TYPE_CLASSIC;
 import static io.eberlein.insane.bluepwn.Static.TYPE_DUAL;
 import static io.eberlein.insane.bluepwn.Static.TYPE_LE;
@@ -30,6 +33,8 @@ public class DeviceActivity extends AppCompatActivity {
     @BindView(R.id.locationCountLabel) TextView locationCountLabel;
     @BindView(R.id.tvManufacturer) TextView tvManufacturer;
     @BindView(R.id.recycler) RecyclerView recycler;
+    @BindView(R.id.onlyStagers) Switch onlyStagers;
+    @BindView(R.id.notify) Switch notify;
 
     ServiceAdapter serviceAdapter;
     BluetoothAdapter bluetoothAdapter;
@@ -44,6 +49,29 @@ public class DeviceActivity extends AppCompatActivity {
     @OnClick(R.id.locationLabel)
     public void locationLabelClicked(){
         locationsActivityIntent();
+    }
+
+    @OnClick(R.id.onlyStagers)
+    public void onlyStagerClicked(){
+        if(onlyStagers.isActivated()) {
+            serviceAdapter.empty();
+            for (Service _s : device.getServices()) {
+                List<Stager> stagers = _s.getStagers();
+                if (stagers.size() > 0) serviceAdapter.add(_s);
+            }
+        } else {
+            serviceAdapter.empty();
+            serviceAdapter.addAll(device.getServices());
+        }
+    }
+
+    @OnClick(R.id.notify)
+    public void notifyClicked(){
+        boolean existsInTable = Notification.exists(TABLE_DEVICE, device.address);
+        if(notify.isActivated()){
+            if(!existsInTable) Notification.get(TABLE_DEVICE, device.address).save();
+        } else Notification.delete(TABLE_DEVICE, device.address);
+
     }
 
     private void locationsActivityIntent(){
@@ -68,6 +96,7 @@ public class DeviceActivity extends AppCompatActivity {
         tvName.setText(device.name);
         tvType.setText(device.type);
         tvBond.setText(device.bond);
+        notify.setChecked(Notification.exists(TABLE_DEVICE, device.address));
         locationCountLabel.setText(String.valueOf(device.getLocations().size()));
         tvManufacturer.setText(device.manufacturer);
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

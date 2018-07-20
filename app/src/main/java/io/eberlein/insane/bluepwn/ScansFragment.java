@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,16 +14,39 @@ import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Spinner;
 
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout;
+import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RFACLabelItem;
+import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloatingActionContentLabelList;
+import com.wangjie.rapidfloatingactionbutton.util.RFABTextUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ScansFragment extends Fragment {
-
+public class ScansFragment extends Fragment implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener{
     @BindView(R.id.recycler) RecyclerView recycler;
     @BindView(R.id.spinner) Spinner spinner;
     @BindView(R.id.query) AutoCompleteTextView filters;
+    @BindView(R.id.fabLayout) RapidFloatingActionLayout rfaLayout;
+    @BindView(R.id.fab) RapidFloatingActionButton fab;
+
+    private RapidFloatingActionHelper rfabHelper;
 
     private ScanAdapter scans;
+
+    @Override
+    public void onRFACItemLabelClick(int position, RFACLabelItem item) {
+        rfabHelper.toggleContent();
+    }
+
+    @Override
+    public void onRFACItemIconClick(int position, RFACLabelItem item) {
+        rfabHelper.toggleContent();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,6 +54,31 @@ public class ScansFragment extends Fragment {
         Log.onCreate(this.getClass());
         scans = new ScanAdapter();
         getActivity().setTitle("scans");
+        populateRapidFloatingActionButton();
+    }
+
+    private void populateRapidFloatingActionButton(){
+        RapidFloatingActionContentLabelList rfaContent = new RapidFloatingActionContentLabelList(getContext());
+        rfaContent.setOnRapidFloatingActionContentLabelListListener(this);
+        List<RFACLabelItem> items = new ArrayList<>();
+        items.add(new RFACLabelItem<Integer>()
+                .setLabel("filter")
+                .setResId(R.drawable.baseline_filter_list_white_48)
+                .setIconNormalColor(0xfc9d19)
+                .setIconPressedColor(0x96d824)
+                .setWrapper(0));
+        items.add(new RFACLabelItem<Integer>()
+                .setLabel("add")
+                .setResId(R.drawable.ic_add_white_48dp)
+                .setIconNormalColor(0xe06711)
+                .setIconPressedColor(0xe03a10)
+                .setWrapper(1));
+
+        rfaContent.setItems(items);
+        rfaContent.setIconShadowRadius(RFABTextUtil.dip2px(getContext(), 5));
+        rfaContent.setIconShadowColor(0xff888888);
+        rfaContent.setIconShadowDy(RFABTextUtil.dip2px(getContext(), 5));
+        rfabHelper = new RapidFloatingActionHelper(getContext(), rfaLayout, fab, rfaContent);
     }
 
     @Nullable

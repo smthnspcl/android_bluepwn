@@ -3,11 +3,16 @@ package io.eberlein.insane.bluepwn;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ScanningSettingsActivity extends AppCompatActivity {
+
+    @BindView(R.id.continuousScanningDefault) CheckBox continuousScanningDefault;
+    @BindView(R.id.discoverServices) CheckBox discoverServices;
 
     ScanSettings settings;
 
@@ -19,6 +24,8 @@ public class ScanningSettingsActivity extends AppCompatActivity {
         setTitle("scan settings");
         ButterKnife.bind(this);
         settings = ScanSettings.getExistingOrNew();
+        continuousScanningDefault.setChecked(settings.continuousScanningDefault);
+        discoverServices.setChecked(settings.discoverServices);
     }
 
     @Override

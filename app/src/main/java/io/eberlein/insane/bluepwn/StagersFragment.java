@@ -30,7 +30,7 @@ public class StagersFragment extends Fragment{
     @BindView(R.id.spinner) Spinner selectionSpinner;
     @BindView(R.id.query) AutoCompleteTextView selectionQuery;
     @BindView(R.id.recycler) RecyclerView recycler;
-    @BindView(R.id.addRecyclerItem) FloatingActionButton addRecyclerItem;
+    @BindView(R.id.fab) FloatingActionButton fab;
 
     private StagerAdapter stagerAdapter;
     private ArrayAdapter<String> selectionSpinnerAdapter;
@@ -62,7 +62,7 @@ public class StagersFragment extends Fragment{
         }*/
     }
 
-    @OnClick(R.id.addRecyclerItem)
+    @OnClick(R.id.fab)
     public void addStagerButtonClicked(){
         Intent i = new Intent(getContext(), StagerActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

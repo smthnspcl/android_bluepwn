@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,6 +39,8 @@ import java.util.concurrent.Callable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static io.eberlein.insane.bluepwn.Static.TABLE_DEVICE;
 import static io.eberlein.insane.bluepwn.Static.TYPE_CLASSIC;
 import static io.eberlein.insane.bluepwn.Static.TYPE_DUAL;
 import static io.eberlein.insane.bluepwn.Static.TYPE_LE;
@@ -68,6 +71,7 @@ public class BluetoothFragment extends Fragment {
 
     private List<Device> toSdpScanDevices;
     private List<Device> toGattScanDevices;
+    private List<Notification> toNotifyDevices;
 
     private BluetoothAdapter btAdapter;
 
@@ -138,8 +142,11 @@ public class BluetoothFragment extends Fragment {
     @Subscribe
     public void onDeviceDiscovered(EventDeviceDiscovered e){
         Log.log(this.getClass(), "discovered " + e.device.address);
-        if(e.device.type.equals(TYPE_CLASSIC) || e.device.type.equals(TYPE_DUAL)) toSdpScanDevices.add(e.device);
-        if(e.device.type.equals(TYPE_LE) || e.device.type.equals(TYPE_DUAL)) toGattScanDevices.add(e.device);
+        // if(Notification.exists(TABLE_DEVICE, e.device.address)) // todo notification
+        if(settings.discoverServices){
+            if(e.device.type.equals(TYPE_CLASSIC) || e.device.type.equals(TYPE_DUAL)) toSdpScanDevices.add(e.device);
+            if(e.device.type.equals(TYPE_LE) || e.device.type.equals(TYPE_DUAL)) toGattScanDevices.add(e.device);
+        }
         if(!scan.devices.contains(e.device.address)) scan.devices.add(e.device.address);
         devices.add(e.device);
     }
@@ -147,17 +154,13 @@ public class BluetoothFragment extends Fragment {
     @Subscribe
     public void onToScanDevicesEmpty(EventToScanDevicesEmpty e){
         Log.log(this.getClass(), "no devices in sdp/gatt queue");
-        if(continuousScanningCheckbox.isChecked()){
-            scan();
-        } else {
-            scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
-        }
+        if(continuousScanningCheckbox.isChecked()) scan();
+        else scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onStartScanning(EventStartScanning e){
         scan();
-
     }
 
     @Subscribe
@@ -208,6 +211,7 @@ public class BluetoothFragment extends Fragment {
         Log.onCreate(this.getClass());
         getActivity().setTitle("scan");
         settings = ScanSettings.get();
+        toNotifyDevices = Notification.getByTable(TABLE_DEVICE);
         toGattScanDevices = new ArrayList<>();
         toSdpScanDevices = new ArrayList<>();
         EventBus.getDefault().register(this);
@@ -239,7 +243,7 @@ public class BluetoothFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v =  inflater.inflate(R.layout.fragment_bluetooth, container, false);
         ButterKnife.bind(this, v);
-        continuousScanningCheckbox.setChecked(false);
+        continuousScanningCheckbox.setChecked(settings.continuousScanningDefault);
         scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
         deviceRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         deviceRecycler.setAdapter(devices);
@@ -296,38 +300,46 @@ public class BluetoothFragment extends Fragment {
                 @Override
                 public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
                     super.onConnectionStateChange(gatt, status, newState);
-                    if(newState == BluetoothProfile.STATE_DISCONNECTED || newState == BluetoothProfile.STATE_DISCONNECTING) {
+                    if(newState == BluetoothProfile.STATE_DISCONNECTED || newState == BluetoothProfile.STATE_DISCONNECTING || status != BluetoothGatt.GATT_SUCCESS) {
                         Log.log(this.getClass(), "disconnected from " + device.address);
                         EventBus.getDefault().post(new EventGATTScanFinished(device));
                     } else if(newState == BluetoothProfile.STATE_CONNECTED){
                         Log.log(this.getClass(), "connected to " + device.address);
                         gatt.discoverServices();
+                    } else if(newState == BluetoothProfile.STATE_CONNECTING) {
+                        Log.log(this.getClass(), "connecting to " + device.address);
+                    } else {
+                        Log.log(this.getClass(), device.address + " BluetoothProfile.STATE_?????? = " + String.valueOf(newState));
                     }
                 }
 
                 @Override
                 public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                     super.onServicesDiscovered(gatt, status);
-                    Log.log(this.getClass(), "discovered services for " + device.address);
-                    List<BluetoothGattService> services = gatt.getServices();
-                    for(BluetoothGattService s : services) {
-                        Service service = Service.getExistingOrNew(s.getUuid().toString());
-                        for(BluetoothGattCharacteristic c : s.getCharacteristics()){
-                            Characteristic characteristic = Characteristic.getExistingOrNew(c);
-                            for(BluetoothGattDescriptor d : c.getDescriptors()){
-                                Descriptor descriptor = Descriptor.getExistingOrNew(d);
-                                characteristic.updateDescriptors(descriptor);
-                                descriptor.save();
+                    if(status != BluetoothGatt.GATT_SUCCESS){
+                        Log.log(this.getClass(), "discovery failed on " + device.address);
+                    } else {
+                        Log.log(this.getClass(), "discovered services for " + device.address);
+                        List<BluetoothGattService> services = gatt.getServices();
+                        for(BluetoothGattService s : services) {
+                            Service service = Service.getExistingOrNew(s.getUuid().toString());
+                            for(BluetoothGattCharacteristic c : s.getCharacteristics()){
+                                Characteristic characteristic = Characteristic.getExistingOrNew(c);
+                                for(BluetoothGattDescriptor d : c.getDescriptors()){
+                                    Descriptor descriptor = Descriptor.getExistingOrNew(d);
+                                    characteristic.updateDescriptors(descriptor);
+                                    descriptor.save();
+                                }
+                                service.updateCharacteristics(characteristic);
+                                characteristic.save();
                             }
-                            service.updateCharacteristics(characteristic);
-                            characteristic.save();
+                            device.updateServices(service);
+                            service.save();
                         }
-                        device.updateServices(service);
-                        service.save();
+                        device.save();
+                        Log.log(this.getClass(), "updated database entry for " + device.address);
+                        gatt.disconnect();
                     }
-                    device.save();
-                    Log.log(this.getClass(), "updated database entry for " + device.address);
-                    gatt.disconnect();
                 }
             });
         }
