@@ -252,6 +252,7 @@ public class BluetoothFragment extends Fragment {
             public void onItemClick(View v, int p) {
                 Intent i = new Intent(getContext(), DeviceActivity.class);
                 i.putExtra("address", devices.get(p).address);
+                i.putExtra("live", true);
                 startActivity(i);
             }
         });

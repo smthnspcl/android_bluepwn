@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -35,6 +36,15 @@ public class DeviceActivity extends AppCompatActivity {
     @BindView(R.id.recycler) RecyclerView recycler;
     @BindView(R.id.onlyStagers) Switch onlyStagers;
     @BindView(R.id.notify) Switch notify;
+    @BindView(R.id.terminal) Button terminal;
+
+    @OnClick(R.id.terminal)
+    public void onTerminalClicked(){
+        Intent i = new Intent(this, TerminalActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.putExtra("address", device.address);
+        startActivity(i);
+    }
 
     ServiceAdapter serviceAdapter;
     BluetoothAdapter bluetoothAdapter;
@@ -90,6 +100,9 @@ public class DeviceActivity extends AppCompatActivity {
         gson = new Gson();
         serviceAdapter = new ServiceAdapter();
         device = Device.getExistingOrNew(getIntent().getStringExtra("address"));
+        Integer v = View.GONE;
+        if(getIntent().getBooleanExtra("live", false)) v = View.VISIBLE;
+        terminal.setVisibility(v);
         setTitle("dev: " + device.address);
         serviceAdapter.addAll(device.getServices());
         tvMac.setText(device.address);

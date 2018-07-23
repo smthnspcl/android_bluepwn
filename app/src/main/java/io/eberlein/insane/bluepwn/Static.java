@@ -19,6 +19,7 @@ public class Static {
     static final String TABLE_CHARACTERISTIC = "characteristic";
     static final String TABLE_SETTINGS = "settings";
     static final String TABLE_NOTIFICATION = "notification";
+    static final String TABLE_TERMINALSESSION = "terminalsession";
 
     static final String[] TABLES = {
             TABLE_STAGE, TABLE_STAGER, TABLE_SERVICE, TABLE_SCAN, TABLE_OUI, TABLE_LOCATION,

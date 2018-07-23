@@ -100,20 +100,20 @@
         android:text="only w/ stagers" />
 
     <Button
-        android:id="@+id/scan"
+        android:id="@+id/terminal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/tvManufacturer"
         android:layout_marginEnd="16dp"
-        android:text="scan" />
+        android:text="terminal" />
 
     <TextView
         android:id="@+id/locationLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/notify"
         android:layout_alignTop="@+id/nameTextView"
-        android:layout_toStartOf="@+id/scanBtn"
         android:text="locations:" />
 
     <TextView
@@ -129,8 +129,9 @@
         android:id="@+id/notify"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/recycler"
-        android:layout_alignEnd="@+id/scan"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/textView2"
+        android:layout_marginEnd="16dp"
         android:text="notify when seen" />
 
 </RelativeLayout>
