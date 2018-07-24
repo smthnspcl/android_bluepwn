@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
 import java.util.Date;
 
 import butterknife.BindView;
@@ -79,7 +81,12 @@ public class StagerActivity extends AppCompatActivity {
         Log.onCreate(this.getClass());
         setContentView(R.layout.activity_stager);
         ButterKnife.bind(this);
-        _service = Service.get(getIntent().getStringExtra("uuid"));
+        String uuid = getIntent().getStringExtra("uuid");
+        if(uuid == null){
+            Toast.makeText(this, "uuid is null. idk", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        _service = Service.get(uuid);
         setTitle("stager: " + "");
         stageAdapter = new StageAdapter();
         recycler.setLayoutManager(new LinearLayoutManager(this));

@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.gson.Gson;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,6 +46,10 @@ public class ScanActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setTitle("scan");
         scan = Scan.get(getIntent().getStringExtra("uuid"));
+        if(scan == null) {
+            Toast.makeText(this, "scan null. idk", Toast.LENGTH_SHORT).show();
+            finish();
+        }
         devices = new DeviceAdapter();
         devices.addAll(scan.getDevices());
         devicesRecycler.setLayoutManager(new LinearLayoutManager(this));

@@ -26,6 +26,18 @@ public class Static {
             TABLE_DEVICE, TABLE_DESCRIPTOR, TABLE_CHARACTERISTIC
     };
 
+    static final String[] STAGE_KEYS = {"uuid", "name", "data", "dataType"};
+    static final String[] STAGER_KEYS = {"uuid", "name", "type", "lastModified"};
+    static final String[] SERVICE_KEYS = {"uuid", "name", "description"};
+    static final String[] SCAN_KEYS = {"uuid", "timestamp"};
+    static final String[] OUI_KEYS = {"registry", "assignment", "organizationname", "organizationaddress"};
+    static final String[] LOCATION_KEYS = {"uuid", "speed", "country", "city", "street"};
+    static final String[] DEVICE_KEYS = {"address", "name", "manufacturer", "type", "bond", "lastModified"};
+    static final String[] DESCRIPTOR_KEYS = {"uuid", "name", "permissions"};
+    static final String[] CHARACTERISTIC_KEYS = {"name", "writeType", "properties", "uuid"};
+    static final String[] NOTIFICATION_KEYS = {"uuid", "table"};
+    static final String[] TERMINALSESSION_KEYS = {"uuid", "cmds", "responses"};
+
     static final String KEY_DELIMITER = "_";
 
     static Class tableToClass(String table) {

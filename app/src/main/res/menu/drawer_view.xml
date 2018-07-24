@@ -11,7 +11,7 @@
     <item
         android:id="@+id/MenuDevices"
         android:title="devices"
-        android:icon="@drawable/baseline_devices_white_48"/>
+        android:icon="@drawable/baseline_devices_other_white_48"/>
     <item
         android:id="@+id/MenuStages"
         android:title="stages"
@@ -24,6 +24,14 @@
         android:id="@+id/MenuUuids"
         android:title="services"
         android:icon="@drawable/baseline_format_list_bulleted_white_48"/>
+    <item
+        android:id="@+id/MenuLocations"
+        android:title="locations"
+        android:icon="@drawable/baseline_edit_location_white_48"/>
+    <item
+        android:id="@+id/MenuOui"
+        android:title="oui"
+        android:icon="@drawable/baseline_device_unknown_white_48"/>
     <item
         android:id="@+id/MenuMap"
         android:title="map"

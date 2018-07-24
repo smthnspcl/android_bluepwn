@@ -10,23 +10,24 @@ import io.paperdb.Paper;
 
 import static io.eberlein.insane.bluepwn.Static.TABLE_CHARACTERISTIC;
 
-public class Characteristic extends DatabaseObject {
+public class Characteristic {
 
     Integer permssions;
     Integer properties;
     Integer writeType;
     String name;
     byte[] value;
+    String uuid;
 
     List<String> descriptors;
 
     Characteristic(){
-        super(UUID.randomUUID().toString());
+        uuid = UUID.randomUUID().toString();
         descriptors = new ArrayList<>();
     }
 
     Characteristic(BluetoothGattCharacteristic c){
-        super(c.getUuid().toString());
+        this.uuid = c.getUuid().toString();
         this.permssions = c.getPermissions();
         this.properties = c.getProperties();
         this.value = c.getValue();
@@ -36,7 +37,7 @@ public class Characteristic extends DatabaseObject {
     }
 
     Characteristic(String uuid, String name, Integer permissions, Integer properties, Integer writeType, byte[] value){
-        super(uuid);
+        this.uuid = uuid;
         this.name = name;
         this.permssions = permissions;
         this.properties = properties;
@@ -58,6 +59,10 @@ public class Characteristic extends DatabaseObject {
         Characteristic c = Paper.book(TABLE_CHARACTERISTIC).read(bgc.getUuid().toString());
         if(c == null) return new Characteristic(bgc);
         else return c;
+    }
+
+    void save(){
+        Paper.book(TABLE_CHARACTERISTIC).write(uuid, this);
     }
 
     static String getWriteTypeString(int writeType){

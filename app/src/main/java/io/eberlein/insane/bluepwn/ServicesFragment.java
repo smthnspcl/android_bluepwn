@@ -24,9 +24,6 @@ public class ServicesFragment extends Fragment {
     @BindView(R.id.recycler) RecyclerView recycler;
 
     private ServiceAdapter serviceAdapter;
-    private static final String[] selectionSpinnerItems = {
-            "id", "name", "description", "protocol" // todo
-    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,7 +52,7 @@ public class ServicesFragment extends Fragment {
                 startActivity(i);
             }
         });
-        spinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, selectionSpinnerItems));
+        spinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, Static.SERVICE_KEYS));
         return v;
     }
 

@@ -51,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
                     f = new StagersFragment(); break;
                 case R.id.MenuUuids:
                     f = new ServicesFragment(); break;
+                case R.id.MenuLocations:
+                    f = new LocationsFragment(); break;
+                case R.id.MenuOui:
+                    f = new OuiFragment(); break;
                 case R.id.MenuMap:
                     f = new MapFragment(); break;
                 case R.id.MenuSync:

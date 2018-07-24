@@ -40,6 +40,7 @@ public class DevicesFragment extends Fragment {
         getActivity().setTitle("devices");
         ButterKnife.bind(this, v);
         initDeviceRecycler();
+        spinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, Static.DEVICE_KEYS));
         return v;
     }
 

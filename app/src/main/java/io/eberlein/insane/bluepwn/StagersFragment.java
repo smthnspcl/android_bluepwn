@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +14,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Spinner;
 
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -22,15 +23,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class StagersFragment extends Fragment{
-
-    private static final String[] selectionSpinnerAdapterItems = {
-           "id", "name", "hex", "data", "macPrefix"
-    };
-
     @BindView(R.id.spinner) Spinner selectionSpinner;
     @BindView(R.id.query) AutoCompleteTextView selectionQuery;
     @BindView(R.id.recycler) RecyclerView recycler;
-    @BindView(R.id.fab) FloatingActionButton fab;
+    @BindView(R.id.fab) RapidFloatingActionButton fab;
 
     private StagerAdapter stagerAdapter;
     private ArrayAdapter<String> selectionSpinnerAdapter;
@@ -109,12 +105,8 @@ public class StagersFragment extends Fragment{
     private void init(){
         List<Stager> stagers = Stager.get();
         initStagerRecycler(stagers);
-        ArrayAdapter<Stager> actionArrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, stagers);
-        selectionQuery.setAdapter(actionArrayAdapter);
-        selectionQuery.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, Stage.get()));
-        selectionSpinnerAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, selectionSpinnerAdapterItems);
-        selectionSpinnerAdapter.notifyDataSetChanged();
-        selectionSpinner.setAdapter(selectionSpinnerAdapter);
+        // ArrayAdapter<Stager> actionArrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, stagers);
+        selectionSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, Static.STAGER_KEYS));
     }
 
     public StagersFragment(){ }

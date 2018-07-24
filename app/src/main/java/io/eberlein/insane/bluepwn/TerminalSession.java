@@ -11,10 +11,12 @@ import static io.eberlein.insane.bluepwn.Static.TABLE_TERMINALSESSION;
 public class TerminalSession {
     String uuid;
     List<String> cmds;
+    List<String> responses;
 
     TerminalSession(){
         uuid = UUID.randomUUID().toString();
         cmds = new ArrayList<>();
+        responses = new ArrayList<>();
     }
 
     static TerminalSession get(String uuid){

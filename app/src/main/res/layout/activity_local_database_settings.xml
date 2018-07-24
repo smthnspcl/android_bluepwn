@@ -2,4 +2,39 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="filter" />
+
+    <TextView
+        android:id="@+id/filteredLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/filter"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="50dp"
+        android:text="filtered" />
+
+    <TextView
+        android:id="@+id/filteredItems"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/filter"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="30dp"
+        android:text="0" />
+
+    <Spinner
+        android:id="@+id/filterSpinner"
+        android:layout_width="171dp"
+        android:layout_height="49dp"
+        android:layout_alignBottom="@+id/filter"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="102dp" />
 </RelativeLayout>

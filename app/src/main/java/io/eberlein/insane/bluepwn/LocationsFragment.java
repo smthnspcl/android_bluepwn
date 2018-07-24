@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,7 +27,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ScansFragment extends Fragment implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener{
+public class LocationsFragment extends Fragment implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
     @BindView(R.id.recycler) RecyclerView recycler;
     @BindView(R.id.spinner) Spinner spinner;
     @BindView(R.id.query) AutoCompleteTextView filters;
@@ -36,7 +35,7 @@ public class ScansFragment extends Fragment implements RapidFloatingActionConten
     @BindView(R.id.fab) RapidFloatingActionButton fab;
 
     private RapidFloatingActionHelper rfabHelper;
-    private ScanAdapter scans;
+    private LocationAdapter locations;
 
     @Override
     public void onRFACItemLabelClick(int position, RFACLabelItem item) {
@@ -52,8 +51,8 @@ public class ScansFragment extends Fragment implements RapidFloatingActionConten
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.onCreate(this.getClass());
-        scans = new ScanAdapter();
-        getActivity().setTitle("scans");
+        locations = new LocationAdapter();
+        getActivity().setTitle("locations");
         populateRapidFloatingActionButton();
     }
 
@@ -86,16 +85,16 @@ public class ScansFragment extends Fragment implements RapidFloatingActionConten
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.objectlist_search, container, false);
         ButterKnife.bind(this, v);
-        spinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, Static.SCAN_KEYS));
+        spinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, Static.LOCATION_KEYS));
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        recycler.setAdapter(scans);
-        scans.addAll(Scan.get());
-        scans.setOnItemClickListener(new ScanAdapter.OnItemClickListener() {
+        recycler.setAdapter(locations);
+        locations.addAll(Location.get());
+        locations.setOnItemClickListener(new LocationAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
                 Intent i = new Intent(getContext(), ScanActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("uuid", scans.get(p).uuid);
+                i.putExtra("uuid", locations.get(p).uuid);
                 startActivity(i);
             }
         });
@@ -116,7 +115,7 @@ public class ScansFragment extends Fragment implements RapidFloatingActionConten
 
     @Override
     public void onResume() {
-        super.onResume();spinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, Static.SCAN_KEYS));
+        super.onResume();
         Log.onResume(this.getClass());
     }
 

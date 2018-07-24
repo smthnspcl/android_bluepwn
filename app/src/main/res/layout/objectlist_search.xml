@@ -13,10 +13,11 @@
 
     <AutoCompleteTextView
         android:id="@+id/query"
-        android:layout_width="190dp"
+        android:layout_width="196dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/spinner"
-        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="83dp"
         android:hint="query" />
 
     <android.support.v7.widget.RecyclerView
@@ -30,15 +31,14 @@
         android:layout_marginBottom="2dp"
         android:scrollbars="vertical"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/search"
         android:layout_width="wrap_content"
         android:layout_height="46dp"
-        android:text="search"
-        android:layout_alignTop="@id/spinner"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="8dp"
-        />
+        android:layout_alignTop="@+id/spinner"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/baseline_search_white_36" />
 
     <com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout
         xmlns:rfal="http://schemas.android.com/apk/res-auto"
