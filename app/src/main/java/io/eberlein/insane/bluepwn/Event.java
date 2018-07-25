@@ -13,6 +13,7 @@ import static io.eberlein.insane.bluepwn.Static.EVENT_GOT_COOKIE;
 import static io.eberlein.insane.bluepwn.Static.EVENT_SDP_SCAN_FINISHED;
 import static io.eberlein.insane.bluepwn.Static.EVENT_START_SCANNING;
 import static io.eberlein.insane.bluepwn.Static.EVENT_STOP_SCANNING;
+import static io.eberlein.insane.bluepwn.Static.EVENT_STOP_SERVICE_SCAN;
 import static io.eberlein.insane.bluepwn.Static.EVENT_TO_SCAN_DEVICES_EMPTY;
 
 public class Event {
@@ -87,6 +88,10 @@ class EventStartScanning extends Event {
     public EventStartScanning(){
         super(EVENT_START_SCANNING);
     }
+}
+
+class EventStopServiceScan extends Event {
+    public EventStopServiceScan(){super(EVENT_STOP_SERVICE_SCAN);}
 }
 
 class EventGotCookie {

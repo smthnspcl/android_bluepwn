@@ -83,6 +83,7 @@ public class Static {
     static final Integer EVENT_START_SCANNING = 6;
     static final Integer EVENT_STOP_SCANNING = 7;
     static final Integer EVENT_GOT_COOKIE = 8;
+    static final Integer EVENT_STOP_SERVICE_SCAN = 9;
 
     static final int BLUETOOTH_RESULT = 0;
     static final int LOCATION_RESULT = 1;

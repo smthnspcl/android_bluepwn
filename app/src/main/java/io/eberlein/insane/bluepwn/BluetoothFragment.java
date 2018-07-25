@@ -57,6 +57,8 @@ public class BluetoothFragment extends Fragment {
             if(btAdapter.isDiscovering()) {
                 continuousScanningCheckbox.setChecked(false);
                 EventBus.getDefault().post(new EventStopScanning());
+            } else if(toGattScanDevices.size() > 0 || toSdpScanDevices.size() > 0) {
+                EventBus.getDefault().post(new EventStopServiceScan());
             } else {
                 EventBus.getDefault().post(new EventStartScanning());
             }
@@ -149,6 +151,12 @@ public class BluetoothFragment extends Fragment {
         }
         if(!scan.devices.contains(e.device.address)) scan.devices.add(e.device.address);
         devices.add(e.device);
+    }
+
+    @Subscribe
+    public void onServiceScanStop(EventStopServiceScan e){
+        Log.log(this.getClass(), "service scan stopped");
+
     }
 
     @Subscribe
