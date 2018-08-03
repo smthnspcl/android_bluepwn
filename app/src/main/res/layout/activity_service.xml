@@ -1,72 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<RelativeLayout android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <EditText
-        android:id="@+id/uuid"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs"
+        app:tabMode="fixed"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:hint="service" />
+        android:layout_height="wrap_content"/>
 
-    <EditText
-        android:id="@+id/name"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/uuid"
-        android:layout_marginTop="8dp"
-        android:layout_below="@+id/uuid"
-        android:ems="10"
-        android:layout_marginEnd="16dp"
-        android:inputType="text"
-        android:hint="name" />
+        android:layout_height="0px"
+        android:layout_weight="1"
+        android:background="@android:color/white">
 
-    <Button
-        android:id="@+id/save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:text="save" />
+        <android.support.v4.view.PagerTabStrip
+            android:id="@+id/viewPagerHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp" />
 
-    <EditText
-        android:id="@+id/description"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_below="@id/name"
-        android:layout_alignStart="@+id/uuid"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:inputType="text"
-        android:textAlignment="textStart"
-        android:layout_marginEnd="16dp"
-        android:hint="description" />
+    </android.support.v4.view.ViewPager>
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:id="@+id/recycler"
-        android:layout_below="@+id/description"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
-        android:scrollbars="vertical">
-
-    </android.support.v7.widget.RecyclerView>
-
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_add_white_48dp"
-        android:id="@+id/add"
-        android:layout_alignEnd="@id/recycler"
-        android:layout_alignBottom="@id/recycler"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"/>
 
 </RelativeLayout>

@@ -22,4 +22,7 @@
     <string name="uuid_mcap_data">001F</string>
     <string name="uuid_l2cap">0100</string>
 
+    <string name="overview">vrvw</string>
+    <string name="stagers">stgrs</string>
+    <string name="characteristics">chrctrstcs</string>
 </resources>

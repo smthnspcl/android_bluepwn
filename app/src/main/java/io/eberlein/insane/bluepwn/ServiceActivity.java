@@ -1,33 +1,33 @@
 package io.eberlein.insane.bluepwn;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.EditText;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import io.paperdb.Paper;
 
 public class ServiceActivity extends AppCompatActivity {
-    @BindView(R.id.name) EditText name;
-    @BindView(R.id.uuid) EditText uuid;
-    @BindView(R.id.description) EditText description;
-    @BindView(R.id.recycler) RecyclerView recycler;
+    //@BindView(R.id.name) EditText name;
+    //@BindView(R.id.uuid) EditText uuid;
+    //@BindView(R.id.description) EditText description;
+    //@BindView(R.id.recycler) RecyclerView recycler;
+    @BindView(R.id.viewPager) ViewPager viewPager;
+    @BindView(R.id.tabs) TabLayout tabs;
 
+    /*
     @OnClick(R.id.save)
     public void saveBtnClicked(){
-        service.name = name.getText().toString();
-        service.uuid = uuid.getText().toString();
-        service.description = description.getText().toString();
+        //service.name = name.getText().toString();
+        //service.uuid = uuid.getText().toString();
+        //service.description = description.getText().toString();
         service.save();
         finish();
     }
+
 
     @OnClick(R.id.add)
     public void addBtnClicked(){
@@ -37,6 +37,8 @@ public class ServiceActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    */
+
     private Service service;
     private StagerAdapter stagerAdapter;
 
@@ -45,8 +47,12 @@ public class ServiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service);
         ButterKnife.bind(this);
+        viewPager.setAdapter(fragmentPagerAdapter);
         service = Service.getExistingOrNew(getIntent().getStringExtra("uuid"));
         setTitle("service: " + service.name);
+        tabs.setupWithViewPager(viewPager);
+
+        /*
         uuid.setText(service.uuid);
         name.setText(service.name);
         description.setText(service.description);
@@ -62,14 +68,44 @@ public class ServiceActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+        */
     }
+
+    private FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+
+        private String[] titles = {"nfo", "stgrs", "chrctrstcs"};
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position){
+                case 0:
+                    return ServiceOverviewFragment.newInstance(position, service);
+                case 1:
+                    return ServiceTabStagersFragment.newInstance(service);
+                case 2:
+                    return CharacteristicsFragment.newInstance(position, service);
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return titles.length;
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles[position];
+        }
+    };
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.onResume(this.getClass());
-        stagerAdapter.empty();
-        stagerAdapter.addAll(service.getStagers());
+        //stagerAdapter.empty();
+        //stagerAdapter.addAll(service.getStagers());
     }
 
     @Override

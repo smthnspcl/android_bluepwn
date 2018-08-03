@@ -30,11 +30,8 @@ import static io.eberlein.insane.bluepwn.Static.TYPE_DUAL;
 import static io.eberlein.insane.bluepwn.Static.TYPE_LE;
 
 public class TerminalActivity extends AppCompatActivity {
-
     @BindView(R.id.log) EditText log;
     @BindView(R.id.cmd) EditText cmd;
-    @BindView(R.id.serviceRecords) Spinner serviceRecords;
-
 
     private TerminalSession session;
     private Device device;
@@ -111,7 +108,7 @@ public class TerminalActivity extends AppCompatActivity {
 
     void doRfCommConnect(){
         try{
-            bluetoothDevice.createRfcommSocketToServiceRecord(UUID.fromString(serviceRecords.getSelectedItem().toString()));
+            bluetoothDevice.createRfcommSocketToServiceRecord(UUID.fromString(((Spinner) findViewById(R.id.serviceRecords)).getSelectedItem().toString()));
         } catch (IOException e){
             e.printStackTrace();
         }

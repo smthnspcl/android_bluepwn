@@ -145,6 +145,7 @@ public class BluetoothFragment extends Fragment {
     public void onDeviceDiscovered(EventDeviceDiscovered e){
         Log.log(this.getClass(), "discovered " + e.device.address);
         // if(Notification.exists(TABLE_DEVICE, e.device.address)) // todo notification
+        // todo scan services on gatt concurrently (watch max le connection count)
         if(settings.discoverServices){
             if(e.device.type.equals(TYPE_CLASSIC) || e.device.type.equals(TYPE_DUAL)) toSdpScanDevices.add(e.device);
             if(e.device.type.equals(TYPE_LE) || e.device.type.equals(TYPE_DUAL)) toGattScanDevices.add(e.device);
@@ -156,7 +157,9 @@ public class BluetoothFragment extends Fragment {
     @Subscribe
     public void onServiceScanStop(EventStopServiceScan e){
         Log.log(this.getClass(), "service scan stopped");
-
+        toSdpScanDevices = new ArrayList<>();
+        toGattScanDevices = new ArrayList<>();
+        scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
     }
 
     @Subscribe

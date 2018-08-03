@@ -87,6 +87,14 @@ public class StagersFragment extends Fragment{
         init();
     }
 
+    static StagersFragment newInstance(int p, Service s){
+        StagersFragment sf = new StagersFragment();
+        Bundle b = new Bundle();
+        b.putString("uuid", s.uuid);
+        sf.setArguments(b);
+        return sf;
+    }
+
     private void initStagerRecycler(List<Stager> stagers){
         stagerAdapter.addAll(stagers);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));

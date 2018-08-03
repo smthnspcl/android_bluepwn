@@ -89,7 +89,8 @@ public class Service {
     }
 
     static Service get(String uuid){
-        return Paper.book(TABLE_SERVICE).read(uuid);
+        if(uuid != null) return Paper.book(TABLE_SERVICE).read(uuid);
+        return null;
     }
 
     static List<Service> get(){
