@@ -1,5 +1,8 @@
 package io.eberlein.insane.bluepwn;
 
+import com.movisens.smartgattlib.Characteristics;
+import com.movisens.smartgattlib.Services;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,9 +41,16 @@ public class Service {
         stagers = new ArrayList<>();
     }
 
+    Service(UUID uuid){
+        this.uuid = uuid.toString();
+        this.name = Services.lookup(uuid).getName();
+        this.description = "";
+        stagers = new ArrayList<>();
+    }
+
     Service(String uuid){
         this.uuid = uuid;
-        this.name = "";
+        this.name = Services.lookup(UUID.fromString(uuid)).getName();
         this.description = "";
         characteristics = new ArrayList<>();
         stagers = new ArrayList<>();

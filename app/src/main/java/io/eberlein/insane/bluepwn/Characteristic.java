@@ -2,6 +2,8 @@ package io.eberlein.insane.bluepwn;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 
+import com.movisens.smartgattlib.Characteristics;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +34,7 @@ public class Characteristic {
         this.properties = c.getProperties();
         this.value = c.getValue();
         this.writeType = c.getWriteType();
-        this.name = "";
+        this.name = Characteristics.lookup(c.getUuid()).getName();
         this.descriptors = new ArrayList<>();
     }
 

@@ -15,16 +15,18 @@ import butterknife.ButterKnife;
 public class ServiceTabStagersFragment extends Fragment {
     @BindView(R.id.recycler) RecyclerView stagerRecycler;
 
+    private Service service;
     private StagerAdapter stagers;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        service = Service.get(getArguments().getString("uuid"));
         stagers = new StagerAdapter();
-        stagers.addAll(Service.get(getArguments().getString("uuid")).getStagers());
+        stagers.addAll(service.getStagers());
     }
 
-    static ServiceTabStagersFragment newInstance(Service s){
+    static ServiceTabStagersFragment newInstance(int p, Service s){
         ServiceTabStagersFragment stsf = new ServiceTabStagersFragment();
         Bundle b = new Bundle();
         b.putString("uuid", s.uuid);

@@ -3,10 +3,10 @@ package io.eberlein.insane.bluepwn;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -15,8 +15,9 @@ public class ServiceActivity extends AppCompatActivity {
     //@BindView(R.id.uuid) EditText uuid;
     //@BindView(R.id.description) EditText description;
     //@BindView(R.id.recycler) RecyclerView recycler;
-    @BindView(R.id.viewPager) ViewPager viewPager;
-    @BindView(R.id.tabs) TabLayout tabs;
+
+    @BindView(R.id.viewpager) ViewPager viewPager;
+    @BindView(R.id.sliding_tabs) TabLayout tabLayout;
 
     /*
     @OnClick(R.id.save)
@@ -47,10 +48,11 @@ public class ServiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service);
         ButterKnife.bind(this);
-        viewPager.setAdapter(fragmentPagerAdapter);
         service = Service.getExistingOrNew(getIntent().getStringExtra("uuid"));
         setTitle("service: " + service.name);
-        tabs.setupWithViewPager(viewPager);
+
+        viewPager.setAdapter(new ServiceFragmentPagerAdapter(getSupportFragmentManager(), service));
+        tabLayout.setupWithViewPager(viewPager);
 
         /*
         uuid.setText(service.uuid);
@@ -70,35 +72,6 @@ public class ServiceActivity extends AppCompatActivity {
         });
         */
     }
-
-    private FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-
-        private String[] titles = {"nfo", "stgrs", "chrctrstcs"};
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position){
-                case 0:
-                    return ServiceOverviewFragment.newInstance(position, service);
-                case 1:
-                    return ServiceTabStagersFragment.newInstance(service);
-                case 2:
-                    return CharacteristicsFragment.newInstance(position, service);
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return titles.length;
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return titles[position];
-        }
-    };
 
     @Override
     protected void onResume() {

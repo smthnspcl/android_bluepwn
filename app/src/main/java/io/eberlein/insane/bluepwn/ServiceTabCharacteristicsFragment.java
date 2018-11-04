@@ -1,6 +1,5 @@
 package io.eberlein.insane.bluepwn;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,11 +18,22 @@ public class ServiceTabCharacteristicsFragment extends Fragment {
     @BindView(R.id.recycler) RecyclerView recycler;
 
     private CharacteristicsAdapter characteristics;
+    private Service service;
+
+    static ServiceTabCharacteristicsFragment newInstance(int p, Service s){
+        ServiceTabCharacteristicsFragment stsf = new ServiceTabCharacteristicsFragment();
+        Bundle b = new Bundle();
+        b.putString("uuid", s.uuid);
+        stsf.setArguments(b);
+        return stsf;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        characteristics.addAll(Service.get(getArguments().getString("uuid")).getCharacteristics());
+        service = Service.get(getArguments().getString("uuid"));
+        characteristics = new CharacteristicsAdapter();
+        characteristics.addAll(service.getCharacteristics());
     }
 
     @Nullable

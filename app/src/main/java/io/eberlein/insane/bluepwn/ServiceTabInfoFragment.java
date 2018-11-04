@@ -12,17 +12,16 @@ import android.widget.EditText;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ServiceOverviewFragment extends Fragment {
+public class ServiceTabInfoFragment extends Fragment {
     @BindView(R.id.name) EditText name;
     @BindView(R.id.uuid) EditText uuid;
 
     private Service service;
 
-    public static ServiceOverviewFragment newInstance(int p, Service s){
-        ServiceOverviewFragment sof = new ServiceOverviewFragment();
+    public static ServiceTabInfoFragment newInstance(int p, Service s){
+        ServiceTabInfoFragment sof = new ServiceTabInfoFragment();
         Bundle b = new Bundle();
         b.putString("uuid", s.uuid);
-        b.putString("name", s.name);
         sof.setArguments(b);
         return sof;
     }
@@ -30,15 +29,16 @@ public class ServiceOverviewFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        service = Service.get(getArguments().getString("uuid"));
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_service_overview_tab, container, false);
+        View v = inflater.inflate(R.layout.fragment_service_info, container, false);
         ButterKnife.bind(this, v);
-        name.setText(getArguments().getString("name"));
-        uuid.setText(getArguments().getString("uuid"));
+        name.setText(service.name);
+        uuid.setText(service.uuid);
         return v;
     }
 }

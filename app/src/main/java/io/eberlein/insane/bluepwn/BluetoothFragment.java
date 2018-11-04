@@ -22,7 +22,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -157,6 +156,7 @@ public class BluetoothFragment extends Fragment {
     @Subscribe
     public void onServiceScanStop(EventStopServiceScan e){
         Log.log(this.getClass(), "service scan stopped");
+        btAdapter.disable(); btAdapter.enable(); // not sure if healthy but should work
         toSdpScanDevices = new ArrayList<>();
         toGattScanDevices = new ArrayList<>();
         scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
@@ -186,7 +186,7 @@ public class BluetoothFragment extends Fragment {
     public void onGATTScanFinished(EventGATTScanFinished e){
         devices.add(e.device);
         Log.log(this.getClass(), "gatt scan for " + e.device.address + " finished");
-        toGattScanDevices.remove(0);
+        if(toGattScanDevices.size() != 0) toGattScanDevices.remove(0);
         doScanOnNextDevice();
     }
 
@@ -221,7 +221,7 @@ public class BluetoothFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.onCreate(this.getClass());
         getActivity().setTitle("scan");
-        settings = ScanSettings.get();
+        settings = ScanSettings.getExistingOrNew();
         toNotifyDevices = Notification.getByTable(TABLE_DEVICE);
         toGattScanDevices = new ArrayList<>();
         toSdpScanDevices = new ArrayList<>();
