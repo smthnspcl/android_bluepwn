@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import com.movisens.smartgattlib.Characteristics;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,8 +13,7 @@ import io.paperdb.Paper;
 
 import static io.eberlein.insane.bluepwn.Static.TABLE_CHARACTERISTIC;
 
-public class Characteristic {
-
+public class Characteristic extends DBObject {
     Integer permssions;
     Integer properties;
     Integer writeType;
@@ -24,12 +24,12 @@ public class Characteristic {
     List<String> descriptors;
 
     Characteristic(){
-        uuid = UUID.randomUUID().toString();
+        super(UUID.randomUUID().toString());
         descriptors = new ArrayList<>();
     }
 
     Characteristic(BluetoothGattCharacteristic c){
-        this.uuid = c.getUuid().toString();
+        super(c.getUuid().toString());
         this.permssions = c.getPermissions();
         this.properties = c.getProperties();
         this.value = c.getValue();
@@ -39,7 +39,7 @@ public class Characteristic {
     }
 
     Characteristic(String uuid, String name, Integer permissions, Integer properties, Integer writeType, byte[] value){
-        this.uuid = uuid;
+        super(uuid);
         this.name = name;
         this.permssions = permissions;
         this.properties = properties;

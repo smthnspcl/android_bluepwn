@@ -4,18 +4,20 @@ import android.bluetooth.BluetoothGattDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import io.paperdb.Paper;
 
 import static io.eberlein.insane.bluepwn.Static.TABLE_DESCRIPTOR;
 
-public class Descriptor {
-    String uuid;
+public class Descriptor extends DBObject{
     String name;
     Integer permissions;
     byte[] value;
 
-    Descriptor(){}
+    Descriptor(){
+        super(UUID.randomUUID().toString());
+    }
 
     static List<Descriptor> get(){
         List<Descriptor> descs = new ArrayList<>();
@@ -28,14 +30,14 @@ public class Descriptor {
     }
 
     Descriptor(BluetoothGattDescriptor d){
-        this.uuid = d.getUuid().toString();
+        super(d.getUuid().toString());
         this.name = "";
         this.permissions = d.getPermissions();
         this.value = d.getValue();
     }
 
     Descriptor(String uuid, String name, Integer permissions, byte[] value){
-        this.uuid = uuid;
+        super(uuid);
         this.name = name;
         this.permissions = permissions;
         this.value = value;

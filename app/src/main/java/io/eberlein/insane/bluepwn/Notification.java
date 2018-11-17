@@ -8,12 +8,12 @@ import io.paperdb.Paper;
 import static io.eberlein.insane.bluepwn.Static.KEY_DELIMITER;
 import static io.eberlein.insane.bluepwn.Static.TABLE_NOTIFICATION;
 
-public class Notification {
+public class Notification extends DBObject {
     String uuid;
     String table;
 
     Notification(String uuid, String table){
-        this.uuid = uuid;
+        super(uuid);
         this.table = table;
     }
 

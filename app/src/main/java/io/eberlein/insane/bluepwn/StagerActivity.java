@@ -68,7 +68,6 @@ public class StagerActivity extends AppCompatActivity {
         Stager s = new Stager();
         s.uuid = service.getText().toString();
         s.name = name.getText().toString();
-        s.lastModified = new Date();
         s.save();
         _service.stagers.add(s.uuid);
         _service.save();

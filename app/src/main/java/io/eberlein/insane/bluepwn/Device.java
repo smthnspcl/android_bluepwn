@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import io.paperdb.Paper;
 
@@ -22,13 +23,12 @@ import static io.eberlein.insane.bluepwn.Static.TYPE_UNKNOWN;
 // todo script to pull tables https://www.bluetooth.com/specifications/assigned-numbers/service-discovery
 
 
-public class Device {
+public class Device extends DBObject {
     String address;
     String name;
     String manufacturer;
     String bond;
     String type;
-    Date lastModified;
 
     List<String> services;
     List<String> locations;
@@ -76,27 +76,28 @@ public class Device {
     }
 
     Device(){
+        super(UUID.randomUUID().toString());
         address = "";
         name = "";
         manufacturer = "";
         bond = "";
         type = "";
-        lastModified = new Date();
         services = new ArrayList<>();
         locations = new ArrayList<>();
     }
 
     public Device(BluetoothDevice device){
+        super(UUID.randomUUID().toString());
         setValues(device);
     }
 
     public Device(String address, String name, String manufacturer, String bond, String type, Date lastModified){
+        super(UUID.randomUUID().toString());
         this.address = address;
         this.name = name;
         this.manufacturer = manufacturer;
         this.bond = bond;
         this.type = type;
-        this.lastModified = lastModified;
     }
 
     void setValues(BluetoothDevice device){
@@ -105,7 +106,6 @@ public class Device {
         manufacturer = "todo";
         bond = getBondStateAsString(device.getBondState());
         type = getTypeAsString(device.getType());
-        lastModified = new Date();
         locations = new ArrayList<>();
         services = new ArrayList<>();
     }

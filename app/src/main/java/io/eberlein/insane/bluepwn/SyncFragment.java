@@ -113,9 +113,40 @@ public class SyncFragment extends Fragment {
 
     @Subscribe
     public void onGotDifference(EventGotDifference e){
+        syncStatusLabel.setText("got difference");
+        JsonArray h = e.results.getAsJsonArray(Static.DB_HAVE);
+        JsonArray w = e.results.getAsJsonArray(Static.DB_WANT);
         TextView tv = tableToTextView(e.table);
-        tv.setText(String.valueOf(e.differences));
-        patchResults(e.table, e.differences);
+        tv.setText(String.valueOf(h.size() + w.size()));
+        syncStatusLabel.setText("importing");
+        if(h.size() > 0) importResults(e.table, h);
+        syncStatusLabel.setText("exporting");
+        if(w.size() > 0) exportResults(e.table, w);
+        syncStatusLabel.setText("done");
+    }
+
+    @Subscribe
+    public void onGotExportResult(EventExportResult e){
+        tableToTextView(e.table).setText(e.msg);
+    }
+
+    @Subscribe
+    public void onExportFailed(EventExportResultsFailed e){
+        tableToTextView(e.table).setText(e.msg);
+    }
+
+    @Subscribe
+    public void onGotImportResults(EventImportResults e){
+        int c = 0;
+        for(JsonElement i : e.results){
+            c += 1;
+            tableToTextView(e.table).setText(String.valueOf(c) + " / " + String.valueOf(e.results.size()));
+        }
+    }
+
+    @Subscribe
+    public void onImportResultsFailed(EventImportResultsFailed e){
+        tableToTextView(e.table).setText(e.msg);
     }
 
     public SyncFragment(){
@@ -152,12 +183,47 @@ public class SyncFragment extends Fragment {
         return v;
     }
 
+    void importResults(String table, JsonArray results) {
+        tableToTextView(table).setText("importing: " + String.valueOf(results.size()));
+        JsonObject j = generateCookieRequestBody();
+        j.add("uuids", results);
+        Ion.with(getContext())
+                .load(settings.server + URL_TABLE_GET.replace(URL_TABLE_VARIABLE, table))
+                .setJsonObjectBody(j)
+                .asJsonArray()
+                .setCallback(new FutureCallback<JsonArray>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonArray result) {
+                        Boolean success = false;
+                        if(result != null) if(!result.isJsonNull()) success = true;
+                        System.out.println(result);
+                        if(success) {EventBus.getDefault().post(new EventImportResults(table, result));}
+                        else EventBus.getDefault().post(new EventImportResultsFailed(table, "no data"));
+                    }
+                });
+    }
 
-    void patchResults(String table, JsonArray differences) {
-        tableToTextView(table).setText("patching");
-        for(JsonElement e : differences){
-
-        }
+    void exportResults(String table, JsonArray results) {
+        tableToTextView(table).setText("exporting: " + String.valueOf(results.size()));
+        JsonObject j = generateCookieRequestBody();
+        List<JsonObject> r = new ArrayList<>();
+        for(JsonElement e : results) r.add(Paper.book(table).read(e.getAsString()));
+        j.addProperty("objs", gson.toJson(r));
+        j.addProperty("table", table);
+        Ion.with(getContext())
+                .load(settings.server + URL_TABLE_SET.replace(URL_TABLE_VARIABLE, table))
+                .setJsonObjectBody(j)
+                .asJsonObject()
+                .setCallback(new FutureCallback<JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
+                        Boolean success = false;
+                        if(result != null) if(!result.isJsonNull()) success = true;
+                        System.out.println(result);
+                        if(success) {EventBus.getDefault().post(new EventExportResult(table, "successful"));}
+                        else EventBus.getDefault().post(new EventExportResultsFailed(table, "failed"));
+                    }
+                });
     }
 
     void getCookie(){
@@ -206,7 +272,7 @@ public class SyncFragment extends Fragment {
                     public void onCompleted(Exception e, JsonObject result) {
                         Boolean success = false;
                         if(result != null) if(!result.isJsonNull()) success = true;
-                        if(success) {System.out.println(result.toString()); EventBus.getDefault().post(new EventGotDifference(table, result.getAsJsonArray("differences")));}
+                        if(success) {EventBus.getDefault().post(new EventGotDifference(table, result));}
                         else EventBus.getDefault().post(new EventSyncFailed(table, "no keys"));
                     }
                 });

@@ -3,9 +3,12 @@ package io.eberlein.insane.bluepwn;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class Static {
     static final String TABLE_STAGE = "stage";
@@ -37,6 +40,9 @@ public class Static {
     static final String[] CHARACTERISTIC_KEYS = {"name", "writeType", "properties", "uuid"};
     static final String[] NOTIFICATION_KEYS = {"uuid", "table"};
     static final String[] TERMINALSESSION_KEYS = {"uuid", "cmds", "responses"};
+
+    static final String DB_WANT = "want";
+    static final String DB_HAVE = "have";
 
     static final String KEY_DELIMITER = "_";
 
@@ -103,6 +109,12 @@ public class Static {
     static final String URL_TABLE_DIFFERENCE = "api/{{TBL}}/difference";
     static final String URL_TABLE_GET = "api/{{TBL}}/get";
     static final String URL_TABLE_SET = "api/{{TBL}}/set";
+
+    static final String DATE_FORMAT = "HH:mm:ss.SSS-dd.MM.yyyy";
+
+    static String date2String(Date date){
+        return new SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(date);
+    }
 
     static List<String> jsonArrayToStringList(JsonArray l){
         List<String> r = new ArrayList<>();

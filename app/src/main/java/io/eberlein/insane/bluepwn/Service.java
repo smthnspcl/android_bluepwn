@@ -1,6 +1,5 @@
 package io.eberlein.insane.bluepwn;
 
-import com.movisens.smartgattlib.Characteristics;
 import com.movisens.smartgattlib.Services;
 
 import java.util.ArrayList;
@@ -13,8 +12,7 @@ import static io.eberlein.insane.bluepwn.Static.TABLE_CHARACTERISTIC;
 import static io.eberlein.insane.bluepwn.Static.TABLE_SERVICE;
 import static io.eberlein.insane.bluepwn.Static.TABLE_STAGER;
 
-public class Service {
-    String uuid;
+public class Service extends DBObject {
     String name;
     String description;
 
@@ -34,22 +32,22 @@ public class Service {
     }
 
     Service(){
+        super(UUID.randomUUID().toString());
         characteristics = new ArrayList<>();
-        uuid = UUID.randomUUID().toString();
         name = "";
         description = "";
         stagers = new ArrayList<>();
     }
 
     Service(UUID uuid){
-        this.uuid = uuid.toString();
+        super(uuid.toString());
         this.name = Services.lookup(uuid).getName();
         this.description = "";
         stagers = new ArrayList<>();
     }
 
     Service(String uuid){
-        this.uuid = uuid;
+        super(uuid);
         this.name = Services.lookup(UUID.fromString(uuid)).getName();
         this.description = "";
         characteristics = new ArrayList<>();
@@ -57,7 +55,7 @@ public class Service {
     }
 
     Service(String uuid, String name){
-        this.uuid = uuid;
+        super(uuid);
         this.name = name;
         this.description = "";
         characteristics = new ArrayList<>();
@@ -65,7 +63,7 @@ public class Service {
     }
 
     Service(String uuid, String name, String description){
-        this.uuid = uuid;
+        super(uuid);
         this.name = name;
         this.description = description;
         characteristics = new ArrayList<>();
@@ -73,7 +71,7 @@ public class Service {
     }
 
     Service(String uuid, String name, String description, List<String> characteristics){
-        this.uuid = uuid;
+        super(uuid);
         this.name = name;
         this.description = description;
         this.characteristics = characteristics;
@@ -81,7 +79,7 @@ public class Service {
     }
 
     Service(String uuid, String name, String description, List<String> characteristics, List<String> stagers){
-        this.uuid = uuid;
+        super(uuid);
         this.name = name;
         this.description = description;
         this.characteristics = characteristics;

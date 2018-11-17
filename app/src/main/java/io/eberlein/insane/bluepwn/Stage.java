@@ -8,8 +8,7 @@ import io.paperdb.Paper;
 
 import static io.eberlein.insane.bluepwn.Static.TABLE_STAGE;
 
-public class Stage {
-    String uuid;
+public class Stage extends DBObject{
     String name;
     String data;
 
@@ -31,14 +30,14 @@ public class Stage {
     }
 
     Stage(){
-        uuid = UUID.randomUUID().toString();
+        super(UUID.randomUUID().toString());
         name = "";
         data = "";
         dataType = "";
     }
 
     Stage(String id, String name){
-        this.uuid = id;
+        super(id);
         this.name = name;
     }
 }

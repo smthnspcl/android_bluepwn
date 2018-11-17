@@ -9,40 +9,34 @@ import java.util.UUID;
 
 import io.paperdb.Paper;
 
-import static io.eberlein.insane.bluepwn.Static.TABLE_SERVICE;
 import static io.eberlein.insane.bluepwn.Static.TABLE_STAGER;
 
-public class Stager {
+public class Stager extends DBObject {
     List<Stage> stages;
     List<String> services;
-    String uuid;
     String name;
     String type;
-    Date lastModified;
 
     Stager(){
-        uuid = UUID.randomUUID().toString();
+        super(UUID.randomUUID().toString());
         name = "";
         type = "";
-        lastModified = new Date();
         stages = new ArrayList<>();
         services = new ArrayList<>();
     }
 
     Stager(String service){
-        uuid = UUID.randomUUID().toString();
+        super(UUID.randomUUID().toString());
         services = new ArrayList<>();
         services.add(service);
         name = "";
         type = "";
-        lastModified = new Date();
     }
 
     Stager(String uuid, String name, String type, Date lastModified, List<Stage> stages, List<String> services){
-        this.uuid = uuid;
+        super(uuid);
         this.name = name;
         this.type = type;
-        this.lastModified = lastModified;
         this.stages = stages;
         this.services = services;
     }

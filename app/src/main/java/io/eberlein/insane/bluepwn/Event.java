@@ -3,6 +3,8 @@ package io.eberlein.insane.bluepwn;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 import static io.eberlein.insane.bluepwn.Static.EVENT_DEVICE_DISCOVERED;
@@ -104,11 +106,11 @@ class EventGotCookie {
 
 class EventGotDifference {
     public final String table;
-    public final JsonArray differences;
+    public final JsonObject results;
 
-    public EventGotDifference(String table, JsonArray differences) {
+    public EventGotDifference(String table, JsonObject results) {
         this.table = table;
-        this.differences = differences;
+        this.results = results;
     }
 }
 
@@ -117,6 +119,46 @@ class EventSyncFailed {
     public final String msg;
 
     public EventSyncFailed (String table, String msg){
+        this.table = table;
+        this.msg = msg;
+    }
+}
+
+class EventImportResults {
+    public final String table;
+    public final JsonArray results;
+
+    public EventImportResults(String table, JsonArray results){
+        this.table = table;
+        this.results = results;
+    }
+}
+
+class EventImportResultsFailed {
+    public final String table;
+    public final String msg;
+
+    public EventImportResultsFailed(String table, String msg){
+        this.table = table;
+        this.msg = msg;
+    }
+}
+
+class EventExportResult {
+    public final String table;
+    public final String msg;
+
+    public EventExportResult(String table, String msg){
+        this.table = table;
+        this.msg = msg;
+    }
+}
+
+class EventExportResultsFailed {
+    public final String table;
+    public final String msg;
+
+    public EventExportResultsFailed(String table, String msg){
         this.table = table;
         this.msg = msg;
     }

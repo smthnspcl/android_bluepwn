@@ -1,7 +1,6 @@
 package io.eberlein.insane.bluepwn;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,16 +12,12 @@ import static io.eberlein.insane.bluepwn.Static.TABLE_SCAN;
 import static io.eberlein.insane.bluepwn.Static.TYPE_CLASSIC;
 import static io.eberlein.insane.bluepwn.Static.TYPE_LE;
 
-public class Scan {
-    String uuid;
-    Date timestamp;
-
+public class Scan extends DBObject {
     List<String> devices;
     List<String> locations;
 
     public Scan(){
-        uuid = UUID.randomUUID().toString();
-        timestamp = new Date();
+        super(UUID.randomUUID().toString());
         devices = new ArrayList<>();
         locations = new ArrayList<>();
     }
