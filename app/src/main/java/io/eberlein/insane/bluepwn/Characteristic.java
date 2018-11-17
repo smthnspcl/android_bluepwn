@@ -19,7 +19,6 @@ public class Characteristic extends DBObject {
     Integer writeType;
     String name;
     byte[] value;
-    String uuid;
 
     List<String> descriptors;
 
