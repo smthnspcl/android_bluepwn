@@ -75,6 +75,7 @@ public class BluetoothFragment extends Fragment {
     private List<Notification> toNotifyDevices;
 
     private BluetoothAdapter btAdapter;
+    private BluetoothGatt currentGatt;
 
     private LocationManager locationManager;
     private GPSLocationListener locationListener;
@@ -156,7 +157,7 @@ public class BluetoothFragment extends Fragment {
     @Subscribe
     public void onServiceScanStop(EventStopServiceScan e){
         Log.log(this.getClass(), "service scan stopped");
-        btAdapter.disable(); btAdapter.enable(); // not sure if healthy but should work
+        if(currentGatt != null) currentGatt.disconnect();
         toSdpScanDevices = new ArrayList<>();
         toGattScanDevices = new ArrayList<>();
         scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
@@ -308,10 +309,12 @@ public class BluetoothFragment extends Fragment {
             Device device = toGattScanDevices.get(0);
             Log.log(this.getClass(), "trying to gatt-scan " + device.address);
             BluetoothDevice d = btAdapter.getRemoteDevice(device.address);
+            if(d == null) return;
             d.connectGatt(getContext(), false, new BluetoothGattCallback() {
                 @Override
                 public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
                     super.onConnectionStateChange(gatt, status, newState);
+                    currentGatt = gatt;
                     if(newState == BluetoothProfile.STATE_DISCONNECTED || newState == BluetoothProfile.STATE_DISCONNECTING || status != BluetoothGatt.GATT_SUCCESS) {
                         Log.log(this.getClass(), "disconnected from " + device.address);
                         EventBus.getDefault().post(new EventGATTScanFinished(device));
