@@ -163,3 +163,11 @@ class EventExportResultsFailed {
         this.msg = msg;
     }
 }
+
+class EventScanStarted {
+    public EventScanStarted(){}
+}
+
+class EventScanStopped {
+    public EventScanStopped(){}
+}

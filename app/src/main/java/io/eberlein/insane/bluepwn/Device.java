@@ -63,6 +63,15 @@ public class Device extends DBObject {
         return new Device();
     }
 
+    static List<Device> get(List<String> addrs){
+        List<Device> devices = new ArrayList<>();
+        for(String a : addrs) {
+            Device d = Paper.book(TABLE_DEVICE).read(a);
+            if(d != null) devices.add(d);
+        }
+        return devices;
+    }
+
     void populateIfEmpty(BluetoothDevice device){
         if(address.isEmpty()) setValues(device);
     }

@@ -11,15 +11,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
-import io.paperdb.Paper;
 
 import static io.eberlein.insane.bluepwn.Static.TABLE_DEVICE;
 import static io.eberlein.insane.bluepwn.Static.TYPE_CLASSIC;
@@ -40,10 +39,14 @@ public class DeviceActivity extends AppCompatActivity {
 
     @OnClick(R.id.terminal)
     public void onTerminalClicked(){
-        Intent i = new Intent(this, TerminalActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.putExtra("address", device.address);
-        startActivity(i);
+        if(bluetoothAdapter.getRemoteDevice(device.address) != null){
+            Intent i = new Intent(this, TerminalActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.putExtra("address", device.address);
+            startActivity(i);
+        } else {
+            Toast.makeText(this, "device is not nearby", Toast.LENGTH_SHORT).show(); // redundant?
+        }
     }
 
     ServiceAdapter serviceAdapter;
@@ -97,12 +100,11 @@ public class DeviceActivity extends AppCompatActivity {
         Log.onCreate(this.getClass());
         setContentView(R.layout.activity_device);
         ButterKnife.bind(this);
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         gson = new Gson();
         serviceAdapter = new ServiceAdapter();
         device = Device.getExistingOrNew(getIntent().getStringExtra("address"));
-        Integer v = View.GONE;
-        if(getIntent().getBooleanExtra("live", false)) v = View.VISIBLE;
-        terminal.setVisibility(v);
+        if(getIntent().getBooleanExtra("live", false)) terminal.setVisibility(View.INVISIBLE);
         setTitle("dev: " + device.address);
         serviceAdapter.addAll(device.getServices());
         tvMac.setText(device.address);
@@ -112,7 +114,6 @@ public class DeviceActivity extends AppCompatActivity {
         notify.setChecked(Notification.exists(TABLE_DEVICE, device.address));
         locationCountLabel.setText(String.valueOf(device.getLocations().size()));
         tvManufacturer.setText(device.manufacturer);
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         recycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         serviceAdapter.setOnItemClickListener(new ServiceAdapter.OnItemClickListener() {
             @Override
@@ -167,5 +168,6 @@ public class DeviceActivity extends AppCompatActivity {
         super.onResume();
         serviceAdapter.empty();
         serviceAdapter.addAll(device.getServices());
+        //if(bluetoothAdapter.getRemoteDevice(device.address) == null) terminal.setEnabled(false);
     }
 }

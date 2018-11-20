@@ -11,6 +11,24 @@ import java.util.List;
 import java.util.Locale;
 
 public class Static {
+
+    static final String ACTION_SCANNER_INITIALIZED = "scanner_initialized";
+    static final String ACTION_START_SCAN = "start_scan";
+    static final String ACTION_SCAN_STARTED = "scan_started";
+    static final String ACTION_SCAN_STOPPED = "scan_stopped";
+    static final String ACTION_SCAN_FINISHED = "scan_finished";
+    static final String ACTION_ALREADY_SCANNING = "already_scanning";
+    static final String ACTION_DEVICE_DISCOVERED = "device_discovered";
+    static final String ACTION_SERVICE_DISCOVERED = "service_discovered";
+    static final String ACTION_STOP_SCAN = "stop_scan";
+    static final String ACTION_STOP_DISCOVERY = "stop_discovery";
+    static final String ACTION_DISCOVERY_STARTED = "discovery_started";
+    static final String ACTION_DISCOVERY_STOPPED = "discovery_stopped";
+    static final String ACTION_DISCOVERY_FINISHED = "discovery_finished";
+    static final String ACTION_DISCOVERY_ALREADY_STOPPED = "discovery_already_stopped";
+
+    static final String ACTION_DATA_KEY = "data";
+
     static final String TABLE_STAGE = "stage";
     static final String TABLE_STAGER = "stager";
     static final String TABLE_SERVICE = "service";

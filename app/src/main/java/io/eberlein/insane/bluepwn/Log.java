@@ -1,6 +1,7 @@
 package io.eberlein.insane.bluepwn;
 
 public class Log {
+    
     static void log(Class c, String msg){
         android.util.Log.i(c.getCanonicalName(), msg);
     }

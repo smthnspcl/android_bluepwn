@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -117,7 +118,6 @@ public class TerminalActivity extends AppCompatActivity {
 
     void doRfCommConnectDialog(){
         View v = LayoutInflater.from(this).inflate(R.layout.dialog_choose_service, null);
-
         AlertDialog d = new AlertDialog.Builder(this)
                 .setView(v)
                 .setTitle("select service")
@@ -176,6 +176,7 @@ public class TerminalActivity extends AppCompatActivity {
             case TYPE_LE:
                 doConnectGatt();break;
             case TYPE_CLASSIC:
+                Toast.makeText(this, "didnt implement. sry", Toast.LENGTH_SHORT).show();
                 break;
             default:
 
