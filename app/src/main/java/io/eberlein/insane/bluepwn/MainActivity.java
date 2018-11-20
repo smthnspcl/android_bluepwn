@@ -2,6 +2,7 @@ package io.eberlein.insane.bluepwn;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -17,6 +18,8 @@ import butterknife.ButterKnife;
 import io.paperdb.Paper;
 
 public class MainActivity extends AppCompatActivity {
+    private Intent scannerServiceIntent;
+
     @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
     @BindView(R.id.nav_view) NavigationView navigationView;
 
@@ -24,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.onCreate(this.getClass());
+        scannerServiceIntent = new Intent(this, ScannerService.class);
+        startService(scannerServiceIntent);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         Context c = getApplicationContext();
@@ -94,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Log.onDestroy(this.getClass());
-        BluetoothAdapter.getDefaultAdapter().disable();
+        stopService(scannerServiceIntent);
         super.onDestroy();
     }
 }

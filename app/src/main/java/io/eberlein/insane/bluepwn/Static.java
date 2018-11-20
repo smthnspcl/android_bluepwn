@@ -1,5 +1,9 @@
 package io.eberlein.insane.bluepwn;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.Nullable;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
@@ -11,6 +15,14 @@ import java.util.List;
 import java.util.Locale;
 
 public class Static {
+
+    static final String ACTION_DATABASE_IMPORT_RESULTS = "database_import_results";
+    static final String ACTION_DATABASE_IMPORT_RESULTS_FAILED = "database_import_results_failed";
+    static final String ACTION_DATABASE_EXPORT_RESULTS = "export_results";
+    static final String ACTION_DATABASE_EXPORT_RESULTS_FAILED = "export_results_failed";
+    static final String ACTION_DATABASE_GOT_COOKIE = "got_cookie";
+    static final String ACTION_DATABASE_GOT_DIFFERENCE = "got_difference";
+    static final String ACTION_DATABASE_GET_DIFFERENCE_FAILED = "get_difference_failed";
 
     static final String ACTION_SCANNER_INITIALIZED = "scanner_initialized";
     static final String ACTION_START_SCAN = "start_scan";
@@ -138,5 +150,11 @@ public class Static {
         List<String> r = new ArrayList<>();
         for(JsonElement e : l) r.add(e.getAsString());
         return r;
+    }
+
+    static void send2BcR(Context c, String action, @Nullable String data){
+        Intent i = new Intent(action);
+        if(data != null) i.putExtra(ACTION_DATA_KEY, data);
+        c.sendBroadcast(i);
     }
 }

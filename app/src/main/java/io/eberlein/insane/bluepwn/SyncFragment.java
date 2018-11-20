@@ -1,5 +1,9 @@
 package io.eberlein.insane.bluepwn;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,10 +20,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +29,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.paperdb.Paper;
 
+import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_EXPORT_RESULTS;
+import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_EXPORT_RESULTS_FAILED;
+import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_GET_DIFFERENCE_FAILED;
+import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_GOT_COOKIE;
+import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_GOT_DIFFERENCE;
+import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_IMPORT_RESULTS;
+import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_IMPORT_RESULTS_FAILED;
+import static io.eberlein.insane.bluepwn.Static.ACTION_DATA_KEY;
 import static io.eberlein.insane.bluepwn.Static.TABLES;
 import static io.eberlein.insane.bluepwn.Static.TABLE_CHARACTERISTIC;
 import static io.eberlein.insane.bluepwn.Static.TABLE_DESCRIPTOR;
@@ -45,7 +53,7 @@ import static io.eberlein.insane.bluepwn.Static.URL_TABLE_GET;
 import static io.eberlein.insane.bluepwn.Static.URL_TABLE_SET;
 import static io.eberlein.insane.bluepwn.Static.URL_TABLE_VARIABLE;
 import static io.eberlein.insane.bluepwn.Static.classToTable;
-import static io.eberlein.insane.bluepwn.Static.tableToClass;
+import static io.eberlein.insane.bluepwn.Static.send2BcR;
 
 public class SyncFragment extends Fragment {
     @BindView(R.id.sync) Button sync;
@@ -99,54 +107,88 @@ public class SyncFragment extends Fragment {
         sync();
     }
 
-    @Subscribe
-    public void onGotCookie(EventGotCookie e){
-        if(e.cookie != null){
-            syncStatusLabel.setText("ready");
-            sync.setText("sync");
-            cookie = e.cookie;
-        } else {
-            syncStatusLabel.setText("cookie null");
-            sync.setText("get cookie");
+    BroadcastReceiver gotCookieReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            cookie = intent.getStringExtra(ACTION_DATA_KEY);
+            if(cookie != null){
+                syncStatusLabel.setText("ready");
+                sync.setText("sync");
+            } else {
+                syncStatusLabel.setText("cookie null");
+                sync.setText("get cookie");
+            }
         }
-    }
+    };
 
-    @Subscribe
-    public void onGotDifference(EventGotDifference e){
-        syncStatusLabel.setText("got difference");
-        JsonArray h = e.results.getAsJsonArray(Static.DB_HAVE);
-        JsonArray w = e.results.getAsJsonArray(Static.DB_WANT);
-        TextView tv = tableToTextView(e.table);
-        tv.setText(String.valueOf(h.size() + w.size()));
-        syncStatusLabel.setText("importing");
-        if(h.size() > 0) importResults(e.table, h);
-        syncStatusLabel.setText("exporting");
-        if(w.size() > 0) exportResults(e.table, w);
-        syncStatusLabel.setText("done");
-    }
-
-    @Subscribe
-    public void onGotExportResult(EventExportResult e){
-        tableToTextView(e.table).setText(e.msg);
-    }
-
-    @Subscribe
-    public void onExportFailed(EventExportResultsFailed e){
-        tableToTextView(e.table).setText(e.msg);
-    }
-
-    @Subscribe
-    public void onGotImportResults(EventImportResults e){
-        int c = 0;
-        for(JsonElement i : e.results){
-            c += 1;
-            tableToTextView(e.table).setText(String.valueOf(c) + " / " + String.valueOf(e.results.size()));
+    BroadcastReceiver gotDifferenceReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            JsonObject results = gson.fromJson(intent.getStringExtra(ACTION_DATA_KEY), JsonObject.class);
+            String table = intent.getStringExtra("table");
+            syncStatusLabel.setText("got difference");
+            JsonArray h = results.getAsJsonArray(Static.DB_HAVE);
+            JsonArray w = results.getAsJsonArray(Static.DB_WANT);
+            TextView tv = tableToTextView(table);
+            tv.setText(String.valueOf(h.size() + w.size()));
+            syncStatusLabel.setText("importing");
+            if(h.size() > 0) importResults(table, h);
+            syncStatusLabel.setText("exporting");
+            if(w.size() > 0) exportResults(table, w);
+            syncStatusLabel.setText("done");
         }
+    };
+
+    BroadcastReceiver gotExportResultReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            tableToTextView(intent.getStringExtra("table")).setText(intent.getStringExtra("msg"));
+        }
+    };
+
+    BroadcastReceiver gotExportFailedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            tableToTextView(intent.getStringExtra("table")).setText(intent.getStringExtra("msg"));
+        }
+    };
+
+    BroadcastReceiver gotImportResultsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            JsonArray results = gson.fromJson(intent.getStringExtra(ACTION_DATA_KEY), JsonArray.class);
+            int c = 0;
+            for(JsonElement i : results){
+                c += 1;
+                tableToTextView(intent.getStringExtra("table")).setText(String.valueOf(c) + " / " + String.valueOf(results.size()));
+            }
+        }
+    };
+
+    BroadcastReceiver gotImportResultsFailedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            tableToTextView(intent.getStringExtra("table")).setText(intent.getStringExtra("msg"));
+        }
+    };
+
+    private BroadcastReceiver[] broadcastReceivers = {
+            gotCookieReceiver, gotDifferenceReceiver, gotExportFailedReceiver, gotExportResultReceiver, gotImportResultsFailedReceiver, gotImportResultsReceiver
+    };
+
+    private void registerReceivers(){
+        Context c = getContext();
+        c.registerReceiver(gotCookieReceiver, new IntentFilter(ACTION_DATABASE_GOT_COOKIE));
+        c.registerReceiver(gotDifferenceReceiver, new IntentFilter(ACTION_DATABASE_GOT_DIFFERENCE));
+        c.registerReceiver(gotExportFailedReceiver, new IntentFilter(ACTION_DATABASE_EXPORT_RESULTS_FAILED));
+        c.registerReceiver(gotExportResultReceiver, new IntentFilter(ACTION_DATABASE_EXPORT_RESULTS));
+        c.registerReceiver(gotImportResultsFailedReceiver, new IntentFilter(ACTION_DATABASE_IMPORT_RESULTS_FAILED));
+        c.registerReceiver(gotImportResultsReceiver, new IntentFilter(ACTION_DATABASE_IMPORT_RESULTS));
     }
 
-    @Subscribe
-    public void onImportResultsFailed(EventImportResultsFailed e){
-        tableToTextView(e.table).setText(e.msg);
+    private void unregisterReceivers(){
+        Context c = getContext();
+        for(BroadcastReceiver bcr : broadcastReceivers) c.unregisterReceiver(bcr);
     }
 
     public SyncFragment(){
@@ -157,14 +199,14 @@ public class SyncFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.onCreate(this.getClass());
-        EventBus.getDefault().register(this);
+        registerReceivers();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.onDestroy(this.getClass());
-        EventBus.getDefault().unregister(this);
+        unregisterReceivers();
     }
 
     @Override
@@ -197,8 +239,17 @@ public class SyncFragment extends Fragment {
                         Boolean success = false;
                         if(result != null) if(!result.isJsonNull()) success = true;
                         System.out.println(result);
-                        if(success) {EventBus.getDefault().post(new EventImportResults(table, result));}
-                        else EventBus.getDefault().post(new EventImportResultsFailed(table, "no data"));
+                        if(success) {
+                            Intent i = new Intent(ACTION_DATABASE_IMPORT_RESULTS);
+                            i.putExtra(ACTION_DATA_KEY, result.toString());
+                            i.putExtra("table", table);
+                            getContext().sendBroadcast(i);
+                        } else {
+                            Intent i = new Intent(ACTION_DATABASE_IMPORT_RESULTS_FAILED);
+                            i.putExtra("table", table);
+                            i.putExtra("msg", "no data");
+                            getContext().sendBroadcast(i);
+                        }
                     }
                 });
     }
@@ -220,8 +271,18 @@ public class SyncFragment extends Fragment {
                         Boolean success = false;
                         if(result != null) if(!result.isJsonNull()) success = true;
                         System.out.println(result);
-                        if(success) {EventBus.getDefault().post(new EventExportResult(table, "successful"));}
-                        else EventBus.getDefault().post(new EventExportResultsFailed(table, "failed"));
+                        if(success) {
+                            Intent i = new Intent(ACTION_DATABASE_EXPORT_RESULTS);
+                            i.putExtra(table, "successful");
+                            i.putExtra(table, "failed");
+                            getContext().sendBroadcast(i);
+                        }
+                        else {
+                            Intent i = new Intent(ACTION_DATABASE_EXPORT_RESULTS_FAILED);
+                            i.putExtra("table", table);
+                            i.putExtra("msg", "failed");
+                            getContext().sendBroadcast(i);
+                        }
                     }
                 });
     }
@@ -248,7 +309,7 @@ public class SyncFragment extends Fragment {
                                 }
                             }
                         }
-                        EventBus.getDefault().post(new EventGotCookie(c));
+                        send2BcR(getContext(), ACTION_DATABASE_GOT_COOKIE, c);
                     }
                 });
     }
@@ -272,8 +333,16 @@ public class SyncFragment extends Fragment {
                     public void onCompleted(Exception e, JsonObject result) {
                         Boolean success = false;
                         if(result != null) if(!result.isJsonNull()) success = true;
-                        if(success) {EventBus.getDefault().post(new EventGotDifference(table, result));}
-                        else EventBus.getDefault().post(new EventSyncFailed(table, "no keys"));
+                        if(success) {
+                            Intent i = new Intent(ACTION_DATABASE_GOT_DIFFERENCE);
+                            i.putExtra("table", table);
+                            i.putExtra(ACTION_DATA_KEY, result.toString());
+                            getContext().sendBroadcast(i);
+                        } else {
+                            Intent i = new Intent(ACTION_DATABASE_GET_DIFFERENCE_FAILED);
+                            i.putExtra("table", table);
+                            i.putExtra(ACTION_DATA_KEY, "no keys");
+                        }
                     }
                 });
     }

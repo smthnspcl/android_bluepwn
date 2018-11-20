@@ -30,6 +30,7 @@ import static io.eberlein.insane.bluepwn.Static.ACTION_DISCOVERY_FINISHED;
 import static io.eberlein.insane.bluepwn.Static.ACTION_DISCOVERY_STARTED;
 import static io.eberlein.insane.bluepwn.Static.ACTION_DISCOVERY_STOPPED;
 import static io.eberlein.insane.bluepwn.Static.ACTION_SCANNER_INITIALIZED;
+import static io.eberlein.insane.bluepwn.Static.ACTION_SCAN_FINISHED;
 import static io.eberlein.insane.bluepwn.Static.ACTION_SCAN_STARTED;
 import static io.eberlein.insane.bluepwn.Static.ACTION_SCAN_STOPPED;
 import static io.eberlein.insane.bluepwn.Static.ACTION_SERVICE_DISCOVERED;
@@ -45,13 +46,11 @@ public class ScannerService extends Service {
     private BluetoothAdapter bluetoothAdapter;
     private LocationManager locationManager;
     private GPSLocationListener locationListener;
-
     private boolean continuousScanning = false;
-
-    private Scan currentScan;
+    private boolean scanning = false;
     private BluetoothGatt currentGatt;
-
     private List<Device> toScanDevices;
+    private Scan currentScan;
 
     BroadcastReceiver startScanReceiver = new BroadcastReceiver() {
         @Override
@@ -76,7 +75,7 @@ public class ScannerService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             toScanDevices = new ArrayList<>();
-            currentGatt.disconnect();
+            if(currentGatt != null) {currentGatt.disconnect(); currentGatt = null;}
             Log.log(this.getClass(), "stopped scanning");
             send2UI(ACTION_SCAN_STOPPED, null); // todo send list of all addresses
         }
@@ -118,7 +117,7 @@ public class ScannerService extends Service {
             if(device.address.isEmpty()) device.setValues(bluetoothDevice);
             if(locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) device.locations.add(locationListener.currentLocation.uuid);
             device.save();
-            currentScan.save();
+            toScanDevices.add(device);
             send2UI(ACTION_DEVICE_DISCOVERED, device.address);
         }
     };
@@ -126,18 +125,21 @@ public class ScannerService extends Service {
     BroadcastReceiver onDiscoveryFinishedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            send2UI(ACTION_DISCOVERY_FINISHED, null);
+            send2UI(ACTION_DISCOVERY_FINISHED, currentScan.uuid);
             doScanOnNextDevice();
         }
     };
 
     void doScanOnNextDevice(){
         if(toScanDevices.size() > 0){
+            Log.log(this.getClass(), "doScanOnNextDevice");
             Device device = toScanDevices.get(0);
             if(device.type.equals(TYPE_LE)) doGattScanOnNextDevice(device);
             else if(device.type.equals(TYPE_CLASSIC)) doSdpScanOnNextDevice(device);
             else if(device.type.equals(TYPE_DUAL)) {doGattScanOnNextDevice(device); doSdpScanOnNextDevice(device);}
             toScanDevices.remove(device);
+        } else {
+            send2UI(ACTION_SCAN_FINISHED, null);
         }
     }
 
@@ -241,8 +243,11 @@ public class ScannerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.onCreate(this.getClass());
+        toScanDevices = new ArrayList<>();
         initGPS();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothAdapter.enable();
         registerReceivers();
         send2UI(ACTION_SCANNER_INITIALIZED, null);
     }
@@ -256,6 +261,7 @@ public class ScannerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.onDestroy(this.getClass());
         unregisterReceivers();
         bluetoothAdapter.disable();
     }

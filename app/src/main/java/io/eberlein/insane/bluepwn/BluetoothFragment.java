@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.Toast;
-import com.google.gson.Gson;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,17 +27,21 @@ import butterknife.OnClick;
 
 import static io.eberlein.insane.bluepwn.Static.ACTION_DATA_KEY;
 import static io.eberlein.insane.bluepwn.Static.ACTION_DEVICE_DISCOVERED;
+import static io.eberlein.insane.bluepwn.Static.ACTION_DISCOVERY_FINISHED;
+import static io.eberlein.insane.bluepwn.Static.ACTION_DISCOVERY_STOPPED;
 import static io.eberlein.insane.bluepwn.Static.ACTION_SCANNER_INITIALIZED;
+import static io.eberlein.insane.bluepwn.Static.ACTION_SCAN_FINISHED;
 import static io.eberlein.insane.bluepwn.Static.ACTION_SCAN_STARTED;
 import static io.eberlein.insane.bluepwn.Static.ACTION_SCAN_STOPPED;
 import static io.eberlein.insane.bluepwn.Static.ACTION_SERVICE_DISCOVERED;
 import static io.eberlein.insane.bluepwn.Static.ACTION_START_SCAN;
+import static io.eberlein.insane.bluepwn.Static.ACTION_STOP_DISCOVERY;
 import static io.eberlein.insane.bluepwn.Static.ACTION_STOP_SCAN;
 import static io.eberlein.insane.bluepwn.Static.TABLE_DEVICE;
+import static io.eberlein.insane.bluepwn.Static.send2BcR;
 
 
 public class BluetoothFragment extends Fragment {
-    private Intent scannerServiceIntent;
 
     BroadcastReceiver scanningStartedReceiver = new BroadcastReceiver() {
         @Override
@@ -50,7 +53,32 @@ public class BluetoothFragment extends Fragment {
     BroadcastReceiver scanningStoppedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            currentlyScanning = false;
             scanBtn.setImageResource(R.drawable.ic_sync_white_48dp);
+        }
+    };
+
+    BroadcastReceiver scanningFinishedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            currentlyScanning = false;
+            scanBtn.setImageResource(R.drawable.ic_sync_white_48dp);
+        }
+    };
+
+    BroadcastReceiver discoveryStoppedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            currentlyScanning = true;
+            currentlyDiscovering = false;
+        }
+    };
+
+    BroadcastReceiver discoveryFinishedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            currentlyDiscovering = false;
+            currentlyScanning = true;
         }
     };
 
@@ -76,22 +104,44 @@ public class BluetoothFragment extends Fragment {
     };
 
     private final BroadcastReceiver[] broadcastReceivers = {
-            scanningStartedReceiver, scanningStoppedReceiver, deviceDiscoveredReceiver, serviceDiscoveredReceiver, scannerServiceInitializedReceiver
+            scanningStartedReceiver, scanningStoppedReceiver, deviceDiscoveredReceiver, serviceDiscoveredReceiver, scannerServiceInitializedReceiver,
+            scanningFinishedReceiver, discoveryStoppedReceiver, discoveryFinishedReceiver
     };
+
+    private void registerReceivers(){
+        Context c = getContext();
+        c.registerReceiver(scanningStartedReceiver, new IntentFilter(ACTION_SCAN_STARTED));
+        c.registerReceiver(scanningStoppedReceiver, new IntentFilter(ACTION_SCAN_STOPPED));
+        c.registerReceiver(deviceDiscoveredReceiver, new IntentFilter(ACTION_DEVICE_DISCOVERED));
+        c.registerReceiver(serviceDiscoveredReceiver, new IntentFilter(ACTION_SERVICE_DISCOVERED));
+        c.registerReceiver(scannerServiceInitializedReceiver, new IntentFilter(ACTION_SCANNER_INITIALIZED));
+        c.registerReceiver(scanningFinishedReceiver, new IntentFilter(ACTION_SCAN_FINISHED));
+        c.registerReceiver(discoveryStoppedReceiver, new IntentFilter(ACTION_DISCOVERY_STOPPED));
+        c.registerReceiver(discoveryFinishedReceiver, new IntentFilter(ACTION_DISCOVERY_FINISHED));
+    }
+
+    private void unregisterReceivers(){
+        Context c = getContext();
+        for(BroadcastReceiver bcr : broadcastReceivers) c.unregisterReceiver(bcr);
+    }
 
     @BindView(R.id.scanBtn) FloatingActionButton scanBtn;
     @BindView(R.id.devicesRecycler) RecyclerView deviceRecycler;
     @BindView(R.id.continuousScanningCheckbox) CheckBox continuousScanningCheckbox;
 
     private boolean currentlyScanning = false;
+    private boolean currentlyDiscovering = false;
 
     @OnClick(R.id.scanBtn)
     void scanBtnClicked(){
         Log.log(this.getClass(),"scanBtnClicked");
         if(!currentlyScanning) send2Service(ACTION_START_SCAN, null);
-        else send2Service(ACTION_STOP_SCAN, null);
+        else {
+            if(currentlyScanning) send2Service(ACTION_STOP_SCAN, null);
+            if(currentlyDiscovering) send2Service(ACTION_STOP_DISCOVERY, null);
+        }
         currentlyScanning = !currentlyScanning;
-        Log.log(this.getClass(), "scanning: " + String.valueOf(currentlyScanning));
+        Log.log(this.getClass(), "scanning: " + String.valueOf(!currentlyScanning));
     }
 
     private DeviceAdapter devices;
@@ -99,23 +149,10 @@ public class BluetoothFragment extends Fragment {
 
     private List<Notification> toNotifyDevices;
 
-    private void registerReceivers(){
-        getContext().registerReceiver(scanningStartedReceiver, new IntentFilter(ACTION_SCAN_STARTED));
-        getContext().registerReceiver(scanningStoppedReceiver, new IntentFilter(ACTION_SCAN_STOPPED));
-        getContext().registerReceiver(deviceDiscoveredReceiver, new IntentFilter(ACTION_DEVICE_DISCOVERED));
-        getContext().registerReceiver(serviceDiscoveredReceiver, new IntentFilter(ACTION_SERVICE_DISCOVERED));
-        getContext().registerReceiver(scannerServiceInitializedReceiver, new IntentFilter(ACTION_SCANNER_INITIALIZED));
-    }
-
-    private void unregisterReceivers(){
-        for(BroadcastReceiver bcr : broadcastReceivers) getContext().unregisterReceiver(bcr);
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.onCreate(this.getClass());
-        scannerServiceIntent = new Intent(getContext(), ScannerService.class);
         getActivity().setTitle("scan");
         requestPermissions();
         registerReceivers();
@@ -135,13 +172,12 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getContext().startService(scannerServiceIntent);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getContext().stopService(scannerServiceIntent);
+
     }
 
     @Override
@@ -187,8 +223,6 @@ public class BluetoothFragment extends Fragment {
     }
 
     private void send2Service(String action, @Nullable String data){
-        Intent i = new Intent(action);
-        if(data != null) i.putExtra(ACTION_DATA_KEY, data);
-        getContext().sendBroadcast(i);
+        send2BcR(getContext(), action, data);
     }
 }
