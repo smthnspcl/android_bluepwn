@@ -43,6 +43,8 @@
         <activity android:name=".GeneralSettingsActivity"/>
         <activity android:name=".UISettingsActivity"/>
         <activity android:name=".TerminalActivity"/>
+
+        <service android:name=".ScannerService"/>
     </application>
 
 </manifest>
