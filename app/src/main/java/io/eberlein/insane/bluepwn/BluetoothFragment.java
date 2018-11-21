@@ -25,6 +25,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static io.eberlein.insane.bluepwn.Static.ACTION_CURRENT_SCAN;
 import static io.eberlein.insane.bluepwn.Static.ACTION_DATA_KEY;
 import static io.eberlein.insane.bluepwn.Static.ACTION_DEVICE_DISCOVERED;
 import static io.eberlein.insane.bluepwn.Static.ACTION_DISCOVERY_FINISHED;
@@ -43,9 +44,20 @@ import static io.eberlein.insane.bluepwn.Static.send2BcR;
 
 public class BluetoothFragment extends Fragment {
 
+    BroadcastReceiver currentScanReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String key = intent.getStringExtra(ACTION_DATA_KEY);
+            Log.log(this.getClass(), key);
+            currentScan = Scan.get(key);
+        }
+    };
+
     BroadcastReceiver scanningStartedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            currentlyScanning = true;
+            currentlyDiscovering = false;
             scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
         }
     };
@@ -61,6 +73,9 @@ public class BluetoothFragment extends Fragment {
     BroadcastReceiver scanningFinishedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            currentScan = Scan.get(intent.getStringExtra(ACTION_DATA_KEY));
+            Log.log(this.getClass(), currentScan.toString());
+            devices.addAll(currentScan.getDevices());
             currentlyScanning = false;
             scanBtn.setImageResource(R.drawable.ic_sync_white_48dp);
         }
@@ -77,6 +92,7 @@ public class BluetoothFragment extends Fragment {
     BroadcastReceiver discoveryFinishedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            currentScan = Scan.get(intent.getStringExtra(ACTION_DATA_KEY));
             currentlyDiscovering = false;
             currentlyScanning = true;
         }
@@ -105,7 +121,7 @@ public class BluetoothFragment extends Fragment {
 
     private final BroadcastReceiver[] broadcastReceivers = {
             scanningStartedReceiver, scanningStoppedReceiver, deviceDiscoveredReceiver, serviceDiscoveredReceiver, scannerServiceInitializedReceiver,
-            scanningFinishedReceiver, discoveryStoppedReceiver, discoveryFinishedReceiver
+            scanningFinishedReceiver, discoveryStoppedReceiver, discoveryFinishedReceiver, currentScanReceiver
     };
 
     private void registerReceivers(){
@@ -118,6 +134,7 @@ public class BluetoothFragment extends Fragment {
         c.registerReceiver(scanningFinishedReceiver, new IntentFilter(ACTION_SCAN_FINISHED));
         c.registerReceiver(discoveryStoppedReceiver, new IntentFilter(ACTION_DISCOVERY_STOPPED));
         c.registerReceiver(discoveryFinishedReceiver, new IntentFilter(ACTION_DISCOVERY_FINISHED));
+        c.registerReceiver(currentScanReceiver, new IntentFilter(ACTION_CURRENT_SCAN));
     }
 
     private void unregisterReceivers(){
@@ -131,6 +148,7 @@ public class BluetoothFragment extends Fragment {
 
     private boolean currentlyScanning = false;
     private boolean currentlyDiscovering = false;
+    private Scan currentScan;
 
     @OnClick(R.id.scanBtn)
     void scanBtnClicked(){
@@ -140,8 +158,6 @@ public class BluetoothFragment extends Fragment {
             if(currentlyScanning) send2Service(ACTION_STOP_SCAN, null);
             if(currentlyDiscovering) send2Service(ACTION_STOP_DISCOVERY, null);
         }
-        currentlyScanning = !currentlyScanning;
-        Log.log(this.getClass(), "scanning: " + String.valueOf(!currentlyScanning));
     }
 
     private DeviceAdapter devices;
@@ -165,19 +181,19 @@ public class BluetoothFragment extends Fragment {
     public void onStart() {
         super.onStart();
         Log.onStart(this.getClass());
-        //if(scan == null) {scan = new Scan();}  todo
-        //devices.addAll(scan.getDevices());
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.onResume(this.getClass());
+        send2Service(ACTION_CURRENT_SCAN, null);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
+        Log.onPause(this.getClass());
     }
 
     @Override

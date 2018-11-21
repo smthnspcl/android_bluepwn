@@ -45,7 +45,6 @@ dependencies {
     implementation 'com.github.MKergall:osmbonuspack:6.5.1'
     implementation 'io.paperdb:paperdb:2.6'
     implementation 'com.koushikdutta.ion:ion:2.+'
-    implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.github.wangjiegulu:rfab:2.0.0'
     implementation 'com.github.movisens:SmartGattLib:3.0'
 }

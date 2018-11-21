@@ -38,6 +38,7 @@ public class Static {
     static final String ACTION_DISCOVERY_STOPPED = "discovery_stopped";
     static final String ACTION_DISCOVERY_FINISHED = "discovery_finished";
     static final String ACTION_DISCOVERY_ALREADY_STOPPED = "discovery_already_stopped";
+    static final String ACTION_CURRENT_SCAN = "current_scan";
 
     static final String ACTION_DATA_KEY = "data";
 

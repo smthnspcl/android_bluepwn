@@ -16,7 +16,7 @@ public class Scan extends DBObject {
     List<String> devices;
     List<String> locations;
 
-    public Scan(){
+    Scan(){
         super(UUID.randomUUID().toString());
         devices = new ArrayList<>();
         locations = new ArrayList<>();
