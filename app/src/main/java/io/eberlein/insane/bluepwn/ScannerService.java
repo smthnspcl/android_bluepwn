@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import static io.eberlein.insane.bluepwn.Static.ACTION_ALREADY_SCANNING;
+import static io.eberlein.insane.bluepwn.Static.ACTION_CURRENTLY_DISCOVERING;
+import static io.eberlein.insane.bluepwn.Static.ACTION_CURRENTLY_SCANNING;
 import static io.eberlein.insane.bluepwn.Static.ACTION_CURRENT_SCAN;
 import static io.eberlein.insane.bluepwn.Static.ACTION_DATA_KEY;
 import static io.eberlein.insane.bluepwn.Static.ACTION_DEVICE_DISCOVERED;
@@ -52,11 +54,28 @@ public class ScannerService extends Service {
     private List<Device> toScanDevices;
     private Scan currentScan;
 
+    BroadcastReceiver getCurrentlyScanningReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            send2UI(ACTION_CURRENTLY_SCANNING, String.valueOf(toScanDevices.size() > 0));
+        }
+    };
+
+    BroadcastReceiver getCurrentlyDiscoveringReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            send2UI(ACTION_CURRENTLY_DISCOVERING, String.valueOf(bluetoothAdapter.isDiscovering()));
+        }
+    };
+
     BroadcastReceiver getCurrentScanReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             currentScan.save();
-            send2UI(ACTION_CURRENT_SCAN, currentScan.uuid);
+            Intent i = new Intent(ACTION_CURRENT_SCAN);
+            i.putExtra(ACTION_DATA_KEY, currentScan.uuid);
+            sendBroadcast(i);
+            //send2UI(ACTION_CURRENT_SCAN, currentScan.uuid);
         }
     };
 
@@ -180,6 +199,8 @@ public class ScannerService extends Service {
         registerReceiver(stopScanReceiver, new IntentFilter(ACTION_STOP_SCAN));
         registerReceiver(stopDiscoveryReceiver, new IntentFilter(ACTION_STOP_DISCOVERY));
         registerReceiver(getCurrentScanReceiver, new IntentFilter(ACTION_CURRENT_SCAN));
+        registerReceiver(getCurrentlyDiscoveringReceiver, new IntentFilter(ACTION_CURRENTLY_DISCOVERING));
+        registerReceiver(getCurrentlyScanningReceiver, new IntentFilter(ACTION_CURRENTLY_SCANNING));
     }
 
     private final BroadcastReceiver[] broadcastReceivers = {
@@ -190,7 +211,9 @@ public class ScannerService extends Service {
             startScanReceiver,
             stopScanReceiver,
             stopDiscoveryReceiver,
-            getCurrentScanReceiver
+            getCurrentScanReceiver,
+            getCurrentlyDiscoveringReceiver,
+            getCurrentlyScanningReceiver
     };
 
     private void doGattScanOnNextDevice(Device device){
@@ -273,7 +296,7 @@ public class ScannerService extends Service {
     private void send2UI(String action, @Nullable String data){
         Intent s = new Intent(action);
         if(data != null) s.putExtra(ACTION_DATA_KEY, data);
-        this.sendBroadcast(s);
+        sendBroadcast(s);
     }
 
     @Override

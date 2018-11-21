@@ -44,12 +44,27 @@ import static io.eberlein.insane.bluepwn.Static.send2BcR;
 
 public class BluetoothFragment extends Fragment {
 
+    BroadcastReceiver currentlyScanningReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            currentlyScanning = Boolean.valueOf(intent.getStringExtra(ACTION_DATA_KEY));
+
+        }
+    };
+
+    BroadcastReceiver currentlyDiscoveringReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            currentlyDiscovering = Boolean.valueOf(intent.getStringExtra(ACTION_DATA_KEY));
+        }
+    };
+
     BroadcastReceiver currentScanReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String key = intent.getStringExtra(ACTION_DATA_KEY);
-            Log.log(this.getClass(), key);
-            currentScan = Scan.get(key);
+            if(key == null) Log.log(this.getClass(), "key null; creating new scan object");
+            else currentScan = Scan.get(key);
         }
     };
 

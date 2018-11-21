@@ -1,6 +1,5 @@
 package io.eberlein.insane.bluepwn;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
