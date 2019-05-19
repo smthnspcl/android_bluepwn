@@ -49,7 +49,7 @@ import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE
 
 // todo
 // modal after scan to ask for current position note if no gps
-
+// pull down menu with quick settings
 
 public class BluetoothFragment extends Fragment {
     BroadcastReceiver scannerServiceReceiver = new BroadcastReceiver() {
@@ -123,7 +123,7 @@ public class BluetoothFragment extends Fragment {
     @OnClick(R.id.scanBtn)
     void scanBtnClicked(){
         Log.log(this.getClass(),"scanBtnClicked");
-        if(!currentlyScanning) {
+        if(!currentlyScanning && !currentlyDiscovering) {
             Log.log(this.getClass(), "starting discovery");
             send2Service(ACTION_CODE_START_DISCOVERY, null);
         } else {
@@ -158,7 +158,7 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.onResume(this.getClass());
+                Log.onResume(this.getClass());
         send2Service(ACTION_CODE_GET_CURRENT_SCAN, null);
     }
 

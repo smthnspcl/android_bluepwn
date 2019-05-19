@@ -24,6 +24,7 @@ import static io.eberlein.insane.bluepwn.Static.TYPE_UNKNOWN;
 
 
 public class Device extends DBObject {
+    Integer pin;
     String address;
     String name;
     String manufacturer;
@@ -82,6 +83,7 @@ public class Device extends DBObject {
 
     Device(){
         super(UUID.randomUUID().toString());
+        pin = 0;
         address = "";
         name = "";
         manufacturer = "";
@@ -113,6 +115,7 @@ public class Device extends DBObject {
         type = getTypeAsString(device.getType());
         locations = new ArrayList<>();
         services = new ArrayList<>();
+        pin = 0;
     }
 
     private String getTypeAsString(int _type){

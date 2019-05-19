@@ -92,7 +92,7 @@ public class LocationsFragment extends Fragment implements RapidFloatingActionCo
         locations.setOnItemClickListener(new LocationAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
-                Intent i = new Intent(getContext(), ScanActivity.class);
+                Intent i = new Intent(getContext(), LocationActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.putExtra("uuid", locations.get(p).uuid);
                 startActivity(i);

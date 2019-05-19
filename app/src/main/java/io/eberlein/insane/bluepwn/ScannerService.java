@@ -142,7 +142,13 @@ public class ScannerService extends Service {
         public void onReceive(Context context, Intent intent) {
             if(BluetoothDevice.ACTION_PAIRING_REQUEST.equals(intent.getAction())) {
                 BluetoothDevice d = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                d.setPairingConfirmation(settings.autoPair);
+                Log.log(this.getClass(), "got pairing request and " + (settings.autoPair ? "accepted":"rejected") + " it");
+                int pin = intent.getIntExtra("android.bluetooth.device.extra.PAIRING_KEY", 0);
+                Log.log(this.getClass(), "pairing key: " + pin);
+                Device ld = Device.getExistingOrNew(d.getAddress());
+                ld.pin = pin;
+                ld.save();
+                // d.setPairingConfirmation(settings.autoPair); // only works as system service
             }
         }
     };
