@@ -60,6 +60,12 @@ public class Scan extends DBObject {
         return devs;
     }
 
+    void addDevice(Device device){
+        boolean add = true;
+        for(String dev : devices)if(device.address.equals(dev)) add = false;
+        if (add) devices.add(device.uuid);
+    }
+
     public List<Location> getLocations(){
         List<Location> locations = new ArrayList<>();
         for(String l : this.locations) if(l != null) locations.add(Paper.book(TABLE_LOCATION).read(l));

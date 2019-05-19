@@ -11,8 +11,9 @@ import butterknife.ButterKnife;
 
 public class ScanningSettingsActivity extends AppCompatActivity {
 
-    @BindView(R.id.continuousScanningDefault) CheckBox continuousScanningDefault;
+    @BindView(R.id.continuousScanningDefault) CheckBox continuousScanning;
     @BindView(R.id.discoverServices) CheckBox discoverServices;
+    @BindView(R.id.autoPair) CheckBox autoPair;
 
     ScanSettings settings;
 
@@ -24,13 +25,17 @@ public class ScanningSettingsActivity extends AppCompatActivity {
         setTitle("scan settings");
         ButterKnife.bind(this);
         settings = ScanSettings.getExistingOrNew();
-        continuousScanningDefault.setChecked(settings.continuousScanningDefault);
+        continuousScanning.setChecked(settings.continuousScanning);
         discoverServices.setChecked(settings.discoverServices);
+        autoPair.setChecked(settings.autoPair);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        settings.autoPair = autoPair.isChecked();
+        settings.continuousScanning = continuousScanning.isChecked();
+        settings.discoverServices = discoverServices.isChecked();
         Log.onDestroy(this.getClass());
         settings.save();
         Toast.makeText(this, "saved", Toast.LENGTH_SHORT).show();

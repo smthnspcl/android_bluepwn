@@ -3,6 +3,7 @@ package io.eberlein.insane.bluepwn;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -14,35 +15,55 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import static io.eberlein.insane.bluepwn.Static.action.ACTION_DATA_KEY;
+
 public class Static {
 
-    static final String ACTION_DATABASE_IMPORT_RESULTS = "database_import_results";
-    static final String ACTION_DATABASE_IMPORT_RESULTS_FAILED = "database_import_results_failed";
-    static final String ACTION_DATABASE_EXPORT_RESULTS = "export_results";
-    static final String ACTION_DATABASE_EXPORT_RESULTS_FAILED = "export_results_failed";
-    static final String ACTION_DATABASE_GOT_COOKIE = "got_cookie";
-    static final String ACTION_DATABASE_GOT_DIFFERENCE = "got_difference";
-    static final String ACTION_DATABASE_GET_DIFFERENCE_FAILED = "get_difference_failed";
+    class action {
+        static final String PKGNAME = "io.eberlein.bluepwn.";
+        static final String ACTION_DATA_KEY = "data";
+        static final String ACTION_CODE_KEY = "action_code";
 
-    static final String ACTION_SCANNER_INITIALIZED = "scanner_initialized";
-    static final String ACTION_START_SCAN = "start_scan";
-    static final String ACTION_SCAN_STARTED = "scan_started";
-    static final String ACTION_SCAN_STOPPED = "scan_stopped";
-    static final String ACTION_SCAN_FINISHED = "scan_finished";
-    static final String ACTION_ALREADY_SCANNING = "already_scanning";
-    static final String ACTION_DEVICE_DISCOVERED = "device_discovered";
-    static final String ACTION_SERVICE_DISCOVERED = "service_discovered";
-    static final String ACTION_STOP_SCAN = "stop_scan";
-    static final String ACTION_STOP_DISCOVERY = "stop_discovery";
-    static final String ACTION_DISCOVERY_STARTED = "discovery_started";
-    static final String ACTION_DISCOVERY_STOPPED = "discovery_stopped";
-    static final String ACTION_DISCOVERY_FINISHED = "discovery_finished";
-    static final String ACTION_DISCOVERY_ALREADY_STOPPED = "discovery_already_stopped";
-    static final String ACTION_CURRENT_SCAN = "current_scan";
-    static final String ACTION_CURRENTLY_SCANNING = "currently_scanning";
-    static final String ACTION_CURRENTLY_DISCOVERING = "currently_discovering";
+        class scanner {
+            static final String ACTION_SCANNER_INFO = PKGNAME + "scanner_info";
+            static final String ACTION_SCANNER_CMD = PKGNAME + "scanner_command";
 
-    static final String ACTION_DATA_KEY = "data";
+            class codes {
+                static final String P = "scanner_info_";
+
+                static final String ACTION_CODE_START_DISCOVERY = PKGNAME + P + "start_discovery";
+                static final String ACTION_CODE_STOP_DISCOVERY = PKGNAME + P + "stop_discovery";
+                static final String ACTION_CODE_STOP_SCAN = PKGNAME + P + "stop_scan";
+                static final String ACTION_CODE_GET_CURRENT_SCAN = PKGNAME + P + "get_current_scan";
+
+                static final String ACTION_CODE_CURRENT_SCAN = PKGNAME + P + "current_scan";
+                static final String ACTION_CODE_SCANNING_STARTED = PKGNAME + P + "scanning_started";
+                static final String ACTION_CODE_SCANNING_STOPPED = PKGNAME + P + "scanning_stopped";
+                static final String ACTION_CODE_SCANNING_FINISHED = PKGNAME + P + "scanning_finished";
+                static final String ACTION_CODE_DISCOVERY_STARTED = PKGNAME + P + "discovery_started";
+                static final String ACTION_CODE_DISCOVERY_STOPPED = PKGNAME + P + "discovery_stopped";
+                static final String ACTION_CODE_DISCOVERY_FINISHED = PKGNAME + P + "discovery_finished";
+                static final String ACTION_CODE_DEVICE_DISCOVERED = PKGNAME + P + "device_discovered";
+                static final String ACTION_CODE_SERVICE_DISCOVERED = PKGNAME + P + "service_discovered";
+
+                static final String ACTION_CODE_SERVICE_INITIALIZED = PKGNAME + P + "service_initialized";
+            }
+        }
+
+        class sync {
+            static final String P = "database_info_";
+
+            static final String ACTION_DATABASE_INFO = "database_info";
+
+            static final String ACTION_DATABASE_IMPORT_RESULTS = "database_import_results";
+            static final String ACTION_DATABASE_IMPORT_RESULTS_FAILED = "database_import_results_failed";
+            static final String ACTION_DATABASE_EXPORT_RESULTS = "export_results";
+            static final String ACTION_DATABASE_EXPORT_RESULTS_FAILED = "export_results_failed";
+            static final String ACTION_DATABASE_GOT_COOKIE = "got_cookie";
+            static final String ACTION_DATABASE_GOT_DIFFERENCE = "got_difference";
+            static final String ACTION_DATABASE_GET_DIFFERENCE_FAILED = "get_difference_failed";
+        }
+    }
 
     static final String TABLE_STAGE = "stage";
     static final String TABLE_STAGER = "stager";
@@ -113,17 +134,6 @@ public class Static {
     static final String KEY_REMOTE_DATABASE_SETTINGS = "remote";
     static final String KEY_SCAN_SETTINGS = "scan";
 
-    static final Integer EVENT_DISCOVERY_STARTED = 0;
-    static final Integer EVENT_DISCOVERY_FINISHED = 1;
-    static final Integer EVENT_DEVICE_DISCOVERED = 2;
-    static final Integer EVENT_SDP_SCAN_FINISHED = 3;
-    static final Integer EVENT_GATT_SCAN_FINISHED = 4;
-    static final Integer EVENT_TO_SCAN_DEVICES_EMPTY = 5;
-    static final Integer EVENT_START_SCANNING = 6;
-    static final Integer EVENT_STOP_SCANNING = 7;
-    static final Integer EVENT_GOT_COOKIE = 8;
-    static final Integer EVENT_STOP_SERVICE_SCAN = 9;
-
     static final int BLUETOOTH_RESULT = 0;
     static final int LOCATION_RESULT = 1;
 
@@ -153,11 +163,5 @@ public class Static {
         List<String> r = new ArrayList<>();
         for(JsonElement e : l) r.add(e.getAsString());
         return r;
-    }
-
-    static void send2BcR(Context c, String action, @Nullable String data){
-        Intent i = new Intent(action);
-        if(data != null) i.putExtra(ACTION_DATA_KEY, data);
-        c.sendBroadcast(i);
     }
 }

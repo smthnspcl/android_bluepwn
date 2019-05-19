@@ -1,10 +1,16 @@
 package io.eberlein.insane.bluepwn;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,7 +27,17 @@ public class LocationActivity extends AppCompatActivity {
 
     @OnClick(R.id.geocodeBtn)
     public void geoCodeBtnClicked(){
-        // todo (pelias) ?
+        Geocoder gc = new Geocoder(this, Locale.getDefault());
+        try{
+            List<Address> addrs = gc.getFromLocation(Double.valueOf(latitude.getText().toString()), Double.valueOf(longitude.getText().toString()), 1);
+            country.setText(addrs.get(0).getCountryName());
+            city.setText(addrs.get(0).getLocality());
+            note.setText(addrs.get(0).getAddressLine(0));
+
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+
     }
 
     @OnClick(R.id.saveBtn)
@@ -49,7 +65,12 @@ public class LocationActivity extends AppCompatActivity {
 
     private void setContentValues(String uuid){
         location = Location.get(uuid);
-        setTitle(String.valueOf(location.latitude) + "; " + String.valueOf(location.longitude));
+        if(location.city.isEmpty() && location.country.isEmpty()){
+            setTitle(location.latitude+ ", " + location.longitude);
+        } else {
+            setTitle(location.city + ", " + location.country);
+        }
+
         latitude.setText(String.valueOf(location.latitude));
         longitude.setText(String.valueOf(location.longitude));
         altitude.setText(String.valueOf(location.altitude));

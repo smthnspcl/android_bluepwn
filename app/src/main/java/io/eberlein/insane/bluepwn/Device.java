@@ -72,10 +72,6 @@ public class Device extends DBObject {
         return devices;
     }
 
-    void populateIfEmpty(BluetoothDevice device){
-        if(address.isEmpty()) setValues(device);
-    }
-
     void updateServices(List<Service> services){
         for(Service s : services) updateServices(s);
     }

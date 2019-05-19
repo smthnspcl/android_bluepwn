@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,14 +30,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.paperdb.Paper;
 
-import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_EXPORT_RESULTS;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_EXPORT_RESULTS_FAILED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_GET_DIFFERENCE_FAILED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_GOT_COOKIE;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_GOT_DIFFERENCE;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_IMPORT_RESULTS;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DATABASE_IMPORT_RESULTS_FAILED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DATA_KEY;
 import static io.eberlein.insane.bluepwn.Static.TABLES;
 import static io.eberlein.insane.bluepwn.Static.TABLE_CHARACTERISTIC;
 import static io.eberlein.insane.bluepwn.Static.TABLE_DESCRIPTOR;
@@ -52,8 +45,17 @@ import static io.eberlein.insane.bluepwn.Static.URL_TABLE_DIFFERENCE;
 import static io.eberlein.insane.bluepwn.Static.URL_TABLE_GET;
 import static io.eberlein.insane.bluepwn.Static.URL_TABLE_SET;
 import static io.eberlein.insane.bluepwn.Static.URL_TABLE_VARIABLE;
+import static io.eberlein.insane.bluepwn.Static.action.ACTION_CODE_KEY;
+import static io.eberlein.insane.bluepwn.Static.action.ACTION_DATA_KEY;
+import static io.eberlein.insane.bluepwn.Static.action.sync.ACTION_DATABASE_EXPORT_RESULTS;
+import static io.eberlein.insane.bluepwn.Static.action.sync.ACTION_DATABASE_EXPORT_RESULTS_FAILED;
+import static io.eberlein.insane.bluepwn.Static.action.sync.ACTION_DATABASE_GET_DIFFERENCE_FAILED;
+import static io.eberlein.insane.bluepwn.Static.action.sync.ACTION_DATABASE_GOT_COOKIE;
+import static io.eberlein.insane.bluepwn.Static.action.sync.ACTION_DATABASE_GOT_DIFFERENCE;
+import static io.eberlein.insane.bluepwn.Static.action.sync.ACTION_DATABASE_IMPORT_RESULTS;
+import static io.eberlein.insane.bluepwn.Static.action.sync.ACTION_DATABASE_IMPORT_RESULTS_FAILED;
+import static io.eberlein.insane.bluepwn.Static.action.sync.ACTION_DATABASE_INFO;
 import static io.eberlein.insane.bluepwn.Static.classToTable;
-import static io.eberlein.insane.bluepwn.Static.send2BcR;
 
 public class SyncFragment extends Fragment {
     @BindView(R.id.sync) Button sync;
@@ -309,7 +311,10 @@ public class SyncFragment extends Fragment {
                                 }
                             }
                         }
-                        send2BcR(getContext(), ACTION_DATABASE_GOT_COOKIE, c);
+                        Intent i = new Intent(ACTION_DATABASE_INFO);
+                        i.putExtra(ACTION_CODE_KEY, ACTION_DATABASE_GOT_COOKIE);
+                        i.putExtra(ACTION_DATA_KEY, c);
+                        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(i);
                     }
                 });
     }

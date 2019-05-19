@@ -50,6 +50,7 @@ public class ScanActivity extends AppCompatActivity {
             Toast.makeText(this, "scan null. idk", Toast.LENGTH_SHORT).show();
             finish();
         }
+        Log.log(this.getClass(), scan.uuid);
         devices = new DeviceAdapter();
         devices.addAll(scan.getDevices());
         devicesRecycler.setLayoutManager(new LinearLayoutManager(this));

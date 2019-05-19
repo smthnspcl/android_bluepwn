@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,136 +26,90 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static io.eberlein.insane.bluepwn.Static.ACTION_CURRENT_SCAN;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DATA_KEY;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DEVICE_DISCOVERED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DISCOVERY_FINISHED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DISCOVERY_STOPPED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_SCANNER_INITIALIZED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_SCAN_FINISHED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_SCAN_STARTED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_SCAN_STOPPED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_SERVICE_DISCOVERED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_START_SCAN;
-import static io.eberlein.insane.bluepwn.Static.ACTION_STOP_DISCOVERY;
-import static io.eberlein.insane.bluepwn.Static.ACTION_STOP_SCAN;
 import static io.eberlein.insane.bluepwn.Static.TABLE_DEVICE;
-import static io.eberlein.insane.bluepwn.Static.send2BcR;
+import static io.eberlein.insane.bluepwn.Static.action.ACTION_CODE_KEY;
+import static io.eberlein.insane.bluepwn.Static.action.ACTION_DATA_KEY;
+import static io.eberlein.insane.bluepwn.Static.action.PKGNAME;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.ACTION_SCANNER_CMD;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.ACTION_SCANNER_INFO;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_CURRENT_SCAN;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_DEVICE_DISCOVERED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_DISCOVERY_FINISHED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_DISCOVERY_STARTED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_DISCOVERY_STOPPED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_GET_CURRENT_SCAN;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_SCANNING_FINISHED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_SCANNING_STARTED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_SCANNING_STOPPED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_SERVICE_DISCOVERED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_SERVICE_INITIALIZED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_START_DISCOVERY;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_STOP_DISCOVERY;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_STOP_SCAN;
+
+// todo
+// modal after scan to ask for current position note if no gps
 
 
 public class BluetoothFragment extends Fragment {
-
-    BroadcastReceiver currentlyScanningReceiver = new BroadcastReceiver() {
+    BroadcastReceiver scannerServiceReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            currentlyScanning = Boolean.valueOf(intent.getStringExtra(ACTION_DATA_KEY));
-
+            Log.log(getClass(), intent.getStringExtra(ACTION_CODE_KEY));
+            Log.log(getClass(), "\t" + intent.getStringExtra(ACTION_DATA_KEY));
+            switch (intent.getStringExtra(ACTION_CODE_KEY)){
+                case ACTION_CODE_CURRENT_SCAN:
+                    currentScan = Scan.get(intent.getStringExtra(ACTION_DATA_KEY));
+                    break;
+                case ACTION_CODE_SCANNING_STARTED:
+                    currentlyScanning = true;
+                    currentlyDiscovering = false;
+                    scanBtn.setImageResource(R.drawable.baseline_device_unknown_white_48);
+                    break;
+                case ACTION_CODE_SCANNING_STOPPED:
+                    currentlyScanning = false;
+                    scanBtn.setImageResource(R.drawable.ic_sync_white_48dp);
+                    break;
+                case ACTION_CODE_SCANNING_FINISHED:
+                    //currentScan = Scan.get(intent.getStringExtra(ACTION_DATA_KEY));
+                    Log.log(getClass(), "scan uuid: " + currentScan.uuid);
+                    Log.log(getClass(), "\tsize: " + String.valueOf(currentScan.getDevices().size()));
+                    //devices.addAll(currentScan.getDevices());
+                    currentlyScanning = false;
+                    scanBtn.setImageResource(R.drawable.ic_sync_white_48dp);
+                    break;
+                case ACTION_CODE_DISCOVERY_STARTED:
+                    currentlyDiscovering = false;
+                    scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
+                    break;
+                case ACTION_CODE_DISCOVERY_STOPPED:
+                    currentlyScanning = true;
+                    currentlyDiscovering = false;
+                    break;
+                case ACTION_CODE_DISCOVERY_FINISHED:
+                    currentScan = Scan.get(intent.getStringExtra(ACTION_DATA_KEY));
+                    currentlyDiscovering = false;
+                    currentlyScanning = true;
+                    break;
+                case ACTION_CODE_DEVICE_DISCOVERED:
+                    devices.add(Device.getExistingOrNew(intent.getStringExtra(ACTION_DATA_KEY)));
+                    break;
+                case ACTION_CODE_SERVICE_DISCOVERED:
+                    devices.add(Device.getExistingOrNew(intent.getStringExtra(ACTION_DATA_KEY)));
+                    break;
+                case ACTION_CODE_SERVICE_INITIALIZED:
+                    Toast.makeText(getContext(), "scanner service initialized", Toast.LENGTH_SHORT).show();
+                    break;
+            }
         }
-    };
-
-    BroadcastReceiver currentlyDiscoveringReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            currentlyDiscovering = Boolean.valueOf(intent.getStringExtra(ACTION_DATA_KEY));
-        }
-    };
-
-    BroadcastReceiver currentScanReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String key = intent.getStringExtra(ACTION_DATA_KEY);
-            if(key == null) Log.log(this.getClass(), "key null; creating new scan object");
-            else currentScan = Scan.get(key);
-        }
-    };
-
-    BroadcastReceiver scanningStartedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            currentlyScanning = true;
-            currentlyDiscovering = false;
-            scanBtn.setImageResource(R.drawable.ic_clear_white_48dp);
-        }
-    };
-
-    BroadcastReceiver scanningStoppedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            currentlyScanning = false;
-            scanBtn.setImageResource(R.drawable.ic_sync_white_48dp);
-        }
-    };
-
-    BroadcastReceiver scanningFinishedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            currentScan = Scan.get(intent.getStringExtra(ACTION_DATA_KEY));
-            Log.log(this.getClass(), currentScan.toString());
-            devices.addAll(currentScan.getDevices());
-            currentlyScanning = false;
-            scanBtn.setImageResource(R.drawable.ic_sync_white_48dp);
-        }
-    };
-
-    BroadcastReceiver discoveryStoppedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            currentlyScanning = true;
-            currentlyDiscovering = false;
-        }
-    };
-
-    BroadcastReceiver discoveryFinishedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            currentScan = Scan.get(intent.getStringExtra(ACTION_DATA_KEY));
-            currentlyDiscovering = false;
-            currentlyScanning = true;
-        }
-    };
-
-    BroadcastReceiver deviceDiscoveredReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            devices.add(Device.getExistingOrNew(intent.getStringExtra(ACTION_DATA_KEY)));
-        }
-    };
-
-    BroadcastReceiver serviceDiscoveredReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            devices.add(Device.getExistingOrNew(intent.getStringExtra(ACTION_DATA_KEY)));
-        }
-    };
-
-    BroadcastReceiver scannerServiceInitializedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Toast.makeText(getContext(), "scanner service initialized", Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    private final BroadcastReceiver[] broadcastReceivers = {
-            scanningStartedReceiver, scanningStoppedReceiver, deviceDiscoveredReceiver, serviceDiscoveredReceiver, scannerServiceInitializedReceiver,
-            scanningFinishedReceiver, discoveryStoppedReceiver, discoveryFinishedReceiver, currentScanReceiver
     };
 
     private void registerReceivers(){
-        Context c = getContext();
-        c.registerReceiver(scanningStartedReceiver, new IntentFilter(ACTION_SCAN_STARTED));
-        c.registerReceiver(scanningStoppedReceiver, new IntentFilter(ACTION_SCAN_STOPPED));
-        c.registerReceiver(deviceDiscoveredReceiver, new IntentFilter(ACTION_DEVICE_DISCOVERED));
-        c.registerReceiver(serviceDiscoveredReceiver, new IntentFilter(ACTION_SERVICE_DISCOVERED));
-        c.registerReceiver(scannerServiceInitializedReceiver, new IntentFilter(ACTION_SCANNER_INITIALIZED));
-        c.registerReceiver(scanningFinishedReceiver, new IntentFilter(ACTION_SCAN_FINISHED));
-        c.registerReceiver(discoveryStoppedReceiver, new IntentFilter(ACTION_DISCOVERY_STOPPED));
-        c.registerReceiver(discoveryFinishedReceiver, new IntentFilter(ACTION_DISCOVERY_FINISHED));
-        c.registerReceiver(currentScanReceiver, new IntentFilter(ACTION_CURRENT_SCAN));
+        getContext().registerReceiver(scannerServiceReceiver, new IntentFilter(ACTION_SCANNER_INFO));
     }
 
     private void unregisterReceivers(){
-        Context c = getContext();
-        for(BroadcastReceiver bcr : broadcastReceivers) c.unregisterReceiver(bcr);
+        getContext().unregisterReceiver(scannerServiceReceiver);
     }
 
     @BindView(R.id.scanBtn) FloatingActionButton scanBtn;
@@ -168,10 +123,12 @@ public class BluetoothFragment extends Fragment {
     @OnClick(R.id.scanBtn)
     void scanBtnClicked(){
         Log.log(this.getClass(),"scanBtnClicked");
-        if(!currentlyScanning) send2Service(ACTION_START_SCAN, null);
-        else {
-            if(currentlyScanning) send2Service(ACTION_STOP_SCAN, null);
-            if(currentlyDiscovering) send2Service(ACTION_STOP_DISCOVERY, null);
+        if(!currentlyScanning) {
+            Log.log(this.getClass(), "starting discovery");
+            send2Service(ACTION_CODE_START_DISCOVERY, null);
+        } else {
+            if(currentlyScanning){ Log.log(this.getClass(), "stopping scan"); send2Service(ACTION_CODE_STOP_SCAN, null);}
+            if(currentlyDiscovering) {Log.log(this.getClass(), "stopping discovery"); send2Service(ACTION_CODE_STOP_DISCOVERY, null);}
         }
     }
 
@@ -202,7 +159,7 @@ public class BluetoothFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.onResume(this.getClass());
-        send2Service(ACTION_CURRENT_SCAN, null);
+        send2Service(ACTION_CODE_GET_CURRENT_SCAN, null);
     }
 
     @Override
@@ -229,7 +186,7 @@ public class BluetoothFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v =  inflater.inflate(R.layout.fragment_bluetooth, container, false);
         ButterKnife.bind(this, v);
-        continuousScanningCheckbox.setChecked(settings.continuousScanningDefault);
+        continuousScanningCheckbox.setChecked(settings.continuousScanning);
         scanBtn.setImageResource(R.drawable.ic_update_white_48dp);
         deviceRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         deviceRecycler.setAdapter(devices);
@@ -254,6 +211,9 @@ public class BluetoothFragment extends Fragment {
     }
 
     private void send2Service(String action, @Nullable String data){
-        send2BcR(getContext(), action, data);
+        Intent i = new Intent(ACTION_SCANNER_CMD);
+        i.putExtra(ACTION_CODE_KEY, action);
+        if(data != null) i.putExtra(ACTION_DATA_KEY, data);
+        getContext().sendBroadcast(i);
     }
 }

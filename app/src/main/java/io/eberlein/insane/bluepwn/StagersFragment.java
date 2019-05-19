@@ -76,6 +76,7 @@ public class StagersFragment extends Fragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v =  inflater.inflate(R.layout.objectlist_search, container, false);
+        getActivity().setTitle("stagers");
         ButterKnife.bind(this, v);
         return v;
     }

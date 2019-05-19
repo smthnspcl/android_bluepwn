@@ -10,7 +10,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="continuous scanning default" />
+        android:text="continuous scanning" />
 
     <CheckBox
         android:id="@+id/discoverServices"
@@ -20,5 +20,14 @@
         android:layout_below="@+id/continuousScanningDefault"
         android:layout_alignStart="@id/continuousScanningDefault"
         android:text="discover services"/>
+
+    <CheckBox
+        android:id="@+id/autoPair"
+        android:text="automatically pair"
+        android:layout_marginTop="4dp"
+        android:layout_below="@id/discoverServices"
+        android:layout_alignStart="@id/continuousScanningDefault"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

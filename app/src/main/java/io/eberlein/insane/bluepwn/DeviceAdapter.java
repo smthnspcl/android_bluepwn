@@ -63,6 +63,8 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
 
     public void onBindViewHolder(DeviceAdapter.ViewHolder holder, int position) {
         Device d = devices.get(position);
+        if(d == null) return;
+        Log.log(getClass(), "at position: " + position);
         holder.tvMac.setText(d.address);
         holder.tvName.setText(d.name);
         holder.tvUuids.setText(String.valueOf(d.services.size()));
@@ -76,12 +78,15 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
 
     void addAll(List<Device> devices){
         this.devices = devices;
+        Log.log(getClass(), "addAll");
+        Log.log(getClass(), "\t" + devices.toString());
         notifyDataSetChanged();
     }
 
     void add(Device device){
         if(device.address.isEmpty()) return;
         for(Device d : devices){
+            if(d == null) continue;
             if(d.address.equals(device.address)){
                 devices.set(devices.indexOf(d), device);
                 notifyItemChanged(devices.indexOf(device));

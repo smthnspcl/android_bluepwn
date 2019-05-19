@@ -20,104 +20,75 @@ import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Callable;
 
-import static io.eberlein.insane.bluepwn.Static.ACTION_ALREADY_SCANNING;
-import static io.eberlein.insane.bluepwn.Static.ACTION_CURRENTLY_DISCOVERING;
-import static io.eberlein.insane.bluepwn.Static.ACTION_CURRENTLY_SCANNING;
-import static io.eberlein.insane.bluepwn.Static.ACTION_CURRENT_SCAN;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DATA_KEY;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DEVICE_DISCOVERED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DISCOVERY_ALREADY_STOPPED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DISCOVERY_FINISHED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DISCOVERY_STARTED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_DISCOVERY_STOPPED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_SCANNER_INITIALIZED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_SCAN_FINISHED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_SCAN_STARTED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_SCAN_STOPPED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_SERVICE_DISCOVERED;
-import static io.eberlein.insane.bluepwn.Static.ACTION_START_SCAN;
-import static io.eberlein.insane.bluepwn.Static.ACTION_STOP_DISCOVERY;
-import static io.eberlein.insane.bluepwn.Static.ACTION_STOP_SCAN;
+import static android.bluetooth.BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
+import static android.bluetooth.BluetoothAdapter.ACTION_DISCOVERY_STARTED;
+import static android.bluetooth.BluetoothDevice.ACTION_FOUND;
+import static android.bluetooth.BluetoothDevice.ACTION_PAIRING_REQUEST;
+import static android.bluetooth.BluetoothDevice.ACTION_UUID;
 import static io.eberlein.insane.bluepwn.Static.TYPE_CLASSIC;
 import static io.eberlein.insane.bluepwn.Static.TYPE_DUAL;
 import static io.eberlein.insane.bluepwn.Static.TYPE_LE;
+import static io.eberlein.insane.bluepwn.Static.action.ACTION_CODE_KEY;
+import static io.eberlein.insane.bluepwn.Static.action.ACTION_DATA_KEY;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.ACTION_SCANNER_CMD;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.ACTION_SCANNER_INFO;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_CURRENT_SCAN;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_DEVICE_DISCOVERED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_DISCOVERY_FINISHED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_DISCOVERY_STARTED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_DISCOVERY_STOPPED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_GET_CURRENT_SCAN;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_SCANNING_FINISHED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_SERVICE_DISCOVERED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_SERVICE_INITIALIZED;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_START_DISCOVERY;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_STOP_DISCOVERY;
+import static io.eberlein.insane.bluepwn.Static.action.scanner.codes.ACTION_CODE_STOP_SCAN;
 
 
 public class ScannerService extends Service {
     private BluetoothAdapter bluetoothAdapter;
     private LocationManager locationManager;
     private GPSLocationListener locationListener;
-    private boolean continuousScanning = false;
+    private ScanSettings settings;
     private BluetoothGatt currentGatt;
     private List<Device> toScanDevices;
     private Scan currentScan;
+    private Timer timer = new Timer();
 
-    BroadcastReceiver getCurrentlyScanningReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            send2UI(ACTION_CURRENTLY_SCANNING, String.valueOf(toScanDevices.size() > 0));
-        }
-    };
-
-    BroadcastReceiver getCurrentlyDiscoveringReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            send2UI(ACTION_CURRENTLY_DISCOVERING, String.valueOf(bluetoothAdapter.isDiscovering()));
-        }
-    };
-
-    BroadcastReceiver getCurrentScanReceiver = new BroadcastReceiver() {
+    BroadcastReceiver uiReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             currentScan.save();
-            Intent i = new Intent(ACTION_CURRENT_SCAN);
-            i.putExtra(ACTION_DATA_KEY, currentScan.uuid);
-            sendBroadcast(i);
-            //send2UI(ACTION_CURRENT_SCAN, currentScan.uuid);
-        }
-    };
-
-    BroadcastReceiver startScanReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(!bluetoothAdapter.isEnabled()) bluetoothAdapter.enable();
-            if(bluetoothAdapter.isDiscovering()) send2UI(ACTION_ALREADY_SCANNING, null);
-            else {bluetoothAdapter.startDiscovery(); send2UI(ACTION_SCAN_STARTED, null);}
-            Log.log(this.getClass(), "scanning: " + String.valueOf(bluetoothAdapter.isDiscovering()));
-        }
-    };
-
-    BroadcastReceiver stopDiscoveryReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(bluetoothAdapter.isDiscovering()) {
-                bluetoothAdapter.cancelDiscovery();
-                send2UI(ACTION_DISCOVERY_STOPPED, null);
+            switch (intent.getStringExtra(ACTION_CODE_KEY)){
+                case ACTION_CODE_START_DISCOVERY:
+                    if(!bluetoothAdapter.isEnabled()) bluetoothAdapter.enable();  // if userStupid
+                    if(!bluetoothAdapter.isDiscovering()) bluetoothAdapter.startDiscovery();
+                    // send2UI happens in onDiscoveryStartedReceiver
+                    break;
+                case ACTION_CODE_STOP_DISCOVERY:
+                    if(bluetoothAdapter.isDiscovering()) bluetoothAdapter.cancelDiscovery();
+                    send2UI(ACTION_CODE_DISCOVERY_STOPPED, currentScan.uuid);
+                    break;
+                case ACTION_CODE_STOP_SCAN:
+                    if(toScanDevices.size() > 0) {toScanDevices = new ArrayList<>(); currentGatt.disconnect();}
+                    send2UI(ACTION_CODE_STOP_SCAN, currentScan.uuid);
+                    break;
+                case ACTION_CODE_GET_CURRENT_SCAN:
+                    send2UI(ACTION_CODE_CURRENT_SCAN, currentScan.uuid);
             }
-            else send2UI(ACTION_DISCOVERY_ALREADY_STOPPED, null);
-            Log.log(this.getClass(), "stopped discovery");
-        }
-    };
-
-    BroadcastReceiver stopScanReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            toScanDevices = new ArrayList<>();
-            if(currentGatt != null) {currentGatt.disconnect(); currentGatt = null;}
-            Log.log(this.getClass(), "stopped scanning");
-            currentScan.save();
-            send2UI(ACTION_SCAN_STOPPED, null);
-            send2UI(ACTION_SCAN_FINISHED, currentScan.uuid);
         }
     };
 
     BroadcastReceiver onDiscoveryStartedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(!continuousScanning) currentScan = new Scan();
-            send2UI(ACTION_DISCOVERY_STARTED, null);
+            if(!settings.continuousScanning || currentScan == null) currentScan = new Scan();
+            send2UI(ACTION_CODE_DISCOVERY_STARTED, null);
         }
     };
 
@@ -135,7 +106,8 @@ public class ScannerService extends Service {
                     if(!device.services.contains(_u.uuid)) device.services.add(_u.uuid);
                 }
                 device.save();
-                send2UI(ACTION_SERVICE_DISCOVERED, device.address);  // todo check
+                currentScan.addDevice(device);
+                send2UI(ACTION_CODE_SERVICE_DISCOVERED, device.address);  // todo check
             }
         }
     };
@@ -145,12 +117,14 @@ public class ScannerService extends Service {
         public void onReceive(Context context, Intent intent) {
             BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             Device device = Device.getExistingOrNew(bluetoothDevice.getAddress());
-            device.populateIfEmpty(bluetoothDevice);
+            device.setValues(bluetoothDevice);
             if(device.address.isEmpty()) device.setValues(bluetoothDevice);
             if(locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) device.locations.add(locationListener.currentLocation.uuid);
             device.save();
+            currentScan.addDevice(device);
+            currentScan.save();
             toScanDevices.add(device);
-            send2UI(ACTION_DEVICE_DISCOVERED, device.address);
+            send2UI(ACTION_CODE_DEVICE_DISCOVERED, device.address);
         }
     };
 
@@ -158,22 +132,33 @@ public class ScannerService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             currentScan.save();
-            send2UI(ACTION_DISCOVERY_FINISHED, currentScan.uuid);
+            send2UI(ACTION_CODE_DISCOVERY_FINISHED, currentScan.uuid);
             doScanOnNextDevice();
         }
     };
 
+    BroadcastReceiver onPairRequestReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(BluetoothDevice.ACTION_PAIRING_REQUEST.equals(intent.getAction())) {
+                BluetoothDevice d = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                d.setPairingConfirmation(settings.autoPair);
+            }
+        }
+    };
+
     void doScanOnNextDevice(){
+        Log.log(getClass(), String.valueOf(toScanDevices.size()));
         if(toScanDevices.size() > 0){
-            Log.log(this.getClass(), "doScanOnNextDevice");
             Device device = toScanDevices.get(0);
+            Log.log(this.getClass(), "doScanOnNextDevice");
             if(device.type.equals(TYPE_LE)) doGattScanOnNextDevice(device);
             else if(device.type.equals(TYPE_CLASSIC)) doSdpScanOnNextDevice(device);
             else if(device.type.equals(TYPE_DUAL)) {doGattScanOnNextDevice(device); doSdpScanOnNextDevice(device);}
             toScanDevices.remove(device);
         } else {
             currentScan.save();
-            send2UI(ACTION_SCAN_FINISHED, currentScan.uuid);
+            send2UI(ACTION_CODE_SCANNING_FINISHED, currentScan.uuid);
         }
     }
 
@@ -191,16 +176,12 @@ public class ScannerService extends Service {
 
     private void registerReceivers(){
         Log.log(this.getClass(), "registering receivers");
-        registerReceiver(onDiscoveryStartedReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
-        registerReceiver(onUuidFoundReceiver, new IntentFilter(BluetoothDevice.ACTION_UUID));
-        registerReceiver(onDeviceDiscoveredReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
-        registerReceiver(onDiscoveryFinishedReceiver, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
-        registerReceiver(startScanReceiver, new IntentFilter(ACTION_START_SCAN));
-        registerReceiver(stopScanReceiver, new IntentFilter(ACTION_STOP_SCAN));
-        registerReceiver(stopDiscoveryReceiver, new IntentFilter(ACTION_STOP_DISCOVERY));
-        registerReceiver(getCurrentScanReceiver, new IntentFilter(ACTION_CURRENT_SCAN));
-        registerReceiver(getCurrentlyDiscoveringReceiver, new IntentFilter(ACTION_CURRENTLY_DISCOVERING));
-        registerReceiver(getCurrentlyScanningReceiver, new IntentFilter(ACTION_CURRENTLY_SCANNING));
+        registerReceiver(uiReceiver, new IntentFilter(ACTION_SCANNER_CMD));
+        registerReceiver(onDeviceDiscoveredReceiver, new IntentFilter(ACTION_FOUND));
+        registerReceiver(onDiscoveryFinishedReceiver, new IntentFilter(ACTION_DISCOVERY_FINISHED));
+        registerReceiver(onDiscoveryStartedReceiver, new IntentFilter(ACTION_DISCOVERY_STARTED));
+        registerReceiver(onUuidFoundReceiver, new IntentFilter(ACTION_UUID));
+        registerReceiver(onPairRequestReceiver, new IntentFilter(ACTION_PAIRING_REQUEST));
     }
 
     private final BroadcastReceiver[] broadcastReceivers = {
@@ -208,12 +189,8 @@ public class ScannerService extends Service {
             onDiscoveryStartedReceiver,
             onUuidFoundReceiver,
             onDiscoveryFinishedReceiver,
-            startScanReceiver,
-            stopScanReceiver,
-            stopDiscoveryReceiver,
-            getCurrentScanReceiver,
-            getCurrentlyDiscoveringReceiver,
-            getCurrentlyScanningReceiver
+            uiReceiver,
+            onPairRequestReceiver
     };
 
     private void doGattScanOnNextDevice(Device device){
@@ -227,9 +204,18 @@ public class ScannerService extends Service {
                 currentGatt = gatt;
                 if(newState == BluetoothProfile.STATE_DISCONNECTED || newState == BluetoothProfile.STATE_DISCONNECTING || status != BluetoothGatt.GATT_SUCCESS) {
                     Log.log(this.getClass(), "disconnected from " + device.address);
-                    send2UI(ACTION_SERVICE_DISCOVERED, device.address);
+                    send2UI(ACTION_CODE_SERVICE_DISCOVERED, device.address);
+                    device.save();
+                    currentScan.save();
+                    doScanOnNextDevice();
                 } else if(newState == BluetoothProfile.STATE_CONNECTED){
                     Log.log(this.getClass(), "connected to " + device.address);
+                    if(settings.gattScanTimeout != null) timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            currentGatt.disconnect();
+                        }
+                    }, 10 * 1000);
                     gatt.discoverServices();
                 } else if(newState == BluetoothProfile.STATE_CONNECTING) {
                     Log.log(this.getClass(), "connecting to " + device.address);
@@ -284,17 +270,19 @@ public class ScannerService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.onCreate(this.getClass());
+        settings = ScanSettings.getExistingOrNew();
         currentScan = new Scan();
         toScanDevices = new ArrayList<>();
         initGPS();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(!bluetoothAdapter.isEnabled()) bluetoothAdapter.enable();
         registerReceivers();
-        send2UI(ACTION_SCANNER_INITIALIZED, null);
+        send2UI(ACTION_CODE_SERVICE_INITIALIZED, null);
     }
 
-    private void send2UI(String action, @Nullable String data){
-        Intent s = new Intent(action);
+    private void send2UI(String key, @Nullable String data){
+        Intent s = new Intent(ACTION_SCANNER_INFO);
+        s.putExtra(ACTION_CODE_KEY, key);
         if(data != null) s.putExtra(ACTION_DATA_KEY, data);
         sendBroadcast(s);
     }

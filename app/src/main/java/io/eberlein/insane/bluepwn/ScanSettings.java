@@ -14,8 +14,8 @@ public class ScanSettings {
     Integer gattScanTimeout;
     TimeUnit gattScanTimeoutUnit;
     Boolean discoverServices;
-    Boolean continuousScanningDefault;
-
+    Boolean continuousScanning;
+    Boolean autoPair;
 
     ScanSettings(){
         prioritize = TYPE_LE;
@@ -23,7 +23,8 @@ public class ScanSettings {
         gattScanTimeout = 5;
         gattScanTimeoutUnit = TimeUnit.SECONDS;
         discoverServices = true;
-        continuousScanningDefault = false;
+        continuousScanning = false;
+        autoPair = false;
     }
 
     void save(){
