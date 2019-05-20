@@ -64,6 +64,10 @@ public class Device extends DBObject {
         return new Device();
     }
 
+    static Device get(String address){
+        return Paper.book(TABLE_DEVICE).read(address);
+    }
+
     static List<Device> get(List<String> addrs){
         List<Device> devices = new ArrayList<>();
         for(String a : addrs) {

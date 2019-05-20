@@ -58,13 +58,14 @@ public class StagesFragment extends Fragment {
     }
 
     private void initStageRecycler(){
+        stages = new StageAdapter();
         List<Stage> _stages = Stage.get();
-        Log.log(this.getClass(), "stages: " + _stages.size());
+        Log.log(this.getClass(), "found " + _stages.size() + " stages");
         stages.addAll(_stages);
         stages.setOnItemClickListener(new StageAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
-                Intent i = new Intent(getContext(), DeviceActivity.class);
+                Intent i = new Intent(getContext(), StageActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.putExtra("uuid", stages.get(p).uuid);
                 startActivity(i);
@@ -73,5 +74,11 @@ public class StagesFragment extends Fragment {
         recycler.setAdapter(stages);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         //query.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, _devices));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        stages.addAll(Stage.get());
     }
 }

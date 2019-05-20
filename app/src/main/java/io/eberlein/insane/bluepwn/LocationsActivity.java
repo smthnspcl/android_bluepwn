@@ -56,7 +56,7 @@ public class LocationsActivity extends AppCompatActivity {
         setTitle("locations");
         gson = new Gson();
         locations = new LocationAdapter();
-        String e = getIntent().getStringExtra("locations");
+        String e = getIntent().getStringExtra("uuid");
         if(e != null) populateWithSuppliedLocations(e);
         else locations.addAll(Location.get());
         recycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -74,7 +74,7 @@ public class LocationsActivity extends AppCompatActivity {
     }
 
     private void populateWithSuppliedLocations(String data){
-        List<Location> locations = gson.fromJson(data, new TypeToken<List<Location>>(){}.getType());
-        this.locations.addAll(locations);
+        Scan s = Scan.get(data);
+        locations.addAll(s.getLocations());
     }
 }

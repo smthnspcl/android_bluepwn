@@ -122,7 +122,6 @@ public class ScannerService extends Service {
             if(locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) device.locations.add(locationListener.currentLocation.uuid);
             device.save();
             currentScan.addDevice(device);
-            currentScan.save();
             toScanDevices.add(device);
             send2UI(ACTION_CODE_DEVICE_DISCOVERED, device.address);
         }

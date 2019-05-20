@@ -29,6 +29,7 @@ public class Scan extends DBObject {
     static List<Scan> get(){
         List<Scan> scans = new ArrayList<>();
         for(String s : Paper.book(TABLE_SCAN).getAllKeys()) scans.add(Paper.book(TABLE_SCAN).read(s));
+        System.out.println("getting " + scans.size() + " amount of scans");
         return scans;
     }
 
@@ -51,19 +52,29 @@ public class Scan extends DBObject {
     }
 
     void save(){
+        Log.log(this.getClass(), "saving scan");
+        Log.log(this.getClass(), this.toString());
         Paper.book(TABLE_SCAN).write(uuid, this);
     }
 
     public List<Device> getDevices(){
         List<Device> devs = new ArrayList<>();
-        for(String d : devices) devs.add(Paper.book(TABLE_DEVICE).read(d));
+        for(String d : devices) {
+            Device device = Paper.book(TABLE_DEVICE).read(d);
+            //Log.log(this.getClass(), device.toString());
+            devs.add(device);
+        }
         return devs;
     }
 
     void addDevice(Device device){
-        boolean add = true;
-        for(String dev : devices)if(device.address.equals(dev)) add = false;
-        if (add) devices.add(device.uuid);
+        if(!devices.contains(device.address)) devices.add(device.address);
+        this.save();
+    }
+
+    void removeDevice(Device device){
+        devices.remove(device.address);
+        this.save();
     }
 
     public List<Location> getLocations(){

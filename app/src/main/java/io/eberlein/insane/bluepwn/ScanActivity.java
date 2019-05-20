@@ -19,7 +19,7 @@ import butterknife.OnClick;
 
 public class ScanActivity extends AppCompatActivity {
 
-    @BindView(R.id.locationCountLabel) TextView location;
+    @BindView(R.id.locationCountLabel) TextView locationCount;
     @BindView(R.id.devicesRecycler) RecyclerView devicesRecycler;
     @BindView(R.id.filterSpinner) Spinner filters;
 
@@ -30,9 +30,18 @@ public class ScanActivity extends AppCompatActivity {
     };
 
     @OnClick(R.id.locationCountLabel)
+    public void locationCountLabelClicked(){
+        _goToLocations();
+    }
+
+    @OnClick(R.id.textView6)
     public void locationLabelClicked(){
+        _goToLocations();
+    }
+
+    public void _goToLocations(){
         Intent i = new Intent(this, LocationsActivity.class);
-        i.putExtra("scan_id", scan.uuid);
+        i.putExtra("uuid", scan.uuid);
         startActivity(i);
     }
 
@@ -46,11 +55,7 @@ public class ScanActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setTitle("scan");
         scan = Scan.get(getIntent().getStringExtra("uuid"));
-        if(scan == null) {
-            Toast.makeText(this, "scan null. idk", Toast.LENGTH_SHORT).show();
-            finish();
-        }
-        Log.log(this.getClass(), scan.uuid);
+        locationCount.setText(String.valueOf(scan.locations.size()));
         devices = new DeviceAdapter();
         devices.addAll(scan.getDevices());
         devicesRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -58,7 +63,7 @@ public class ScanActivity extends AppCompatActivity {
         devices.setOnItemClickListener(new DeviceAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int p) {
-                Intent i = new Intent(getApplicationContext(), LocationActivity.class);
+                Intent i = new Intent(getApplicationContext(), DeviceActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.putExtra("address", devices.get(p).address);
                 startActivity(i);

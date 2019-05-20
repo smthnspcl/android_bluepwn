@@ -82,6 +82,7 @@ public class StagerActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         String uuid = getIntent().getStringExtra("uuid");
         if(uuid == null){
+            // todo make user choose for what service he wants to create the stager
             Toast.makeText(this, "uuid is null. idk", Toast.LENGTH_SHORT).show();
             finish();
         }
