@@ -154,17 +154,16 @@ public class ScannerService extends Service {
 
     void doScanOnNextDevice(){
         Log.log(getClass(), String.valueOf(toScanDevices.size()));
-        if(toScanDevices.size() > 0){
+        while(toScanDevices.size() > 0){
             Device device = toScanDevices.get(0);
             Log.log(this.getClass(), "doScanOnNextDevice");
             if(device.type.equals(TYPE_LE)) doGattScanOnNextDevice(device);
             else if(device.type.equals(TYPE_CLASSIC)) doSdpScanOnNextDevice(device);
             else if(device.type.equals(TYPE_DUAL)) {doGattScanOnNextDevice(device); doSdpScanOnNextDevice(device);}
             toScanDevices.remove(device);
-        } else {
-            currentScan.save();
-            send2UI(ACTION_CODE_SCANNING_FINISHED, currentScan.uuid);
         }
+        currentScan.save();
+        send2UI(ACTION_CODE_SCANNING_FINISHED, currentScan.uuid);
     }
 
     private void doSdpScanOnNextDevice(Device device){
