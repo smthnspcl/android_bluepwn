@@ -58,10 +58,10 @@ public class Device extends DBObject {
         return devices;
     }
 
-    static Device getExistingOrNew(String address){
-        Device d = Paper.book(TABLE_DEVICE).read(address);
+    static Device getExistingOrNew(BluetoothDevice device){
+        Device d = Paper.book(TABLE_DEVICE).read(device.getAddress());
         if(d != null) return d;
-        return new Device();
+        return new Device(device);
     }
 
     static Device get(String address){

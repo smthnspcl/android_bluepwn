@@ -103,7 +103,7 @@ public class DeviceActivity extends AppCompatActivity {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         gson = new Gson();
         serviceAdapter = new ServiceAdapter();
-        device = Device.getExistingOrNew(getIntent().getStringExtra("address"));
+        device = Device.get(getIntent().getStringExtra("address"));
         if(getIntent().getBooleanExtra("live", false)) terminal.setVisibility(View.INVISIBLE);
         setTitle("dev: " + device.address);
         serviceAdapter.addAll(device.getServices());

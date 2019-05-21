@@ -92,10 +92,10 @@ public class BluetoothFragment extends Fragment {
                     currentlyScanning = true;
                     break;
                 case ACTION_CODE_DEVICE_DISCOVERED:
-                    devices.add(Device.getExistingOrNew(intent.getStringExtra(ACTION_DATA_KEY)));
+                    devices.add(Device.get(intent.getStringExtra(ACTION_DATA_KEY)));
                     break;
                 case ACTION_CODE_SERVICE_DISCOVERED:
-                    devices.add(Device.getExistingOrNew(intent.getStringExtra(ACTION_DATA_KEY)));
+                    devices.add(Device.get(intent.getStringExtra(ACTION_DATA_KEY)));
                     break;
                 case ACTION_CODE_SERVICE_INITIALIZED:
                     Toast.makeText(getContext(), "scanner service initialized", Toast.LENGTH_SHORT).show();

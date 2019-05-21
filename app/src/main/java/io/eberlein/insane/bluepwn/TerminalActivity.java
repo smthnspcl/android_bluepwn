@@ -146,7 +146,7 @@ public class TerminalActivity extends AppCompatActivity {
         setContentView(R.layout.activity_terminal);
         ButterKnife.bind(this);
         cmd.setEnabled(false);
-        device = Device.getExistingOrNew(getIntent().getStringExtra("address"));
+        device = Device.get(getIntent().getStringExtra("address"));
         session = TerminalSession.get(getIntent().getStringExtra("session"));
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(!bluetoothAdapter.isEnabled()) bluetoothAdapter.enable();

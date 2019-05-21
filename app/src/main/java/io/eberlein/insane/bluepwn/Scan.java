@@ -36,7 +36,7 @@ public class Scan extends DBObject {
     List<Device> getGATTDevices(){
         List<Device> devices = new ArrayList<>();
         for(String d : this.devices) {
-            Device _d = Device.getExistingOrNew(d);
+            Device _d = Device.get(d);
             if(_d.type.equals(TYPE_LE)) devices.add(_d);
         }
         return devices;
@@ -45,7 +45,7 @@ public class Scan extends DBObject {
     List<Device> getClassicDevices(){
         List<Device> devices = new ArrayList<>();
         for(String d : this.devices) {
-            Device _d = Device.getExistingOrNew(d);
+            Device _d = Device.get(d);
             if(_d.type.equals(TYPE_CLASSIC)) devices.add(_d);
         }
         return devices;

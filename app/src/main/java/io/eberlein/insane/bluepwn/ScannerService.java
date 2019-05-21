@@ -97,7 +97,7 @@ public class ScannerService extends Service {
         public void onReceive(Context context, Intent intent) {
             BluetoothDevice d = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             Parcelable[] uuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
-            Device device = Device.getExistingOrNew(d.getAddress());
+            Device device = Device.getExistingOrNew(d);
             if(uuids != null && device != null){
                 for(Parcelable u : uuids){
                     android.os.ParcelUuid __u = (android.os.ParcelUuid) u;
@@ -116,8 +116,7 @@ public class ScannerService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            Device device = Device.getExistingOrNew(bluetoothDevice.getAddress());
-            device.setValues(bluetoothDevice);
+            Device device = Device.getExistingOrNew(bluetoothDevice);
             if(device.address.isEmpty()) device.setValues(bluetoothDevice);
             if(locationListener.currentLocation != null && !locationListener.currentLocation.isEmpty()) device.locations.add(locationListener.currentLocation.uuid);
             device.save();
@@ -144,7 +143,7 @@ public class ScannerService extends Service {
                 Log.log(this.getClass(), "got pairing request and " + (settings.autoPair ? "accepted":"rejected") + " it");
                 int pin = intent.getIntExtra("android.bluetooth.device.extra.PAIRING_KEY", 0);
                 Log.log(this.getClass(), "pairing key: " + pin);
-                Device ld = Device.getExistingOrNew(d.getAddress());
+                Device ld = Device.getExistingOrNew(d);
                 ld.pin = pin;
                 ld.save();
                 // d.setPairingConfirmation(settings.autoPair); // only works as system service
