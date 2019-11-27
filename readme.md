@@ -1,2 +1,2 @@
-## bluepwn_android
-![Build Status](http://91.121.89.185:8080/buildStatus/icon?job=bluepwn_android)
+## android_bluepwn
+[![Build Status](http://build.eberlein.io:8080/job/android_bluepwn/badge/icon)](http://build.eberlein.io:8080/job/android_bluepwn/)
