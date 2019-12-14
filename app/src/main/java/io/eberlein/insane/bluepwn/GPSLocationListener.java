@@ -8,22 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import io.eberlein.insane.bluepwn.object.ILocation;
 import io.paperdb.Paper;
 
 
-// todo
 public class GPSLocationListener implements LocationListener {
-    io.eberlein.insane.bluepwn.Location currentLocation;
-    List<Callable<Void>> onLocationChangedFunctions;
+    private ILocation currentILocation;
+    private List<Callable<Void>> onLocationChangedFunctions;
 
-    GPSLocationListener(){
+    public GPSLocationListener() {
         onLocationChangedFunctions = new ArrayList<>();
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        currentLocation = new io.eberlein.insane.bluepwn.Location(location);
-        Paper.book("location").write(currentLocation.uuid, currentLocation);
+        currentILocation = new ILocation(location);
+        Paper.book("location").write(currentILocation.getUuid(), currentILocation);
         for(Callable<Void> c : onLocationChangedFunctions) {
             try {
                 c.call();
@@ -46,5 +46,13 @@ public class GPSLocationListener implements LocationListener {
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 
+    }
+
+    public ILocation getCurrentILocation() {
+        return currentILocation;
+    }
+
+    public void addOnLocationChangedFunction(Callable<Void> f) {
+        onLocationChangedFunctions.add(f);
     }
 }

@@ -114,7 +114,7 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/notify"
         android:layout_alignTop="@+id/nameTextView"
-        android:text="locations:" />
+        android:text="ILocations:" />
 
     <TextView
         android:id="@+id/locationCountLabel"

@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature android:name="android.hardware.ILocation.gps" />
 
     <application
         android:allowBackup="true"
@@ -21,7 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,22 +29,22 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".DeviceActivity"/>
-        <activity android:name=".StagerActivity"/>
-        <activity android:name=".ScanActivity"/>
-        <activity android:name=".LocationsActivity"/>
-        <activity android:name=".ServiceActivity"/>
-        <activity android:name=".LocationActivity"/>
-        <activity android:name=".DatabaseSettingsActivity"/>
-        <activity android:name=".RemoteDatabaseSettingsActivity"/>
-        <activity android:name=".StageActivity"/>
-        <activity android:name=".LocalDatabaseSettingsActivity"/>
-        <activity android:name=".ScanningSettingsActivity"/>
-        <activity android:name=".GeneralSettingsActivity"/>
-        <activity android:name=".UISettingsActivity"/>
-        <activity android:name=".TerminalActivity"/>
+        <activity android:name=".activity.DeviceActivity" />
+        <activity android:name=".activity.StagerActivity" />
+        <activity android:name=".activity.ScanActivity" />
+        <activity android:name=".activity.LocationsActivity" />
+        <activity android:name=".activity.ServiceActivity" />
+        <activity android:name=".activity.LocationActivity" />
+        <activity android:name=".activity.DatabaseSettingsActivity" />
+        <activity android:name=".activity.RemoteDatabaseSettingsActivity" />
+        <activity android:name=".activity.StageActivity" />
+        <activity android:name=".activity.LocalDatabaseSettingsActivity" />
+        <activity android:name=".activity.ScanningSettingsActivity" />
+        <activity android:name=".activity.GeneralSettingsActivity" />
+        <activity android:name=".activity.UISettingsActivity" />
+        <activity android:name=".activity.TerminalActivity" />
 
-        <service android:name=".ScannerService"/>
+        <service android:name=".service.ScannerService" />
     </application>
 
 </manifest>

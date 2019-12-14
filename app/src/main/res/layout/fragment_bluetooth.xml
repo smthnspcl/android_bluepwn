@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="io.eberlein.insane.bluepwn.MainActivity">
+    tools:context="io.eberlein.insane.bluepwn.activity.MainActivity">
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/scanBtn"
